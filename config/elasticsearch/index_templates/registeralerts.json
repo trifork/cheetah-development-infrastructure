@@ -1,0 +1,28 @@
+{
+  "index_patterns": [
+    "registeralerts_*"
+  ],
+  "composed_of": [
+    "shared_template"
+  ],
+  "template": {
+    "settings": {
+      "codec": "best_compression",
+      "number_of_replicas": 1,
+      "index.lifecycle.name": "shared_policy",
+      "index.routing.allocation.include._tier_preference": "data_hot,data_warm"
+    },
+    "mappings": {
+      "dynamic": "true",
+      "_source": {
+        "enabled": true
+      },
+      "dynamic_templates": [],
+      "properties": {
+        "alertGeneratedTimestamp": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}

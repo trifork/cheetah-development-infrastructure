@@ -1,0 +1,48 @@
+version: '2.1'
+
+services:
+
+  es:
+    image: elasticsearch:8.4.1
+    hostname: es
+    environment:
+      - node.name=es01
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g -Dlog4j2.formatMsgNoLookups"
+      - "xpack.security.enabled=false"
+      - "xpack.license.self_generated.type=basic"
+      - ELASTIC_PASSWORD=d6MR9LN8kwpqlZClVuP3WYxfZiuOEOEN
+    ports:
+      - 9200:9200
+    volumes:
+      - es:/usr/share/elasticsearch/data
+    restart: unless-stopped
+
+  es-cfg:
+    build:
+      context: ../config/elasticsearch
+      dockerfile: Dockerfile
+    depends_on:
+      - es
+    restart: unless-stopped
+    profiles:
+      - donotstart
+
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.4.3
+    hostname: kibana
+    ports:
+     - 5601:5601
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://es:9200"]'
+    restart: unless-stopped 
+
+volumes:
+  es:
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true

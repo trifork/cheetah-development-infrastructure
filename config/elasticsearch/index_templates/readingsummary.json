@@ -1,0 +1,65 @@
+{
+  "index_patterns": [
+    "readingsummary_*"
+  ],
+  "template": {
+    "settings": {
+      "codec": "best_compression",
+      "number_of_replicas": 1,
+      "index.lifecycle.name": "readingsummary_policy",
+      "index.routing.allocation.include._tier_preference": "data_hot,data_warm"
+    },
+    "mappings": {
+      "dynamic": "true",
+      "_source": {
+        "enabled": true
+      },
+      "dynamic_templates": [],
+      "properties": {
+        "volumeStatistics": {
+          "properties": {
+            "min": {
+              "type": "float"
+            },
+            "max": {
+              "type": "float"
+            },
+            "mean": {
+              "type": "float"
+            },
+            "count": {
+              "type": "long"
+            },
+            "sum": {
+              "type": "float"
+            },
+            "standardDeviation": {
+              "type": "float"
+            }
+          }
+        },
+        "start": {
+          "type": "date"
+        },
+        "end": {
+          "type": "date"
+        },
+        "source": {
+          "type": "keyword"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "key": {
+          "type": "keyword"
+        },
+        "uniqueId": {
+          "type": "keyword"
+        },
+        "customer": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

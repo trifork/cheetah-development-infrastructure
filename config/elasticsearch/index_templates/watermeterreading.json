@@ -1,0 +1,74 @@
+{
+  "index_patterns": [
+    "watermeterreading_*"
+  ],
+  "composed_of": [
+    "shared_template"
+  ],
+  "template": {
+    "settings": {
+      "codec": "best_compression",
+      "number_of_replicas": 1,
+      "index.lifecycle.name": "watermeterreading_policy",
+      "index.routing.allocation.include._tier_preference": "data_hot,data_warm"
+    },
+    "mappings": {
+      "dynamic": "true",
+      "_source": {
+        "enabled": true
+      },
+      "dynamic_templates": [],
+      "properties": {
+        "imported": {
+          "type": "date"
+        },
+        "importedCsvVersion": {
+          "type": "keyword"
+        },
+        "importedCsvFile": {
+          "type": "keyword"
+        },
+        "volume1Logged": {
+          "type": "float"
+        },
+        "serialNumber": {
+          "type": "keyword"
+        },
+        "manufacture": {
+          "type": "keyword"
+        },
+        "meterId": {
+          "type": "keyword"
+        },
+        "acousticNoise": {
+          "type": "keyword"
+        },
+        "infoCodes": {
+          "type": "long"
+        },
+        "hourCounter": {
+          "type": "long"
+        },
+        "volume1": {
+          "type": "float"
+        },
+        "volume1Delta": {
+          "properties": {
+            "timestamp1": {
+              "type": "date"
+            },
+            "timestamp0": {
+              "type": "date"
+            },
+            "readingId0": {
+              "type": "keyword"
+            },
+            "value": {
+              "type": "float"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,85 @@
+version: '2.1'
+
+services:
+
+  zoo:
+    image: confluentinc/cp-zookeeper:7.2.1
+    hostname: zoo
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    #volumes:
+    #  - ./zk-single-kafka-single/zoo/data:/data
+    #  - ./zk-single-kafka-single/zoo/datalog:/datalog
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.2.1
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: "zoo:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      # volumes:
+      #- ./zk-single-kafka-single/kafka/data:/var/lib/kafka/data
+    depends_on:
+      - zoo
+      - kafka-setup
+    restart: unless-stopped
+
+  # This "container" is a workaround to pre-create topics
+  kafka-setup:
+    image: confluentinc/cp-kafka:7.2.1
+    hostname: kafka-setup
+    container_name: kafka-setup
+    volumes:
+      - ../config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
+    command: "bash /etc/config/kafkaconfig.sh"
+    restart: on-failure
+    environment:
+      # The following settings are listed here only to satisfy the image's requirements.
+      # We override the image's `command` anyways, hence this container will not start a broker.
+      KAFKA_BROKER_ID: ignored
+      KAFKA_ZOOKEEPER_CONNECT: ignored
+    profiles:
+      - donotstart
+
+  kowl:
+    image: quay.io/cloudhut/kowl:latest
+    hostname: kowl
+    restart: on-failure
+    volumes:
+      - ../config/kowl.yaml:/etc/kowl/config.yaml
+    ports:
+      - "8080:8080"
+    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
+    depends_on:
+      - kafka
+
+  # Kafka Prometheus exporter https://github.com/cloudhut/kminion
+  kafka-minion:
+    image: quay.io/cloudhut/kminion:master
+    hostname: kafka-minion
+    container_name: kafka-minion
+    depends_on:
+      - zoo
+      - kafka
+    ports:
+      - 8088:8080
+    environment:
+      KAFKA_BROKERS: kafka:19092
+    restart: unless-stopped
+    profiles:
+      - donotstart
+
+networks:
+  default:
+    name: "cheetah-infrastructure"

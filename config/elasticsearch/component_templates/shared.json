@@ -1,0 +1,17 @@
+{
+  "template": {
+    "mappings": {
+      "properties": {
+        "timestamp": {
+          "type": "date"
+        },
+        "customer": {
+          "type": "keyword"
+        },
+        "uniqueId": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
