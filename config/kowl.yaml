@@ -2,6 +2,10 @@
 kafka:
   brokers:
     - kafka:19092
-
+  schemaregistry:
+    enabled: true
+    urls: [
+      http://schema-registry:8081
+    ]
 # server:
   # listenPort: 8080

@@ -26,6 +26,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: "zoo:2181"
       KAFKA_BROKER_ID: 1
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_DELETE_TOPIC_ENABLE: "true"
       # volumes:
@@ -79,6 +80,19 @@ services:
     restart: unless-stopped
     profiles:
       - donotstart
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.3.0
+    hostname: schema-registry
+    container_name: schema-registry
+    depends_on:
+      - kafka
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka:19092'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
 
 networks:
   default:
