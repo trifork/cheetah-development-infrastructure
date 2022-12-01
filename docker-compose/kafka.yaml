@@ -62,6 +62,7 @@ services:
     entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
     depends_on:
       - kafka
+      - schema-registry
 
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
