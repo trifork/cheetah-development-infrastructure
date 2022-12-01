@@ -50,8 +50,9 @@ services:
       # We override the image's `command` anyways, hence this container will not start a broker.
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
-    profiles:
-      - donotstart
+    # Doesn't work on docker 20.10.21
+    # profiles:
+    #   - donotstart
 
   kowl:
     image: quay.io/cloudhut/kowl:latest
