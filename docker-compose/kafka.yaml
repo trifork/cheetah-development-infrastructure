@@ -50,8 +50,6 @@ services:
       # We override the image's `command` anyways, hence this container will not start a broker.
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
-    profiles:
-      - donotstart
 
   kowl:
     image: quay.io/cloudhut/kowl:latest
@@ -64,6 +62,7 @@ services:
     entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
     depends_on:
       - kafka
+      - schema-registry
 
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
