@@ -9,7 +9,7 @@
     "settings": {
       "codec": "best_compression",
       "number_of_replicas": 1,
-      "index.lifecycle.name": "otto-reading-policy",
+      "index.lifecycle.name": "otto-reading_policy",
       "index.routing.allocation.include._tier_preference": "data_hot,data_warm"
     },
     "mappings": {

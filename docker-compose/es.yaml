@@ -26,8 +26,8 @@ services:
     depends_on:
       - es
     restart: unless-stopped
-    profiles:
-      - donotstart
+    #profiles:
+    #  - donotstart
 
   
   kibana:
