@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: "Build and push"
-        uses: trifork/cheetah-development-infrastructure/.github/actions/build-image@main
+        uses: trifork/cheetah-development-infrastructure/.github/actions/build-image@master
         with:
           read_package_pat: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
           context: ${{ env.CONTEXT }}
