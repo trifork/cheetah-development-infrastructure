@@ -13,8 +13,7 @@ on:
 env:
   IMAGE_NAME: trifork/cheetah-infrastructure-es-cfg              # image name, must have gh org prefix
   BASE_IMAGE: Dockerfile
-  CONTEXT: .
-
+  CONTEXT: config/elasticsearch
 
 jobs:
 
