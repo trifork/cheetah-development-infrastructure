@@ -1,0 +1,38 @@
+name: Docker Image CI
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches: [ "master" ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  IMAGE_NAME: trifork/cheetah-infrastructure-es-cfg              # image name, must have gh org prefix
+  BASE_IMAGE: Dockerfile
+  CONTEXT: .
+
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: "Build and push"
+        uses: trifork/cheetah-development-infrastructure/.github/actions/build-image@main
+        with:
+          read_package_pat: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
+          context: ${{ env.CONTEXT }}
+          image_name: ${{ env.IMAGE_NAME }}
+          github_actor: ${{ github.actor }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_run_id: ${{ github.run_id }}
+          base_image: ${{ env.BASE_IMAGE }}
