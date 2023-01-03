@@ -51,19 +51,21 @@ services:
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
 
-  kowl:
-    image: quay.io/cloudhut/kowl:latest
-    hostname: kowl
+  redpanda:
+    image: docker.redpanda.com/vectorized/console:v2.1.1
+    entrypoint: /bin/sh
+    command: -c "/app/console"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
     restart: on-failure
     volumes:
-      - ../config/kowl.yaml:/etc/kowl/config.yaml
+      - ../config/redpanda.yaml:/tmp/config.yml
     ports:
-      - "8080:8080"
-    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
+      - 8080:8080
     depends_on:
       - kafka
       - schema-registry
-
+  
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
     image: quay.io/cloudhut/kminion:master
