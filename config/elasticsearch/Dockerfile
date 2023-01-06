@@ -6,7 +6,5 @@ RUN pip install -r /tmp/requirements.txt
 ADD . /app
 
 WORKDIR /app
-RUN chmod +x /app/docker-entrypoint.sh
+ENTRYPOINT [ "python3", "apply_configuration.py", "es:9200", "--dev" ]
 
-CMD [ "python3", "apply_configuration.py", "es:9200", "--dev" ]
-ENTRYPOINT [ "bash", "/app/docker-entrypoint.sh" ]

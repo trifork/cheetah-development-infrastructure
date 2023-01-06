@@ -18,14 +18,19 @@ services:
     volumes:
       - es:/usr/share/elasticsearch/data
     restart: unless-stopped
+    healthcheck:
+      test: curl -u elastic:d6MR9LN8kwpqlZClVuP3WYxfZiuOEOEN -s -f es:9200/_cat/health >/dev/null || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   es-cfg:
     build:
       context: ../config/elasticsearch
       dockerfile: Dockerfile
     depends_on:
-      - es
-    restart: unless-stopped
+      es:
+        condition: service_healthy
     #profiles:
     #  - donotstart
 

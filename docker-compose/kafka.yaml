@@ -33,7 +33,12 @@ services:
       #- ./zk-single-kafka-single/kafka/data:/var/lib/kafka/data
     depends_on:
       - zoo
-      - kafka-setup
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
     restart: unless-stopped
 
   # This "container" is a workaround to pre-create topics
@@ -44,6 +49,9 @@ services:
     volumes:
       - ../config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
     command: "bash /etc/config/kafkaconfig.sh"
+    depends_on:
+      kafka: 
+        condition: service_healthy
     restart: on-failure
     environment:
       # The following settings are listed here only to satisfy the image's requirements.
@@ -57,28 +65,28 @@ services:
     command: -c "/app/console"
     environment:
       CONFIG_FILEPATH: /tmp/config.yml
-    restart: on-failure
     volumes:
       - ../config/redpanda.yaml:/tmp/config.yml
     ports:
       - 8080:8080
     depends_on:
-      - kafka
-      - schema-registry
-  
+      kafka:
+        condition: service_healthy
+      schema-registry:
+        condition: service_healthy
+
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
     image: quay.io/cloudhut/kminion:master
     hostname: kafka-minion
     container_name: kafka-minion
     depends_on:
-      - zoo
-      - kafka
+      kafka:
+        condition: service_healthy
     ports:
       - 8088:8080
     environment:
       KAFKA_BROKERS: kafka:19092
-    restart: unless-stopped
     profiles:
       - donotstart
 
@@ -87,13 +95,20 @@ services:
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
     ports:
       - "8081:8081"
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka:19092'
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    healthcheck:
+      test: nc -z localhost 8081 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
 networks:
   default:
