@@ -9,10 +9,7 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-    #volumes:
-    #  - ./zk-single-kafka-single/zoo/data:/data
-    #  - ./zk-single-kafka-single/zoo/datalog:/datalog
-    restart: unless-stopped
+   
 
   kafka:
     image: confluentinc/cp-kafka:7.2.1
@@ -29,8 +26,6 @@ services:
       KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_DELETE_TOPIC_ENABLE: "true"
-      # volumes:
-      #- ./zk-single-kafka-single/kafka/data:/var/lib/kafka/data
     depends_on:
       - zoo
     healthcheck:
@@ -39,7 +34,6 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
-    restart: unless-stopped
 
   # This "container" is a workaround to pre-create topics
   kafka-setup:
@@ -52,7 +46,6 @@ services:
     depends_on:
       kafka: 
         condition: service_healthy
-    restart: on-failure
     environment:
       # The following settings are listed here only to satisfy the image's requirements.
       # We override the image's `command` anyways, hence this container will not start a broker.
