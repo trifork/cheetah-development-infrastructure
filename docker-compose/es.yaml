@@ -1,7 +1,6 @@
-version: '2.1'
+version: "2.1"
 
 services:
-
   es:
     image: elasticsearch:7.17.8
     hostname: es
@@ -13,6 +12,9 @@ services:
       - "xpack.security.enabled=false"
       - "xpack.license.self_generated.type=basic"
       - ELASTIC_PASSWORD=d6MR9LN8kwpqlZClVuP3WYxfZiuOEOEN
+    mem_limit: 2048m
+    cpus: 1
+    #cpu_percent: 10
     ports:
       - 9200:9200
     volumes:
@@ -34,12 +36,12 @@ services:
     #profiles:
     #  - donotstart
 
-  
   kibana:
     image: docker.elastic.co/kibana/kibana:7.17.8
     hostname: kibana
+    mem_limit: 1024m
     ports:
-     - 5601:5601
+      - 5601:5601
     environment:
       ELASTICSEARCH_HOSTS: '["http://es:9200"]'
     depends_on:
