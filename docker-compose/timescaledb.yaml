@@ -1,0 +1,19 @@
+
+
+services:
+
+  timescaledb:
+      image: timescale/timescaledb:latest-pg12
+      restart: always
+      ports:
+        - 5432:5432
+      environment:
+        POSTGRES_USER: timescaledb
+        POSTGRES_PASSWORD: cheetah
+      volumes:
+        - /data/timescaledb:/var/lib/postgresql/data
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true
