@@ -22,6 +22,8 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+      - ../config/pgadmin/servers.json:/pgadmin4/servers.json
+      - ../config/pgadmin/pgpass:/pgpass
 
 networks:
   default:
