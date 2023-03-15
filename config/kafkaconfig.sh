@@ -4,9 +4,9 @@ echo "Waiting for Kafka to be ready..."
 cub kafka-ready -b kafka:19092 1 20 #expected_brokers timeout_seconds
 
 echo "Creating topics with retention set to 3 years"
-for topic in OttoReadingMovingAverage OttoReading OttoReadingId; do
-   kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --partitions 1 --replication-factor 1 --topic $topic --config retention.ms=94608000000
-   kafka-configs --bootstrap-server kafka:19092 --entity-type topics --entity-name $topic --alter --add-config retention.ms=94608000000
+for topic in OttoReadingMovingAverage OttoReading OttoReadingId JobNameInputTopic; do
+   kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --partitions 1 --replication-factor 1 --topic $topic --config retention.ms=20000
+   kafka-configs --bootstrap-server kafka:19092 --entity-type topics --entity-name $topic --alter --add-config segment.bytes=300
 done
 echo "Creating topics done"
 
