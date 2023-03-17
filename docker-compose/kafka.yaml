@@ -31,7 +31,7 @@ services:
   #     timeout: 10s
   #     retries: 10
   kafka:
-    image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
+    image: my-kafka
     command:
       [
         "sh",
@@ -44,10 +44,12 @@ services:
       - "9092:9092"
     environment:
       LOG_DIR: "/tmp/logs"
+      KAFKA_ROOT_LOGGER_LEVEL: debug
     volumes:
       - ../config/kafka/server.properties:/opt/kafka/custom-config/server.properties
+      - ../config/kafka/log4j.properties:/opt/kafka/config/log4j.properties
     healthcheck:
-      test: nc -z kafka 29092 || exit -1
+      test: nc -z kafka 19092 || exit -1
       start_period: 15s
       interval: 5s
       timeout: 10s
