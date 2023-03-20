@@ -10,26 +10,6 @@ services:
     environment:
       LOG_DIR: /tmp/logs
 
-  # kafka:
-  #   image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
-  #   command:
-  #     - "sh"
-  #     - "-c"
-  #     - "bin/kafka-server-start.sh /opt/kafka/custom-config/server.config"
-  #   depends_on:
-  #     - zookeeper
-  #   ports:
-  #     - "9092:9092"
-  #   environment:
-  #     LOG_DIR: "/tmp/logs"
-  #   volumes:
-  #     - ../config/kafka/server.config:/opt/kafka/custom-config/server.config
-  #   healthcheck:
-  #     test: nc -z kafka 9092 || exit -1
-  #     start_period: 15s
-  #     interval: 5s
-  #     timeout: 10s
-  #     retries: 10
   kafka:
     image: my-kafka
     command:
@@ -47,88 +27,12 @@ services:
       KAFKA_ROOT_LOGGER_LEVEL: debug
     volumes:
       - ../config/kafka/server.properties:/opt/kafka/custom-config/server.properties
-      - ../config/kafka/log4j.properties:/opt/kafka/config/log4j.properties
     healthcheck:
       test: nc -z kafka 19092 || exit -1
       start_period: 15s
       interval: 5s
       timeout: 10s
       retries: 10
-
-  redpanda:
-    image: docker.redpanda.com/vectorized/console:v2.1.1
-    entrypoint: /bin/sh
-    command: -c "/app/console"
-    mem_limit: 512m
-    environment:
-      CONFIG_FILEPATH: /tmp/config.yml
-    volumes:
-      - ../config/redpanda.yaml:/tmp/config.yml
-    ports:
-      - "9898:8080"
-    depends_on:
-      kafka:
-        condition: service_healthy
-      schema-registry:
-        condition: service_healthy
-
-  schema-registry:
-    mem_limit: 256m
-    image: confluentinc/cp-schema-registry:7.3.0
-    hostname: schema-registry
-    container_name: schema-registry
-    depends_on:
-      kafka:
-        condition: service_healthy
-    ports:
-      - "8081:8081"
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka:19092"
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
-    healthcheck:
-      test: nc -z localhost 8081 || exit -1
-      start_period: 15s
-      interval: 5s
-      timeout: 10s
-      retries: 10
-
-  kafka-producer-testdata:
-    image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
-    entrypoint: /bin/bash
-    command:
-      - -c
-      - |-
-        template=device%s:'{"deviceId":"%s","timestamp":"%s","value":%d}\n'
-        while [ true ]; do
-          echo "Inserted message"
-          counter=$((($$RANDOM % 20) + 1))
-          json_string=$(printf "$$template" "$$counter" "$$counter" "$(date -Ins)" $$RANDOM)
-          echo $$json_string | bin/kafka-console-producer.sh /opt/kafka/custom-config/zookeeper.properties --topic $$TOPIC_NAME --bootstrap-server kafka:9092 --property value.serializer=custom.class.serialization.JsonSerializer --property parse.key=true --property key.separator=:
-          ((COUNTER++))
-        done
-    restart: on-failure
-    profiles:
-      - bootstrap
-      - e2e
-    environment:
-      # How much data to generate
-      COUNTER: 0
-      COUNTER_STOP: 3
-      # Input
-      TOPIC_NAME: "JobNameInputTopic"
-      # The following settings are listed here only to satisfy the image's requirements.
-      # We override the image's `command` anyways, hence this container will not start a broker.
-      KAFKA_BROKER_ID: ignored
-      KAFKA_ZOOKEEPER_CONNECT: ignored
-      KAFKA_OAUTH_JWKS_ENDPOINT_URI: http://keycloak:8080/auth/realms/master/protocol/openid-connect/certs
-      KAFKA_OAUTH_CLIENT_ID: test
-      KAFKA_OAUTH_CLIENT_SECRET: BQvvCOLUlbWTmpbYSib5cCgIqRXnd71G
-      KAFKA_OAUTH_TOKEN_ENDPOINT_URI: http://keycloak:8080/auth/realms/master/protocol/openid-connect/token
-      KAFKA_SASL_MECHANISMS: OAUTHBEARER
-      KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
-    volumes:
-      - ../config/kafka/server.properties:/opt/kafka/custom-config/server.properties
 
 networks:
   default:
