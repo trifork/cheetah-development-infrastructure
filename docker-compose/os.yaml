@@ -1,0 +1,41 @@
+services:
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    hostname: opensearch
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=os01
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - DISABLE_SECURITY_PLUGIN=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+    mem_limit: 2048m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 262144
+        hard: 262144
+    volumes:
+      - opensearch:/data
+    ports:
+      - 9229:9200
+      - 9600:9600
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    hostname: opensearch-dashboards
+    ports:
+      - 5602:5601
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+
+volumes:
+  opensearch:
+
+networks:
+  default:
+    name: 'cheetah-infrastructure'
