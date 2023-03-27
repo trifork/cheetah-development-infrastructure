@@ -9,6 +9,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
     mem_limit: 512m
+    profiles:
+      - kafka
 
   kafka:
     image: confluentinc/cp-kafka:7.2.1
@@ -34,6 +36,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+    profiles:
+      - kafka
 
   # This "container" is a workaround to pre-create topics
   kafka-setup:
@@ -51,6 +55,8 @@ services:
       # We override the image's `command` anyways, hence this container will not start a broker.
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
+    profiles:
+      - kafka
 
   redpanda:
     image: docker.redpanda.com/vectorized/console:v2.1.1
@@ -68,6 +74,8 @@ services:
         condition: service_healthy
       schema-registry:
         condition: service_healthy
+    profiles:
+      - kafka
 
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
@@ -104,6 +112,9 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+    profiles:
+      - kafka
+
 
 networks:
   default:
