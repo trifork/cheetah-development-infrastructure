@@ -1,0 +1,47 @@
+---
+version: "3.4"
+
+services:
+  cheetah.oauth.simulator:
+    hostname: cheetahoauthsimulator
+    ports:
+      - "1752:80"
+    image: ghcr.io/trifork/cheetah-oauth-simulator:latest
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://cheetahoauthsimulator:80/health"]
+    networks:
+      - cheetah-infrastructure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - OAuth__Mode=Asymmetric
+    volumes:
+    profiles:
+      - oauth
+
+  # Not enabled by default
+  cheetah.oauth.simulator.https:
+    hostname: cheetahoauthsimulator
+    ports:
+      - "1852:1852"
+    image: ghcr.io/trifork/cheetah-oauth-simulator:latest
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://cheetahoauthsimulator:1752/health"]
+    networks:
+      - cheetah-infrastructure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:1852;http://+:1752
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/aspnetapp.pfx
+      - OAuth__SymmetricPrivateKey="wnhjzYtZD7tMbqu4C5xw"
+      - OAuth__Mode=Asymmetric
+      - Simulator__CertFilePath=/root/.aspnet/certs/secret.pem
+    volumes:
+      - "${APPDATA:-.}/ASP.NET/https:/root/.aspnet/https:ro"
+      - "${APPDATA:-.}/ASP.NET/certs:/root/.aspnet/certs"
+    profiles:
+      - oauth_https
+
+networks:
+  cheetah-infrastructure:
+    external: true
