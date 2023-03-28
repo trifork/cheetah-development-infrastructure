@@ -1,15 +1,20 @@
-<https://docs.cheetah.trifork.dev/reference/development-infrastructure>
-
 # Cheetah development infrastructure
 
-This repository is used to setup infrastructure when developing locally using Kafka/Opensearch
+This repository is used to setup infrastructure when developing locally using Kafka/Opensearch.
 
 The repository consists of a set of docker-compose files which are all referenced in the [.env](.env) file. This allows invoking `docker compose up <service-name>` on a service in any of the docker-compose files, from the root of the repository.
+
+See also: <https://docs.cheetah.trifork.dev/reference/development-infrastructure>
 
 ## Prerequisites
 
 1. Follow: https://docs.cheetah.trifork.dev/getting-started/guided-tour/prerequisites#run-standard-jobs
 1. Run `docker network create cheetah-infrastructure`
+
+### Security model
+
+The development infrastructure follows the [Reference Security Model](https://docs.cheetah.trifork.dev/reference/security).  
+See sections below for details on security model configuration.
 
 ## Kafka
 
@@ -56,7 +61,7 @@ The OpenSearch setup consists of different services:
 
 - **OpenSearch** - OpenSearch data storage solution
 - **OpenSearch-Dashboard** - Dashboard solution for interacting with OpenSearch API
-- **OpenSearch Configurer** - TODO
+- **OpenSearch Configurer** - Uses [OpenSearch Template Configuration Script](https://github.com/trifork/cheetah-infrastructure-utils-opensearch) to setup Index Templates and more.
 
 ### Running OpenSearch and its associated services
 
