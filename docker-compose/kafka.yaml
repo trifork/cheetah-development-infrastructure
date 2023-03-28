@@ -1,37 +1,41 @@
 version: "2.1"
 
 services:
-  zoo:
-    image: confluentinc/cp-zookeeper:7.2.1
-    hostname: zoo
+  zookeeper:
+    image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
+    command:
+      ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
     ports:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      LOG_DIR: /tmp/logs
     mem_limit: 512m
     profiles:
       - kafka
 
   kafka:
-    image: confluentinc/cp-kafka:7.2.1
+    image: ghcr.io/trifork/cheetah-infrastructure-utils-kafka:main-4542528321
     hostname: kafka
     mem_limit: 1024m
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
-      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
-      KAFKA_ZOOKEEPER_CONNECT: "zoo:2181"
-      KAFKA_BROKER_ID: 1
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_DELETE_TOPIC_ENABLE: "true"
+    command:
+      [
+        "sh",
+        "-c",
+        "bin/kafka-server-start.sh /opt/kafka/custom-config/server.properties",
+      ]
     depends_on:
-      - zoo
+      - zookeeper
+    ports:
+      - "9092:9092" # Requires Ouaht2 authentication
+      - "9093:9093" # Requires No authentication
+    environment:
+      LOG_DIR: "/tmp/logs"
+      KAFKA_ROOT_LOGGER_LEVEL: debug
+    volumes:
+      - ../config/kafka/server.properties:/opt/kafka/custom-config/server.properties
     healthcheck:
-      test: nc -z localhost 9092 || exit -1
+      test: nc -z kafka 19092 || exit -1
       start_period: 15s
       interval: 5s
       timeout: 10s
@@ -39,13 +43,13 @@ services:
     profiles:
       - kafka
 
-  # This "container" is a workaround to pre-create topics
   kafka-setup:
-    image: confluentinc/cp-kafka:7.2.1
+    image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
     hostname: kafka-setup
     container_name: kafka-setup
     volumes:
       - ../config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
+      - ../config/kafka/producer.config:/etc/config/producer.config
     command: "bash /etc/config/kafkaconfig.sh"
     depends_on:
       kafka:
@@ -74,6 +78,8 @@ services:
         condition: service_healthy
       schema-registry:
         condition: service_healthy
+      kafka-setup:
+        condition: service_completed_successfully
     profiles:
       - kafka
 
@@ -94,20 +100,25 @@ services:
 
   schema-registry:
     mem_limit: 256m
-    image: confluentinc/cp-schema-registry:7.3.0
+    image: apicurio/apicurio-registry-kafkasql:2.4.1.Final
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
       kafka:
         condition: service_healthy
     ports:
-      - "8081:8081"
+      - "8081:8080"
     environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka:19092"
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      ENABLE_KAFKA_SASL: true
+      CLIENT_ID: testId
+      CLIENT_SECRET: testSecret
+      OAUTH_TOKEN_ENDPOINT_URI: https://oauth.cheetah.trifork.dev/oauth2/token
+      KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      REGISTRY_AUTH_ANONYMOUS_READ_ACCESS_ENABLED: true
+
     healthcheck:
-      test: nc -z localhost 8081 || exit -1
+      test: curl schema-registry:8080 || exit -1
       start_period: 15s
       interval: 5s
       timeout: 10s
@@ -115,7 +126,7 @@ services:
     profiles:
       - kafka
 
-
 networks:
   default:
     name: "cheetah-infrastructure"
+    external: true
