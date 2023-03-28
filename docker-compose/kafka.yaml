@@ -2,7 +2,7 @@ version: "2.1"
 
 services:
   zookeeper:
-    image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
+    image: ghcr.io/trifork/cheetah-kafka:pr-4@sha256:74b32f4649f5bcbc84626787fbcdaf6c817b02ac876bddfd7e67ea4e9c93e340
     command:
       ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
     ports:
@@ -11,7 +11,7 @@ services:
       LOG_DIR: /tmp/logs
 
   kafka:
-    image: my-kafka
+    image: ghcr.io/trifork/cheetah-kafka:pr-4@sha256:74b32f4649f5bcbc84626787fbcdaf6c817b02ac876bddfd7e67ea4e9c93e340
     command:
       [
         "sh",
@@ -35,11 +35,12 @@ services:
       retries: 10
 
   kafka-setup:
-    image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
+    image: ghcr.io/trifork/cheetah-kafka:pr-4@sha256:74b32f4649f5bcbc84626787fbcdaf6c817b02ac876bddfd7e67ea4e9c93e340
     hostname: kafka-setup
     container_name: kafka-setup
     volumes:
       - ../config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
+      - ../config/kafka/producer.config:/etc/config/producer.config
     command: "bash /etc/config/kafkaconfig.sh"
     depends_on:
       kafka:
@@ -84,20 +85,25 @@ services:
 
   schema-registry:
     mem_limit: 256m
-    image: confluentinc/cp-schema-registry:7.3.0
+    image: apicurio/apicurio-registry-kafkasql:2.4.1.Final
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
       kafka:
         condition: service_healthy
     ports:
-      - "8081:8081"
+      - "8081:8080"
     environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka:19092"
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      ENABLE_KAFKA_SASL: true
+      CLIENT_ID: testId
+      CLIENT_SECRET: testSecret
+      OAUTH_TOKEN_ENDPOINT_URI: https://oauth.cheetah.trifork.dev/oauth2/token
+      KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      REGISTRY_AUTH_ANONYMOUS_READ_ACCESS_ENABLED: true
+
     healthcheck:
-      test: nc -z kafka 19092 || exit -1
+      test: curl schema-registry:8080 || exit -1
       start_period: 15s
       interval: 5s
       timeout: 10s
