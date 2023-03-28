@@ -1,9 +1,6 @@
 #!/usr/bin bash
 
-# echo "Waiting for Kafka to be ready..."
-# cub kafka-ready -b kafka:19093 1 20 #expected_brokers timeout_seconds
-
-# for user in redpanda-user; do
+echo "Creating Kafka User redpanda"
 bash bin/kafka-configs.sh --bootstrap-server kafka:19092 --command-config /etc/config/producer.config --alter --add-config 'SCRAM-SHA-512=[password=password]' --entity-type users --entity-name redpanda
 
 echo "Creating topics with retention set to 3 years"
@@ -41,6 +38,3 @@ echo "Creating topics done"
 #segment.jitter.ms
 #segment.ms
 #unclean.leader.election.enable
-
-# bash bin/kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:19093 --partitions 1 --replication-factor 1 --topic $topic --config retention.ms=20000 segment.bytes=300
-#    bash bin/kafka-configs.sh --alter --bootstrap-server kafka:19093 --topic $topic --config segment.bytes=300 
