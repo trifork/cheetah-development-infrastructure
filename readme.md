@@ -75,5 +75,5 @@ When all of the services are running, you can go to:
 ### Authentication
 
 Services should connect using the OAuth2 protocol. When working locally, you can use `admin:admin` user. This is only possibly locally.
-You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SECURITY_PLUGIN=true` to disable security completly.
+You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SECURITY_PLUGIN=true` to disable security completely.
 
