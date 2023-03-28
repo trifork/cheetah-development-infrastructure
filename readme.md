@@ -27,7 +27,7 @@ The kafka setup consists of different services:
 Run:
 
 ```
-docker compose --profile=kafka up -d
+docker compose --profile=kafka --profile=oauth up -d
 ```
 
 When all of the services are running, you can go to:
@@ -48,21 +48,25 @@ When all of the services are running, you can go to:
 
 To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [server.properties](/config/kafka/server.properties). This will cause all connections from unauthenticated sources to be rejected by `CheetahKafkaAuthorizer`.
 
+## OpenSearch
 
-### Examples
+The OpenSearch setup consists of different services:
 
-Only start up opensearch:
+- **OpenSearch** - OpenSearch data storage solution
+- **OpenSearch-Dashboard** - Dashboard solution for interacting with OpenSearch API
+- **OpenSearch Configurer** - TODO
 
-```sh
-docker compose --profile oauth --profile opensearch up --abort-on-container-exit
+### Running OpenSearch and its associated services
+
+Run:
+
+```
+docker compose --profile=opensearch --profile=oauth up -d
 ```
 
+When all of the services are running, you can go to:
 
+- http://localhost:9229/ OpenSearch 
+- http://localhost:5602 to see the dashboard UI
+- http://localhost:9229/_cat/indices to see all current indices
 
-### Examples
-
-Only start up opensearch:
-
-```sh
-docker compose --profile oauth --profile opensearch up --abort-on-container-exit
-```
