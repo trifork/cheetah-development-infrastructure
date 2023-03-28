@@ -1,0 +1,69 @@
+---
+# In this file users, backendroles and hosts can be mapped to Security roles.
+# Permissions for OpenSearch roles are configured in roles.yml
+
+_meta:
+  type: "rolesmapping"
+  config_version: 2
+
+# https://github.com/opensearch-project/security/blob/main/config/roles_mapping.yml
+
+# Define your roles mapping here
+
+# claimtest_read_access:
+#   reserved: true
+#   backend_roles:
+#     - "claimtest_read_access"
+#   description: "claimtest_read_access"
+
+# claimtest_full_access:
+#   reserved: true
+#   backend_roles:
+#     - "claimtest_full_access"
+#   description: "claimtest_full_access"
+
+default_service:
+  reserved: true
+  backend_roles:
+    - "default_service"
+  description: "Default role for all services"
+
+## Demo roles mapping
+
+all_access:
+  reserved: false
+  backend_roles:
+    - "admin"
+  description: "Maps admin to all_access"
+
+own_index:
+  reserved: false
+  users:
+    - "*"
+  description: "Allow full access to an index named like the username"
+
+logstash:
+  reserved: false
+  backend_roles:
+    - "logstash"
+
+kibana_user:
+  reserved: false
+  backend_roles:
+    - "kibanauser"
+  description: "Maps kibanauser to kibana_user"
+
+readall:
+  reserved: false
+  backend_roles:
+    - "readall"
+
+manage_snapshots:
+  reserved: false
+  backend_roles:
+    - "snapshotrestore"
+
+kibana_server:
+  reserved: true
+  users:
+    - "kibanaserver"

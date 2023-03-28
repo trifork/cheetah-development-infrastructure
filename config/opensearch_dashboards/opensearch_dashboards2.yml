@@ -1,0 +1,29 @@
+#https://opensearch.org/docs/latest/dashboards/branding/#sample-configuration
+server.host: 0.0.0.0
+#opensearch.hosts: ["http://opensearch:9200"]
+opensearch.ssl.verificationMode: none
+opensearch.username: "kibanaserver"
+opensearch.password: "kibanaserver"
+opensearch.requestHeadersAllowlist: [authorization, securitytenant]
+#server.ssl.enabled: true
+#server.ssl.certificate: /path/to/your/server/certificate
+#server.ssl.key: /path/to/your/server/key
+
+opensearch_security.multitenancy.enabled: false
+opensearch_security.multitenancy.tenants.preferred: ["Private", "Global"]
+opensearch_security.readonly_mode.roles: ["kibana_read_only"]
+# Use this setting if you are running opensearch-dashboards without https
+opensearch_security.cookie.secure: false
+
+opensearchDashboards.branding:
+  #logo:
+  #  defaultUrl: "https://example.com/sample.svg"
+  #  darkModeUrl: "https://example.com/dark-mode-sample.svg"
+  # mark:
+  #   defaultUrl: ""
+  #   darkModeUrl: ""
+  # loadingLogo:
+  #   defaultUrl: ""
+  #   darkModeUrl: ""
+  # faviconUrl: ""
+  applicationTitle: "Just some testing"

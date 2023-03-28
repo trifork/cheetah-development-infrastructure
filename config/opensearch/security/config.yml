@@ -1,0 +1,36 @@
+---
+_meta:
+  type: "config"
+  config_version: 2
+
+# https://github.com/opensearch-project/security/blob/main/config/config.yml
+
+config:
+  dynamic:
+    http:
+      anonymous_auth_enabled: true
+    authc:
+      basic_internal_auth_domain:
+        description: "Authenticate via HTTP Basic against internal users database"
+        http_enabled: true
+        transport_enabled: true
+        order: 0
+        http_authenticator:
+          type: basic
+          challenge: true
+        authentication_backend:
+          type: intern
+      openid_auth_domain:
+        http_enabled: true
+        transport_enabled: true
+        order: 1
+        http_authenticator:
+          type: openid
+          challenge: false # JWT tokens already contain all required information, so challenge is unnecessary
+          config:
+            subject_key: sub
+            roles_key: osroles
+            openid_connect_url: http://cheetahoauthsimulator:80/.well-known/openid-configuration
+        authentication_backend:
+          type: noop # unnecessary
+

@@ -47,3 +47,22 @@ When all of the services are running, you can go to:
 - `kafka:19094` - Only used by Redpanda, since it does not support Oauth2.
 
 To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [server.properties](/config/kafka/server.properties). This will cause all connections from unauthenticated sources to be rejected by `CheetahKafkaAuthorizer`.
+
+
+### Examples
+
+Only start up opensearch:
+
+```sh
+docker compose --profile oauth --profile opensearch up --abort-on-container-exit
+```
+
+
+
+### Examples
+
+Only start up opensearch:
+
+```sh
+docker compose --profile oauth --profile opensearch up --abort-on-container-exit
+```
