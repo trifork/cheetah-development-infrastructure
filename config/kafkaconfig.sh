@@ -8,8 +8,8 @@ bash bin/kafka-configs.sh --bootstrap-server kafka:19092 --command-config /etc/c
 
 echo "Creating topics with retention set to 3 years"
 for topic in OttoReadingMovingAverage OttoReading OttoReadingId JobNameInputTopic; do
-   bash bin/kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:19092 --command-config /etc/config/producer.config --partitions 1 --replication-factor 1 --topic $topic --config retention.ms=20000
-   bash bin/kafka-configs.sh --bootstrap-server kafka:19092 --command-config /etc/config/producer.config --entity-type topics --entity-name $topic --alter --add-config segment.bytes=300
+   bash bin/kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:19092 --command-config /etc/config/producer.config --partitions 1 --replication-factor 1 --topic $topic --config retention.ms=94608000000
+   bash bin/kafka-configs.sh --bootstrap-server kafka:19092 --command-config /etc/config/producer.config --entity-type topics --entity-name $topic --alter --add-config retention.ms=94608000000
 done
 echo "Creating topics done"
 
