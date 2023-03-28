@@ -14,6 +14,8 @@ See also: <https://docs.cheetah.trifork.dev/reference/development-infrastructure
 ### Security model
 
 The development infrastructure follows the [Reference Security Model](https://docs.cheetah.trifork.dev/reference/security).  
+For local development we are using [Cheetah OAuth Simulator](https://github.com/trifork/cheetah-infrastructure-utils-oauth) inside `docker-compose/oauth.yaml` as a local static IDP.
+
 See sections below for details on security model configuration.
 
 ## Kafka
