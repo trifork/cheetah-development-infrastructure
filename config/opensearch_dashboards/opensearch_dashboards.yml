@@ -1,3 +1,4 @@
+# Documentation: https://opensearch.org/docs/latest/dashboards/branding/#sample-configuration
 server.name: kibana
 server.host: "0.0.0.0"
 server.customResponseHeaders: { "Access-Control-Allow-Credentials": "true" }

@@ -46,6 +46,8 @@ When all of the services are running, you can go to:
 - `kafka:19093` - Used for connecting to kafka with OAuth2 authentication from a docker container in the `cheetah-infrastructure` docker network.
 - `kafka:19094` - Only used by Redpanda, since it does not support Oauth2.
 
+### Authentication
+
 To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [server.properties](/config/kafka/server.properties). This will cause all connections from unauthenticated sources to be rejected by `CheetahKafkaAuthorizer`.
 
 ## OpenSearch
@@ -69,4 +71,9 @@ When all of the services are running, you can go to:
 - http://localhost:9229/ OpenSearch 
 - http://localhost:5602 to see the dashboard UI
 - http://localhost:9229/_cat/indices to see all current indices
+
+### Authentication
+
+Services should connect using the OAuth2 protocol. When working locally, you can use `admin:admin` user. This is only possibly locally.
+You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SECURITY_PLUGIN=true` to disable security completly.
 

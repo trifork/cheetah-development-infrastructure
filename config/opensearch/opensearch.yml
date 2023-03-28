@@ -1,4 +1,4 @@
-# https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/
+# Documentation: https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/
 cluster.name: docker-singlenode
 
 # Bind to all interfaces because we don't know what IP address Docker will assign to us.
