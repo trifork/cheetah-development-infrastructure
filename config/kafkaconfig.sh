@@ -4,7 +4,7 @@
 # cub kafka-ready -b kafka:19093 1 20 #expected_brokers timeout_seconds
 
 # for user in redpanda-user; do
-bash bin/kafka-configs.sh --bootstrap-server kafka:19092 --command-config /etc/config/producer.config --alter --if-not-exists --add-config 'SCRAM-SHA-512=[password=password]' --entity-type users --entity-name redpanda
+bash bin/kafka-configs.sh --bootstrap-server kafka:19092 --command-config /etc/config/producer.config --alter --add-config 'SCRAM-SHA-512=[password=password]' --entity-type users --entity-name redpanda
 
 echo "Creating topics with retention set to 3 years"
 for topic in OttoReadingMovingAverage OttoReading OttoReadingId JobNameInputTopic; do

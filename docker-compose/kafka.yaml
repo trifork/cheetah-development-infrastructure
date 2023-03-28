@@ -22,6 +22,7 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
+      - "9093:9093"
     environment:
       LOG_DIR: "/tmp/logs"
       KAFKA_ROOT_LOGGER_LEVEL: debug
@@ -67,6 +68,8 @@ services:
         condition: service_healthy
       schema-registry:
         condition: service_healthy
+      kafka-setup:
+        condition: service_completed_successfully
 
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
