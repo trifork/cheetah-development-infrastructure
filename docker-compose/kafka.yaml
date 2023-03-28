@@ -8,7 +8,10 @@ services:
     ports:
       - "2181:2181"
     environment:
-      LOG_DIR: /tmp/logs
+      ZOOKEEPER_CLIENT_PORT: 2181
+    mem_limit: 512m
+    profiles:
+      - kafka
 
   kafka:
     image: ghcr.io/trifork/cheetah-kafka:pr-4@sha256:74b32f4649f5bcbc84626787fbcdaf6c817b02ac876bddfd7e67ea4e9c93e340
@@ -34,6 +37,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+    profiles:
+      - kafka
 
   kafka-setup:
     image: ghcr.io/trifork/cheetah-kafka:pr-4@sha256:74b32f4649f5bcbc84626787fbcdaf6c817b02ac876bddfd7e67ea4e9c93e340
@@ -51,6 +56,8 @@ services:
       # We override the image's `command` anyways, hence this container will not start a broker.
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
+    profiles:
+      - kafka
 
   redpanda:
     image: docker.redpanda.com/vectorized/console:v2.1.1
@@ -70,6 +77,8 @@ services:
         condition: service_healthy
       kafka-setup:
         condition: service_completed_successfully
+    profiles:
+      - kafka
 
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
@@ -110,6 +119,9 @@ services:
       start_period: 15s
       interval: 5s
       timeout: 10s
+      retries: 10
+    profiles:
+      - kafka
 
 networks:
   default:

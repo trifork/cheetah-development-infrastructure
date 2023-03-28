@@ -23,6 +23,9 @@ services:
     ports:
       - 9229:9200
       - 9600:9600
+    profiles:
+      - opensearch
+
 
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:latest
@@ -32,6 +35,8 @@ services:
     environment:
       - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
       - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    profiles:
+      - opensearch
 
 volumes:
   opensearch:
