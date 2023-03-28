@@ -27,7 +27,7 @@ The kafka setup consists of different services:
 Run:
 
 ```
-docker compose --profile=kafka up -d
+docker compose --profile=kafka --profile=oauth up -d
 ```
 
 When all of the services are running, you can go to:
@@ -40,10 +40,40 @@ When all of the services are running, you can go to:
 
 5 different listeners is setup for Kafka on different internal and external ports (see [server.properties](/config/kafka/server.properties) for the configuration):
 
-- `localhost:9092` - Used for connecting to kafka with Oauth2 authentication from outside the docker environment.
-- `localhost:9093` - Used for connecting to kafka without authentication from outside the docker environment.
-- `kafka:19092` - Used for connecting to kafka with Oauth2 authentication from a docker container in the `cheetah-infrastructure` docker network.
-- `kafka:19093` - Used for connecting to kafka without authentication from a docker container in the `cheetah-infrastructure` docker network.
+- `localhost:9092` - Used for connecting to kafka without authentication from outside the docker environment.
+- `localhost:9093` - Used for connecting to kafka with OAuth2 authentication from outside the docker environment.
+- `kafka:19092` - Used for connecting to kafka without authentication from a docker container in the `cheetah-infrastructure` docker network.
+- `kafka:19093` - Used for connecting to kafka with OAuth2 authentication from a docker container in the `cheetah-infrastructure` docker network.
 - `kafka:19094` - Only used by Redpanda, since it does not support Oauth2.
 
+### Authentication
+
 To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [server.properties](/config/kafka/server.properties). This will cause all connections from unauthenticated sources to be rejected by `CheetahKafkaAuthorizer`.
+
+## OpenSearch
+
+The OpenSearch setup consists of different services:
+
+- **OpenSearch** - OpenSearch data storage solution
+- **OpenSearch-Dashboard** - Dashboard solution for interacting with OpenSearch API
+- **OpenSearch Configurer** - TODO
+
+### Running OpenSearch and its associated services
+
+Run:
+
+```
+docker compose --profile=opensearch --profile=oauth up -d
+```
+
+When all of the services are running, you can go to:
+
+- http://localhost:9229/ OpenSearch 
+- http://localhost:5602 to see the dashboard UI
+- http://localhost:9229/_cat/indices to see all current indices
+
+### Authentication
+
+Services should connect using the OAuth2 protocol. When working locally, you can use `admin:admin` user. This is only possibly locally.
+You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SECURITY_PLUGIN=true` to disable security completely.
+

@@ -27,8 +27,8 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092" # Requires Ouaht2 authentication
-      - "9093:9093" # Requires No authentication
+      - "9092:9092" # Requires No authentication
+      - "9093:9093" # Requires OAuth2 authentication
     environment:
       LOG_DIR: "/tmp/logs"
       KAFKA_ROOT_LOGGER_LEVEL: debug
@@ -49,7 +49,7 @@ services:
     container_name: kafka-setup
     volumes:
       - ../config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
-      - ../config/kafka/producer.config:/etc/config/producer.config
+      - ../config/kafka/kafkasetup.config:/etc/config/kafkasetup.config
     command: "bash /etc/config/kafkaconfig.sh"
     depends_on:
       kafka:
