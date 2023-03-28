@@ -1,4 +1,6 @@
 services:
+  # login fallback: admin:admin
+  # services should use oauth
   opensearch:
     image: opensearchproject/opensearch:latest
     hostname: opensearch
@@ -37,6 +39,7 @@ services:
     profiles:
       - opensearch
 
+  # login kibanaserver:kibanaserver
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:latest
     hostname: opensearch-dashboards
