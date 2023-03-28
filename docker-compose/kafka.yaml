@@ -2,19 +2,22 @@ version: "2.1"
 
 services:
   zookeeper:
-    image: ghcr.io/trifork/cheetah-kafka:pr-4@sha256:74b32f4649f5bcbc84626787fbcdaf6c817b02ac876bddfd7e67ea4e9c93e340
+    image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
     command:
       ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
     ports:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      LOG_DIR: /tmp/logs
     mem_limit: 512m
     profiles:
       - kafka
 
   kafka:
-    image: ghcr.io/trifork/cheetah-kafka:pr-4@sha256:74b32f4649f5bcbc84626787fbcdaf6c817b02ac876bddfd7e67ea4e9c93e340
+    image: ghcr.io/trifork/cheetah-infrastructure-utils-kafka:main-4542528321
+    hostname: kafka
+    mem_limit: 1024m
     command:
       [
         "sh",
@@ -24,8 +27,8 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"
-      - "9093:9093"
+      - "9092:9092" # Requires Ouaht2 authentication
+      - "9093:9093" # Requires No authentication
     environment:
       LOG_DIR: "/tmp/logs"
       KAFKA_ROOT_LOGGER_LEVEL: debug
@@ -41,7 +44,7 @@ services:
       - kafka
 
   kafka-setup:
-    image: ghcr.io/trifork/cheetah-kafka:pr-4@sha256:74b32f4649f5bcbc84626787fbcdaf6c817b02ac876bddfd7e67ea4e9c93e340
+    image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
     hostname: kafka-setup
     container_name: kafka-setup
     volumes:
