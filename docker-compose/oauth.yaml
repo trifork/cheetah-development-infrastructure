@@ -14,7 +14,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - OAuth__Mode=Asymmetric
-    volumes:
     profiles:
       - oauth
 
