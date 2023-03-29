@@ -25,7 +25,10 @@ services:
         "bin/kafka-server-start.sh /opt/kafka/custom-config/server.properties",
       ]
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_started
+      cheetah.oauth.simulator:
+        condition: service_healthy
     ports:
       - "9092:9092" # Requires No authentication
       - "9093:9093" # Requires OAuth2 authentication
@@ -53,6 +56,8 @@ services:
     command: "bash /etc/config/kafkaconfig.sh"
     depends_on:
       kafka:
+        condition: service_healthy
+      cheetah.oauth.simulator:
         condition: service_healthy
     environment:
       # The following settings are listed here only to satisfy the image's requirements.
@@ -105,6 +110,8 @@ services:
     container_name: schema-registry
     depends_on:
       kafka:
+        condition: service_healthy
+      cheetah.oauth.simulator:
         condition: service_healthy
     ports:
       - "8081:8080"
