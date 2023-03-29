@@ -9,7 +9,7 @@ See also: <https://docs.cheetah.trifork.dev/reference/development-infrastructure
 ## Start infrastructure
 
 ```
-docker compose up --quiet-pull --abort-on-container-exit --force-recreate
+docker compose up --quiet-pull 
 ```
 
 ## Prerequisites
