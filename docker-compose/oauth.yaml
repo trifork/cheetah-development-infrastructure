@@ -7,12 +7,10 @@ services:
     ports:
       - "1752:80"
     image: ghcr.io/trifork/cheetah-oauth-simulator:latest
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://cheetahoauthsimulator:80/health"]
     networks:
       - cheetah-infrastructure
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      #- ASPNETCORE_ENVIRONMENT=Development
       - OAuth__Mode=Asymmetric
     profiles:
       - oauth
@@ -23,8 +21,6 @@ services:
     ports:
       - "1852:1852"
     image: ghcr.io/trifork/cheetah-oauth-simulator:latest
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://cheetahoauthsimulator:1752/health"]
     networks:
       - cheetah-infrastructure
     environment:
