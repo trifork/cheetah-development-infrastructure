@@ -112,7 +112,7 @@ services:
       ENABLE_KAFKA_SASL: true
       CLIENT_ID: kafka
       CLIENT_SECRET: testSecret
-      OAUTH_TOKEN_ENDPOINT_URI: https://oauth.cheetah.trifork.dev/oauth2/token
+      OAUTH_TOKEN_ENDPOINT_URI: http://cheetahoauthsimulator/oauth2/token
       KAFKA_BOOTSTRAP_SERVERS: kafka:19093
       KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
       REGISTRY_AUTH_ANONYMOUS_READ_ACCESS_ENABLED: true
