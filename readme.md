@@ -6,6 +6,12 @@ The repository consists of a set of docker-compose files which are all reference
 
 See also: <https://docs.cheetah.trifork.dev/reference/development-infrastructure>
 
+## Start infrastructure
+
+```
+docker compose up --quiet-pull --abort-on-container-exit
+```
+
 ## Prerequisites
 
 1. Follow: https://docs.cheetah.trifork.dev/getting-started/guided-tour/prerequisites#run-standard-jobs
