@@ -96,7 +96,7 @@ services:
     environment:
       KAFKA_BROKERS: kafka:19092
     profiles:
-      - donotstart
+      - prometheus
 
   schema-registry:
     mem_limit: 256m
@@ -113,7 +113,7 @@ services:
       CLIENT_ID: testId
       CLIENT_SECRET: testSecret
       OAUTH_TOKEN_ENDPOINT_URI: https://oauth.cheetah.trifork.dev/oauth2/token
-      KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      KAFKA_BOOTSTRAP_SERVERS: kafka:19093
       KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
       REGISTRY_AUTH_ANONYMOUS_READ_ACCESS_ENABLED: true
 
