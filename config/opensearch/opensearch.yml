@@ -4,6 +4,7 @@ cluster.name: docker-singlenode
 # Bind to all interfaces because we don't know what IP address Docker will assign to us.
 network.host: 0.0.0.0
 
+#plugins.security.ssl.transport.enabled: true
 plugins.security.ssl.transport.pemcert_filepath: esnode.pem
 plugins.security.ssl.transport.pemkey_filepath: esnode-key.pem
 plugins.security.ssl.transport.pemtrustedcas_filepath: root-ca.pem

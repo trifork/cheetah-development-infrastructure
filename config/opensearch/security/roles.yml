@@ -42,8 +42,9 @@ _meta:
 
 default_service:
   reserved: true # can’t be changed using the REST API
-  #cluster_permissions:
-  #  - "read"
+  cluster_permissions:
+    - "cluster:monitor/health"
+    - "cluster:monitor/state"
   index_permissions:
     - index_patterns:
         - "*"
