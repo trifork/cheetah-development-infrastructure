@@ -63,6 +63,7 @@ default_service:
         - "indices_monitor"
         - "indices:admin/get"
         - "indices:admin/create"
+        - "indices:admin/delete"
 
 # Restrict users so they can only view visualization and dashboard on OpenSearchDashboards
 kibana_read_only:

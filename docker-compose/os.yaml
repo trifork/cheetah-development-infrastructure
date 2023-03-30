@@ -2,7 +2,7 @@ services:
   # login fallback: admin:admin
   # services should use oauth
   opensearch:
-    image: opensearchproject/opensearch:latest
+    image: opensearchproject/opensearch:2.6.0
     hostname: opensearch
     environment:
       - cluster.name=opensearch-cluster
