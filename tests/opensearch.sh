@@ -5,7 +5,22 @@ set -euo pipefail
 # Only start opensearch
 #docker compose --profile=oauth --profile=opensearch up --quiet-pull --force-recreate 
 
-function get_access_token() {
+function get_default_access_token() {
+  local tenant=$1
+  local response
+  local access_token
+  response=$(curl --fail -s -X 'POST' \
+    'http://localhost:1752/oauth2/token' \
+    -H 'accept: */*' \
+    -H 'Content-Type: application/x-www-form-urlencoded' \
+    -H 'cache-control: no-cache' \
+    -d "grant_type=client_credentials&scope=&client_id=$tenant&client_secret="
+   )
+  access_token=$(printf '%s' "$response" | jq -r '.access_token')
+  echo "$access_token"
+}
+
+function get_customaccess_token() {
   local tenant=$1
   local roles=$2 # backend roles
   local response
@@ -27,9 +42,10 @@ function get_access_token() {
   echo "$access_token"
 }
 
+
 TENANT=1
-service_token=$(get_access_token $TENANT 'default_service')
-admin_token=$(get_access_token $TENANT 'admin')
+service_token=$(get_default_access_token $TENANT)
+admin_token=$(get_customaccess_token $TENANT 'admin')
 
 # Test token
 curl -X GET "http://localhost:9229/_cat/indices" -H "Authorization: bearer $(printf '%s' "$service_token")"
