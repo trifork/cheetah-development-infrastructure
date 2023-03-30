@@ -23,10 +23,10 @@ services:
     volumes:
       - opensearch:/data
       - ../config/opensearch/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
-      - ../config/opensearch/security/config.yml:/usr/share/opensearch/plugins/opensearch-security/securityconfig/config.yml
-      - ../config/opensearch/security/roles.yml:/usr/share/opensearch/plugins/opensearch-security/securityconfig/roles.yml
-      - ../config/opensearch/security/roles_mapping.yml:/usr/share/opensearch/plugins/opensearch-security/securityconfig/roles_mapping.yml
-      - ../config/opensearch/security/internal_users.yml:/usr/share/opensearch/plugins/opensearch-security/securityconfig/internal_users.yml
+      - ../config/opensearch/security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
+      - ../config/opensearch/security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml
+      - ../config/opensearch/security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml
+      - ../config/opensearch/security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml
       # Demo certs
       - ../config/opensearch/certs/esnode-key.pem:/usr/share/opensearch/config/esnode-key.pem
       - ../config/opensearch/certs/esnode.pem:/usr/share/opensearch/config/esnode.pem
