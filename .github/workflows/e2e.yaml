@@ -26,7 +26,7 @@ jobs:
       - name: docker network create cheetah-infrastructure
         run: docker network create cheetah-infrastructure
       - name: Run development environment
-        run: docker compose --profile=oauth --profile=opensearch up --quiet-pull --force-recreate -d
+        run: docker compose up --quiet-pull --force-recreate -d
 
       - name: Start mye2eclient container in shared network
         run: docker run -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:latest
@@ -44,8 +44,16 @@ jobs:
           warning_on_retry: false
           command: 'docker exec mye2eclient curl -sS -X GET -H "Content-Type: application/json" http://admin:admin@opensearch:9200/_cat/indices'
 
+      - name: Check docker health
+        run: |
+          echo $(docker compose ps -a | grep 'unhealthy')
+          docker compose ps -a | grep 'unhealthy' && echo "Services unhealthy" && exit 1 || exit 0
+
       - name: opensearch test
         run: docker exec mye2eclient bash /opt/tests/opensearch.sh
+
+      - name: kafka test
+        run: docker exec mye2eclient bash /opt/tests/kafka.sh
 
       #- name: "see logs"
       #  run: docker logs cheetah-lib-templates-java-e2e-job-name-job
