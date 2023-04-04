@@ -28,6 +28,13 @@ jobs:
       - name: Run development environment
         run: docker compose --profile=oauth --profile=opensearch up --quiet-pull --force-recreate -d
 
+      - name: Start mye2eclient container in shared network
+        run: docker run -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:latest
+
+      - name: Setup mye2eclient container
+        run: |
+          docker exec mye2eclient apk add curl jq bash
+
       - name: "Wait for opensearch, the slowest component"
         uses: nick-fields/retry@v2
         with:
@@ -35,14 +42,7 @@ jobs:
           max_attempts: 25
           retry_wait_seconds: 5
           warning_on_retry: false
-          command: 'docker run --rm --network=cheetah-infrastructure badouralix/curl-jq curl -sS -X GET -H "Content-Type: application/json" http://admin:admin@opensearch:9200/_cat/indices'
-
-      - name: Start mye2eclient container in shared network
-        run: docker run -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:latest
-
-      - name: Setup mye2eclient container
-        run: |
-          docker exec mye2eclient apk add curl jq bash
+          command: 'docker exec mye2eclient curl -sS -X GET -H "Content-Type: application/json" http://admin:admin@opensearch:9200/_cat/indices'
 
       - name: opensearch test
         run: docker exec mye2eclient bash /opt/tests/opensearch.sh
