@@ -50,7 +50,7 @@ admin_token=$(get_customaccess_token $TENANT 'admin')
 
 echo
 echo "Test jwt auth:"
-if ! curl --fail-with-body -X GET "http://opensearch:9200/_cat/indices" -H "Authorization: bearer $(printf '%s' "$service_token")"; then
+if ! curl --fail-with-body -s -X GET "http://opensearch:9200/_cat/indices" -H "Authorization: bearer $(printf '%s' "$service_token")"; then
   echo
   echo "ERROR - Authorized access using jwt failed"
   exit 1
@@ -58,7 +58,7 @@ fi
 
 echo
 echo "Test basic auth:"
-if ! curl --fail-with-body -u 'admin:admin' -X GET "http://admin:admin@opensearch:9200/_cat/indices"; then
+if ! curl --fail-with-body - -u 'admin:admin' -X GET "http://admin:admin@opensearch:9200/_cat/indices"; then
   echo
   echo "ERROR - Authorized access using admin credentials failed"
   exit 1

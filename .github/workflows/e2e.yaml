@@ -35,7 +35,7 @@ jobs:
           max_attempts: 25
           retry_wait_seconds: 5
           warning_on_retry: false
-          command: 'docker run --rm --network=cheetah-infrastructure badouralix/curl-jq curl -sS -X POST -H "Content-Type: application/json" http://admin:admin@opensearch:9200/_cat/indices'
+          command: 'docker run --rm --network=cheetah-infrastructure badouralix/curl-jq curl -sS -X GET -H "Content-Type: application/json" http://admin:admin@opensearch:9200/_cat/indices'
 
       - name: Start mye2eclient container in shared network
         run: docker run -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:latest
