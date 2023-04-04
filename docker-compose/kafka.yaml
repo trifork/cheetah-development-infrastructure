@@ -3,6 +3,7 @@ version: "2.1"
 services:
   zookeeper:
     image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
+    platform: linux/amd64
     command:
       ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
     ports:
@@ -16,6 +17,7 @@ services:
 
   kafka:
     image: ghcr.io/trifork/cheetah-infrastructure-utils-kafka:main-4542528321
+    platform: linux/amd64
     hostname: kafka
     mem_limit: 1024m
     command:
@@ -48,6 +50,7 @@ services:
 
   kafka-setup:
     image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
+    platform: linux/amd64
     hostname: kafka-setup
     container_name: kafka-setup
     volumes:
