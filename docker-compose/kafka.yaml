@@ -82,7 +82,7 @@ services:
     ports:
       - "9898:8080"
     healthcheck:
-      test: curl redpanda:8080 || exit -1
+      test: curl redpanda:8080/admin/health || exit -1
       start_period: 15s
       interval: 5s
       timeout: 10s
