@@ -51,8 +51,8 @@ os_url="http://opensearch:9200"
 service_token=$(get_default_access_token $TENANT)
 admin_token=$(get_customaccess_token $TENANT 'admin')
 
-echo "INFO - account info as anonymous user:"
-if curl --fail-with-body -k "http:/opensearch:9200/_plugins/_security/api/account" -H "$cache_header" ; then
+echo "INFO - indices lookup with anonymous user:"
+if curl --fail-with-body -k "$os_url/_cat/indices" -H "$cache_header" ; then
   echo
   echo "ERROR - Anonymous authentication enabled"
   exit 1
@@ -60,7 +60,7 @@ fi
 
 echo
 echo "Test jwt auth:"
-if ! curl --fail-with-body -s -X GET "http://opensearch:9200/_cat/indices" -H "Authorization: bearer $(printf '%s' "$service_token")"; then
+if ! curl --fail-with-body -s -X GET "$os_url/_cat/indices" -H "Authorization: bearer $(printf '%s' "$service_token")"; then
   echo
   echo "ERROR - Authorized access using jwt failed"
   exit 1
@@ -68,7 +68,7 @@ fi
 
 echo
 echo "Test basic auth:"
-if ! curl --fail-with-body -s -u 'admin:admin' -X GET "http://admin:admin@opensearch:9200/_cat/indices"; then
+if ! curl --fail-with-body -s -u 'admin:admin' -X GET "$os_url/_cat/indices"; then
   echo
   echo "ERROR - Authorized access using admin credentials failed"
   exit 1
