@@ -2,8 +2,9 @@
 
 set -euo pipefail
 
-# Only start opensearch
-#docker compose --profile=oauth --profile=opensearch up --quiet-pull --force-recreate 
+#
+# Test authentication using basic auth and JWT
+#
 
 function get_default_access_token() {
   local tenant=$1
@@ -47,10 +48,18 @@ TENANT=1
 service_token=$(get_default_access_token $TENANT)
 admin_token=$(get_customaccess_token $TENANT 'admin')
 
-# Test token
-curl -X GET "http://opensearch:9200/_cat/indices" -H "Authorization: bearer $(printf '%s' "$service_token")"
-echo "OAuth2 works"
+echo
+echo "Test jwt auth:"
+if ! curl --fail-with-body -X GET "http://opensearch:9200/_cat/indices" -H "Authorization: bearer $(printf '%s' "$service_token")"; then
+  echo
+  echo "ERROR - Authorized access using jwt failed"
+  exit 1
+fi
 
-# Test basic auth
-curl  -X GET "http://admin:admin@opensearch:9200/_cat/indices" 
-echo "Basic auth works"
+echo
+echo "Test basic auth:"
+if ! curl --fail-with-body -u 'admin:admin' -X GET "http://admin:admin@opensearch:9200/_cat/indices"; then
+  echo
+  echo "ERROR - Authorized access using admin credentials failed"
+  exit 1
+fi
