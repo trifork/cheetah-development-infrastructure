@@ -58,7 +58,7 @@ fi
 
 echo
 echo "Test basic auth:"
-if ! curl --fail-with-body - -u 'admin:admin' -X GET "http://admin:admin@opensearch:9200/_cat/indices"; then
+if ! curl --fail-with-body -s -u 'admin:admin' -X GET "http://admin:admin@opensearch:9200/_cat/indices"; then
   echo
   echo "ERROR - Authorized access using admin credentials failed"
   exit 1
