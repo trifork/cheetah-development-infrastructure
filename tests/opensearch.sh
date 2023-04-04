@@ -45,8 +45,18 @@ function get_customaccess_token() {
 
 
 TENANT=1
+cache_header="cache-control: no-cache"
+os_url="http://opensearch:9200"
+
 service_token=$(get_default_access_token $TENANT)
 admin_token=$(get_customaccess_token $TENANT 'admin')
+
+echo "INFO - account info as anonymous user:"
+if curl --fail-with-body -k "http:/opensearch:9200/_plugins/_security/api/account" -H "$cache_header" ; then
+  echo
+  echo "ERROR - Anonymous authentication enabled"
+  exit 1
+fi
 
 echo
 echo "Test jwt auth:"
