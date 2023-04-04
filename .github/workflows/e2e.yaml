@@ -46,7 +46,7 @@ jobs:
 
       - name: Check docker health
         run: |
-          docker compose ps -a | grep 'unhealthy'
+          echo $(docker compose ps -a | grep 'unhealthy')
           docker compose ps -a | grep 'unhealthy' && echo "Services unhealthy" && exit 1 || exit 0
 
       - name: opensearch test
