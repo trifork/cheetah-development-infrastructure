@@ -26,7 +26,8 @@ jobs:
       - name: docker network create cheetah-infrastructure
         run: docker network create cheetah-infrastructure
       - name: Run OAuthSimulator
-        run: docker run
+        run:
+          docker run
           --detach
           -p 80:80
           -e "OAuth__Mode=Asymmetric"
@@ -34,6 +35,7 @@ jobs:
           --network=cheetah-infrastructure
           --hostname=cheetahoauthsimulator
           ghcr.io/trifork/cheetah-oauth-simulator:latest
+          # todo: switch to local compose
       - name: Run OpenSearch # This reuses the options from cheetah-development-infrastructure OS container
         run: docker run
           --detach
