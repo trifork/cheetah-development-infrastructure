@@ -44,6 +44,11 @@ jobs:
           warning_on_retry: false
           command: 'docker exec mye2eclient curl -sS -X GET -H "Content-Type: application/json" http://admin:admin@opensearch:9200/_cat/indices'
 
+      - name: Check docker health
+        run: |
+          docker compose ps -a | grep 'unhealthy'
+          docker compose ps -a | grep 'unhealthy' && echo "Services unhealthy" && exit 1 || exit 0
+
       - name: opensearch test
         run: docker exec mye2eclient bash /opt/tests/opensearch.sh
 
