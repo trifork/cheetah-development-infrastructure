@@ -25,36 +25,17 @@ jobs:
         # OpenSearch is required for integration tests
       - name: docker network create cheetah-infrastructure
         run: docker network create cheetah-infrastructure
-      - name: Run OAuthSimulator
-        run:
-          docker run
-          --detach
-          -p 80:80
-          -e "OAuth__Mode=Asymmetric"
-          -e "Simulator__DefaultRole=admin"
-          --network=cheetah-infrastructure
-          --hostname=cheetahoauthsimulator
-          ghcr.io/trifork/cheetah-oauth-simulator:latest
-          # todo: switch to local compose
-      - name: Run OpenSearch # This reuses the options from cheetah-development-infrastructure OS container
-        run: docker run
-          --detach
-          -p 9200:9200
-          -e cluster.name=opensearch-cluster
-          -e node.name=os01
-          -e discovery.type=single-node
-          -e bootstrap.memory_lock=true
-          -e "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-          -e DISABLE_INSTALL_DEMO_CONFIG=false
-          -e network.host=0.0.0.0
-          -e plugins.security.ssl.http.enabled=false
-          -v $(pwd)/.github/config/:/usr/share/opensearch/config/opensearch-security/
-          --network=cheetah-infrastructure
-          --hostname=opensearch
-          opensearchproject/opensearch:2.6.0
+      - name: Run development environment
+        run: docker compose --profile=oauth --profile=opensearch up --quiet-pull --force-recreate -d
 
-      - name: "Wait for environtment"
-        run: sleep 5
+      - name: "Wait for opensearch, the slowest component"
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 3
+          max_attempts: 25
+          retry_wait_seconds: 5
+          warning_on_retry: false
+          command: 'docker run --rm --network=cheetah-infrastructure badouralix/curl-jq curl -sS -X POST -H "Content-Type: application/json" http://admin:admin@opensearch:9200/_cat/indices'
 
       - name: Start mye2eclient container in shared network
         run: docker run -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:latest
