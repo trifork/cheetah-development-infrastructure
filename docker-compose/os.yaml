@@ -47,7 +47,7 @@ services:
       retries: 5
 
   opensearch-configurer:
-    image: ghcr.io/trifork/cheetah-infrastructure-utils-os:main
+    image: ghcr.io/trifork/cheetah-infrastructure-utils-os:latest
     command: "opensearch:9200 --service"
     environment:
       - OS_USER=admin
