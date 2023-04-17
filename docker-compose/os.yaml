@@ -1,3 +1,5 @@
+version: "2.1"
+
 services:
   # login fallback: admin:admin
   # services should use oauth
@@ -38,6 +40,31 @@ services:
       - 9600:9600
     profiles:
       - opensearch
+    healthcheck:
+      test: curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  opensearch-configurer:
+    image: ghcr.io/trifork/cheetah-infrastructure-utils-os:latest
+    command: "opensearch:9200 --service"
+    environment:
+      - OS_USER=admin
+      - OS_PASS=admin
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    volumes:
+      # TODO: when the base directory is configurable, use the following instead
+      # - ../config/opensearch-configurer/:/path/to/basedir/
+      - ../config/opensearch-configurer/lifecycle_policies/:/app/lifecycle_policies/
+      - ../config/opensearch-configurer/pipelines/:/app/pipelines/
+      - ../config/opensearch-configurer/component_templates/:/app/component_templates/
+      - ../config/opensearch-configurer/index_templates/:/app/index_templates/
+      - ../config/opensearch-configurer/cluster/:/app/cluster/
+    profiles:
+      - opensearch
 
   # login kibanaserver:kibanaserver
   opensearch-dashboards:
@@ -49,10 +76,12 @@ services:
       - ../config/opensearch_dashboards/opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
       - ../config/opensearch_dashboards/opensearch_dashboards.crt:/usr/share/opensearch-dashboards/config/opensearch_dashboards.crt
       - ../config/opensearch_dashboards/opensearch_dashboards.key:/usr/share/opensearch-dashboards/config/opensearch_dashboards.key
-
     environment:
       - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
       #- DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    depends_on:
+      opensearch:
+        condition: service_healthy
     profiles:
       - opensearch
 
@@ -62,3 +91,4 @@ volumes:
 networks:
   default:
     name: "cheetah-infrastructure"
+    external: true
