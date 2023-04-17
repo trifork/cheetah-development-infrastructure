@@ -32,8 +32,8 @@ services:
       cheetah.oauth.simulator:
         condition: service_healthy
     ports:
-      - "9092:9092" # Requires No authentication
-      - "9093:9093" # Requires OAuth2 authentication
+      - "9092:9092" # Requires OAuth2 authentication
+      - "9093:9093" # Requires No authentication
     environment:
       LOG_DIR: "/tmp/logs"
       KAFKA_ROOT_LOGGER_LEVEL: debug
@@ -108,7 +108,7 @@ services:
     ports:
       - 8088:8080
     environment:
-      KAFKA_BROKERS: kafka:19092
+      KAFKA_BROKERS: kafka:19093
     profiles:
       - prometheus
 
@@ -129,7 +129,7 @@ services:
       CLIENT_ID: kafka
       CLIENT_SECRET: testSecret
       OAUTH_TOKEN_ENDPOINT_URI: http://cheetahoauthsimulator/oauth2/token
-      KAFKA_BOOTSTRAP_SERVERS: kafka:19093
+      KAFKA_BOOTSTRAP_SERVERS: kafka:19092
       KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
       REGISTRY_AUTH_ANONYMOUS_READ_ACCESS_ENABLED: true
 
