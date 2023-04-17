@@ -71,6 +71,8 @@ The OpenSearch setup consists of different services:
 - **OpenSearch-Dashboard** - Dashboard solution for interacting with OpenSearch API
 - **OpenSearch Configurer** - Uses [OpenSearch Template Configuration Script](https://github.com/trifork/cheetah-infrastructure-utils-opensearch) to setup Index Templates and more.
 
+Files placed in any subdirectory of [config/opensearch-configurer/](config/opensearch-configurer/) are automatically applied to the OpenSearch instance.
+
 ### Running OpenSearch and its associated services
 
 Run:
