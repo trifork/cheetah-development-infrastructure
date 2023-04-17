@@ -55,6 +55,14 @@ services:
     depends_on:
       opensearch:
         condition: service_healthy
+    volumes:
+      # TODO: when the base directory is configurable, use the following instead
+      # - ../config/opensearch-configurer/:/path/to/basedir/
+      - ../config/opensearch-configurer/lifecycle_policies/:/app/lifecycle_policies/
+      - ../config/opensearch-configurer/pipelines/:/app/pipelines/
+      - ../config/opensearch-configurer/component_templates/:/app/component_templates/
+      - ../config/opensearch-configurer/index_templates/:/app/index_templates/
+      - ../config/opensearch-configurer/cluster/:/app/cluster/
     profiles:
       - opensearch
 
