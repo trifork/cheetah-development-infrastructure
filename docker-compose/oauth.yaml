@@ -8,8 +8,7 @@ services:
       - "1752:80"
     image: ghcr.io/trifork/cheetah-oauth-simulator:latest
     platform: linux/amd64
-    networks:
-      - cheetah-infrastructure
+
     environment:
       #- ASPNETCORE_ENVIRONMENT=Development
       - OAuth__Mode=Asymmetric
@@ -23,8 +22,6 @@ services:
       - "1852:1852"
     image: ghcr.io/trifork/cheetah-oauth-simulator:latest
     platform: linux/amd64
-    networks:
-      - cheetah-infrastructure
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:1852;http://+:1752
@@ -40,5 +37,6 @@ services:
       - oauth_https
 
 networks:
-  cheetah-infrastructure:
-    external: true
+  default:
+    name: "cheetah-infrastructure"
+
