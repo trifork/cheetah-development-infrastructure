@@ -1,6 +1,5 @@
 {
   "index_patterns": "test_performance_*",
-  "name": "performance-tester",
   "template": {
     "settings": {
       "number_of_shards": 3,
