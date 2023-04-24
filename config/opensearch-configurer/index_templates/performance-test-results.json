@@ -1,5 +1,5 @@
 {
-  "index_patterns": "test_performance_*",
+  "index_patterns": "performance-test-results",
   "template": {
     "settings": {
       "number_of_shards": 3,
@@ -8,6 +8,9 @@
     "mappings": {
       "properties": {
         "testId": {
+          "type": "keyword"
+        },
+        "testType": {
           "type": "keyword"
         }
       }
