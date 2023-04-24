@@ -1,0 +1,7 @@
+security.protocol=SASL_PLAINTEXT
+sasl.mechanism=OAUTHBEARER
+sasl.jaas.config=org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required \
+      oauth.client.id="kafka" \
+      oauth.client.secret="myClientSecret" \
+      oauth.token.endpoint.uri="http://cheetahoauthsimulator:80/oauth2/token";
+sasl.login.callback.handler.class=io.strimzi.kafka.oauth.client.JaasClientOauthLoginCallbackHandler

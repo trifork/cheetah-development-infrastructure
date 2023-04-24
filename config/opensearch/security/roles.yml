@@ -1,0 +1,83 @@
+---
+_meta:
+  type: "roles"
+  config_version: 2
+
+# https://github.com/opensearch-project/security/blob/main/config/roles.yml
+
+# claimtest_read_access:
+#   reserved: true # can’t be changed using the REST API
+#   #cluster_permissions:
+#   #  - "read"
+#   index_permissions:
+#     - index_patterns:
+#         - "claimtest_*"
+#       allowed_actions:
+#         - "indices:data/read*"
+#         - "indices:data/read/search"
+#         - "indices:admin/mappings/fields/get*"
+#         - "indices:monitor/settings/get"
+#         - "read"
+
+# claimtest_full_access:
+#   reserved: true # can’t be changed using the REST API
+#   #cluster_permissions:
+#   #  - "read"
+#   index_permissions:
+#     - index_patterns:
+#         - "claimtest_*"
+#       allowed_actions:
+#         - "indices:data/read*"
+#         - "indices:admin/mappings/fields/get*"
+#         - "indices:data/write/index*"
+#         - "indices:monitor/settings/get"
+#         - "indices:data/write/update*"
+#         - "indices:data/write/bulk*"
+#         - "read"
+#         - "write"
+#         - "search"
+#         - "create_index"
+#         - "data_access"
+#         - "indices_monitor"
+
+default_service:
+  reserved: true # can’t be changed using the REST API
+  cluster_permissions:
+    - "cluster:monitor/health"
+    - "cluster:monitor/state"
+  index_permissions:
+    - index_patterns:
+        - "*"
+      allowed_actions:
+        - "indices:data/read*"
+        - "indices:admin/mappings/fields/get*"
+        - "indices:data/write/index*"
+        - "indices:monitor/settings/get"
+        - "indices:data/write/update*"
+        - "indices:data/write/bulk*"
+        - "read"
+        - "write"
+        - "search"
+        - "create_index"
+        - "data_access"
+        - "indices_monitor"
+        - "indices:admin/get"
+        - "indices:admin/create"
+        - "indices:admin/delete"
+
+# Restrict users so they can only view visualization and dashboard on OpenSearchDashboards
+kibana_read_only:
+  reserved: true
+
+# The security REST API access role is used to assign specific users access to change the security settings through the REST API.
+security_rest_api_access:
+  reserved: true
+
+# Allows user to use point in time functionality
+point_in_time_full_access:
+  reserved: true
+  index_permissions:
+    - index_patterns:
+        - "*"
+      allowed_actions:
+        - "manage_point_in_time"
