@@ -1,0 +1,17 @@
+{
+  "index_patterns": "test_performance_*",
+  "name": "performance-tester",
+  "template": {
+    "settings": {
+      "number_of_shards": 3,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "testId": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
