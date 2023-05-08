@@ -45,3 +45,7 @@ plugins.security.system_indices.indices:
   ]
 node.max_local_storage_nodes: 3
 ######## End OpenSearch Security Demo Configuration ########
+
+prometheus.indices: "true"
+prometheus.cluster.settings: "true"
+prometheus.metric_name.prefix: opensearch_
