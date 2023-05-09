@@ -6,6 +6,10 @@ services:
   opensearch:
     image: opensearchproject/opensearch:2.6.0
     hostname: opensearch
+    command:
+      - /bin/bash
+      - -c
+      - ./bin/opensearch-plugin install --batch 'repository-s3' 'https://github.com/aiven/prometheus-exporter-plugin-for-opensearch/releases/download/2.6.0.0/prometheus-exporter-2.6.0.0.zip' && ./opensearch-docker-entrypoint.sh
     environment:
       - cluster.name=opensearch-cluster
       - node.name=os01
