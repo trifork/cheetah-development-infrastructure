@@ -91,3 +91,23 @@ When all of the services are running, you can go to:
 
 Services should connect using the OAuth2 protocol. When working locally, you can use `admin:admin` user. This is only possibly locally.
 You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SECURITY_PLUGIN=true` to disable security completely.
+
+
+#### Self signed cert for Oauth
+
+Please setup a local certificate:
+
+```shell
+dotnet dev-certs https -ep "$env:APPDATA/ASP.NET/https/aspnetapp.pfx" -p "password"
+dotnet dev-certs https -t # trust
+```
+
+```sh
+openssl genrsa -out localhost.key 2048
+openssl req -new -key localhost.key -out localhost.csr -subj "/CN=localhost"
+openssl x509 -req -in localhost.csr -signkey localhost.key -out localhost.crt -days 365
+openssl pkcs12 -export -in localhost.crt -inkey localhost.key -out localhost.pfx #password
+mv localhost.pfx docker-compose/ASP.NET/https/
+```
+
+docker compose --profile=oauth_https --profile=opensearch up -d

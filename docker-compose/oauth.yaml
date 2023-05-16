@@ -24,7 +24,7 @@ services:
     platform: linux/amd64
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:1852;http://+:1752
+      - ASPNETCORE_URLS=https://+:1852;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/aspnetapp.pfx
       - OAuth__SymmetricPrivateKey="wnhjzYtZD7tMbqu4C5xw"
@@ -39,4 +39,3 @@ services:
 networks:
   default:
     name: "cheetah-infrastructure"
-
