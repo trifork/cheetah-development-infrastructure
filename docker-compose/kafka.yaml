@@ -16,7 +16,7 @@ services:
       - kafka
 
   kafka:
-    image: ${ DOCKER_REGISTRY }/cheetah-infrastructure-utils-kafka:main-4542528321
+    image: $DOCKER_REGISTRY/cheetah-infrastructure-utils-kafka:main-4542528321
     platform: linux/amd64
     hostname: kafka
     mem_limit: 1024m
