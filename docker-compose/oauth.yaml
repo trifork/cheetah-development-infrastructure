@@ -6,7 +6,7 @@ services:
     hostname: cheetahoauthsimulator
     ports:
       - "1752:80"
-    image: ghcr.io/trifork/cheetah-oauth-simulator:latest
+    image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:latest
     platform: linux/amd64
 
     environment:
@@ -20,7 +20,7 @@ services:
     hostname: cheetahoauthsimulator
     ports:
       - "1852:1852"
-    image: ghcr.io/trifork/cheetah-oauth-simulator:latest
+    image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:latest
     platform: linux/amd64
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
