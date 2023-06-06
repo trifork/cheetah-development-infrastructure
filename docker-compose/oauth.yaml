@@ -6,7 +6,7 @@ services:
     hostname: cheetahoauthsimulator
     ports:
       - "1752:80"
-    image: ${{ DOCKER_REGISTRY }}/cheetah-oauth-simulator:latest
+    image: ${ DOCKER_REGISTRY }/cheetah-oauth-simulator:latest
     platform: linux/amd64
 
     environment:
