@@ -26,13 +26,13 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:1852;http://+:1752
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/appuser/.aspnet/https/aspnetapp.pfx
       - OAuth__SymmetricPrivateKey="wnhjzYtZD7tMbqu4C5xw"
       - OAuth__Mode=Asymmetric
-      - Simulator__CertFilePath=/root/.aspnet/certs/secret.pem
+      - Simulator__CertFilePath=/appuser/.aspnet/certs/secret.pem
     volumes:
-      - "${APPDATA:-.}/ASP.NET/https:/root/.aspnet/https:ro"
-      - "${APPDATA:-.}/ASP.NET/certs:/root/.aspnet/certs"
+      - "${APPDATA:-.}/ASP.NET/https:/appuser/.aspnet/https:ro"
+      - "${APPDATA:-.}/ASP.NET/certs:/appuser/.aspnet/certs"
     profiles:
       - oauth_https
 
