@@ -4,12 +4,13 @@ services:
   # login fallback: admin:admin
   # services should use oauth
   opensearch:
-    image: opensearchproject/opensearch:2.6.0
+    image: cheetah-opensearch
     hostname: opensearch
-    command:
-      - /bin/bash
-      - -c
-      - ./bin/opensearch-plugin install --batch 'repository-s3' 'https://github.com/aiven/prometheus-exporter-plugin-for-opensearch/releases/download/2.6.0.0/prometheus-exporter-2.6.0.0.zip' && ./opensearch-docker-entrypoint.sh
+    build:
+      context: ../config/opensearch/
+      dockerfile: Dockerfile
+      args:
+        - OPENSEARCH_VERSION=2.6.0
     environment:
       - cluster.name=opensearch-cluster
       - node.name=os01
