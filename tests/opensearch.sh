@@ -34,7 +34,7 @@ function get_customaccess_token() {
     -d "{
     \"clientId\": \"$tenant\",
     \"claims\": {
-      \"osroles\": \"$roles\",
+      \"roles\": \"$roles\",
       \"osuser\": \"hest\"
     },
     \"expiresInMinutes\": 120

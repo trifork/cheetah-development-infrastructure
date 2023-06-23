@@ -16,7 +16,7 @@ services:
       - kafka
 
   kafka:
-    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:main-4542528321
+    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:release-strimzi-0.33.0-kafka-3.3.2-trifork-1.3.0
     platform: linux/amd64
     hostname: kafka
     mem_limit: 1024m
@@ -125,13 +125,28 @@ services:
     ports:
       - "8081:8080"
     environment:
+      # Kafka
       ENABLE_KAFKA_SASL: true
       CLIENT_ID: kafka
       CLIENT_SECRET: testSecret
       OAUTH_TOKEN_ENDPOINT_URI: http://cheetahoauthsimulator/oauth2/token
       KAFKA_BOOTSTRAP_SERVERS: kafka:19092
       KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      # Basics
       REGISTRY_AUTH_ANONYMOUS_READ_ACCESS_ENABLED: true
+      # API protection
+      AUTH_ENABLED: true
+      ROLE_BASED_AUTHZ_ENABLED: true
+      REGISTRY_AUTH_OBAC_ENABLED: true
+      REGISTRY_AUTH_OBAC_LIMIT_GROUP_ACCESS: true
+      ROLE_BASED_AUTHZ_SOURCE: "token"
+      REGISTRY_AUTH_ROLES_DEVELOPER: "sr-producer" # "sr-developer"
+      # https://quarkus.io/guides/security-oidc-configuration-properties-reference
+      quarkus.oidc.enabled: true
+      quarkus.oidc.auth-server-url: http://cheetahoauthsimulator:80
+      quarkus.oidc.jwks-path: /.well-known/jwks.json
+      #quarkus.log.level: DEBUG
+      quarkus.oidc.roles.role-claim-path: roles
 
     healthcheck:
       test: curl schema-registry:8080 || exit -1
