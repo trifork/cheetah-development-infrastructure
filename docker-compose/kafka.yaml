@@ -49,9 +49,8 @@ services:
       - kafka
 
   kafka-setup:
-    image: quay.io/strimzi/kafka:0.33.2-kafka-3.2.3
+    image: quay.io/strimzi/kafka:0.33.2-kafka-3.3.2
     platform: linux/amd64
-    hostname: kafka-setup
     container_name: kafka-setup
     volumes:
       - ../config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
@@ -136,7 +135,7 @@ services:
       REGISTRY_AUTH_ANONYMOUS_READ_ACCESS_ENABLED: true
       REGISTRY_UI_FEATURES_READONLY: true
       # API protection
-      AUTH_ENABLED: false # protects UI and API
+      AUTH_ENABLED: true # protects UI and API
       ROLE_BASED_AUTHZ_ENABLED: true
       REGISTRY_AUTH_OBAC_ENABLED: true
       REGISTRY_AUTH_OBAC_LIMIT_GROUP_ACCESS: true

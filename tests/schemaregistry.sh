@@ -5,7 +5,7 @@ set -euo pipefail
 sr_url="http://schema-registry:8080"
 cache_header="cache-control: no-cache"
 TENANT=1
-GROUPID=123
+GROUPID=124
 empty_token=""
 
 function get_default_access_token() {
@@ -43,19 +43,7 @@ function test_jwt_auth() {
 function upload_api_description() {
   local group_id=$1
   local token=$2
-  local api_description=$3
-  local response=$(curl -s -X POST -H "Content-Type: application/json; artifactType=OPENAPI" --data-binary "$api_description" "$sr_url/apis/registry/v2/groups/$group_id/artifacts" -H "Authorization: bearer $(printf '%s' "$token")")
-  if [[ $response =~ "error_code" ]]; then
-    echo "Error uploading API description:"
-    echo "$response"
-    return 1
-  else
-    echo "API description uploaded successfully."
-  fi
-  return 0
-}
-
-API_DESCRIPTION='{
+  local api_description='{
     "type": "OpenAPI",
     "info": {
         "title": "My API",
@@ -73,7 +61,19 @@ API_DESCRIPTION='{
             }
         }
     }
-}'
+  }'
+  local response=$(curl -s --fail-with-body --show-error -X POST -H "Content-Type: application/json; artifactType=OPENAPI" --data-binary "$api_description" "$sr_url/apis/registry/v2/groups/$group_id/artifacts" -H "Authorization: bearer $(printf '%s' "$token")")
+  echo "resp: $response"
+  if [[ $response =~ "error" ]]; then
+    echo "Error uploading API description:"
+    return 1
+  else
+    echo "API description uploaded successfully."
+  fi
+  return 0
+}
+
+
 
 service_token=$(get_default_access_token $TENANT)
 
@@ -84,7 +84,7 @@ fi
 
 echo
 echo "Uploading API description as anonymous..."
-if upload_api_description $GROUPID "" "$API_DESCRIPTION"; then
+if upload_api_description $GROUPID "$empty_token"; then
 echo "Upload should have failed"
   exit 1
 fi
@@ -96,6 +96,6 @@ if ! test_jwt_auth $service_token; then
 fi
 
 echo "Uploading API description..."
-if ! upload_api_description $GROUPID $service_token "$API_DESCRIPTION"; then
+if ! upload_api_description $GROUPID "$service_token"; then
   exit 1
 fi
