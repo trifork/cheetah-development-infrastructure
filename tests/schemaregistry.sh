@@ -10,19 +10,18 @@ empty_token=""
 
 function get_default_access_token() {
   local tenant=$1
-  local response=$(curl --fail -s -X 'POST' \
-    'http://cheetahoauthsimulator:80/oauth2/token' \
-    -H 'accept: */*' \
-    -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'cache-control: no-cache' \
-    -d "grant_type=client_credentials&scope=&client_id=$tenant&client_secret="
+  local response=$(http --check-status --ignore-stdin  --follow --all --form POST 'http://cheetahoauthsimulator:80/oauth2/token' \
+    accept:'*/*' \
+    Content-Type:'application/x-www-form-urlencoded' \
+    cache-control:'no-cache' \
+    grant_type=client_credentials scope= client_id=$tenant client_secret=123
   )
   local access_token=$(printf '%s' "$response" | jq -r '.access_token')
   echo "$access_token"
 }
 
 function test_anonymous_user() {
-  if ! curl -s --fail-with-body -k "$sr_url/apis/registry/v2/users/me" -H "$cache_header" ; then
+  if ! http --check-status --ignore-stdin "$sr_url/apis/registry/v2/users/me" cache-control:'no-cache'; then
     echo "ERROR - Anonymous readonly not allowed"
     return 1
   fi
@@ -31,7 +30,7 @@ function test_anonymous_user() {
 
 function test_jwt_auth() {
   local token=$1
-  local response=$(curl -s --fail-with-body -k "$sr_url/apis/registry/v2/users/me" -H "Authorization: bearer $(printf '%s' "$token")")
+  local response=$(http --check-status --ignore-stdin "$sr_url/apis/registry/v2/users/me"  Authorization:"bearer $token")
   echo $response
   if [[ $response =~ "error_code" ]]; then
     echo "ERROR - Authorized access using jwt failed"
@@ -62,9 +61,9 @@ function upload_api_description() {
         }
     }
   }'
-  local response=$(curl -s --fail-with-body --show-error -X POST -H "Content-Type: application/json; artifactType=OPENAPI" --data-binary "$api_description" "$sr_url/apis/registry/v2/groups/$group_id/artifacts" -H "Authorization: bearer $(printf '%s' "$token")")
-  echo "resp: $response"
-  if [[ $response =~ "error" ]]; then
+  local response=$(http --body POST "$sr_url/apis/registry/v2/groups/$group_id/artifacts" Content-Type:"application/json; artifactType=OPENAPI" Authorization:"bearer $token" <<< "$api_description")
+  echo "$response"
+  if [[ ${#response} == 0 ]]; then
     echo "Error uploading API description:"
     return 1
   else
@@ -73,8 +72,7 @@ function upload_api_description() {
   return 0
 }
 
-
-
+echo "Start test"
 service_token=$(get_default_access_token $TENANT)
 
 echo "INFO - groups lookup with anonymous user:"

@@ -35,7 +35,7 @@ jobs:
 
       - name: Setup mye2eclient container
         run: |
-          docker exec mye2eclient apk add curl jq bash
+          docker exec mye2eclient apk add curl jq bash httpie
 
       - name: "Wait for opensearch, the slowest component"
         uses: nick-fields/retry@v2
