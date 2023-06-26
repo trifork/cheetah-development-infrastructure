@@ -135,8 +135,8 @@ services:
       REGISTRY_AUTH_ANONYMOUS_READ_ACCESS_ENABLED: true
       REGISTRY_UI_FEATURES_READONLY: true
       # API protection
-      AUTH_ENABLED: true # protects UI and API
-      ROLE_BASED_AUTHZ_ENABLED: true
+      AUTH_ENABLED: true # also protects UI
+      ROLE_BASED_AUTHZ_ENABLED: true # Allows admin and developer concept
       REGISTRY_AUTH_OBAC_ENABLED: true
       REGISTRY_AUTH_OBAC_LIMIT_GROUP_ACCESS: true
       ROLE_BASED_AUTHZ_SOURCE: "token"

@@ -64,7 +64,7 @@ function upload_api_description() {
   local response=$(http --body POST "$sr_url/apis/registry/v2/groups/$group_id/artifacts" Content-Type:"application/json; artifactType=OPENAPI" Authorization:"bearer $token" <<< "$api_description")
   echo "$response"
   if [[ ${#response} == 0 ]]; then
-    echo "Error uploading API description:"
+    echo "Error uploading API description!"
     return 1
   else
     echo "API description uploaded successfully."
@@ -97,3 +97,5 @@ echo "Uploading API description..."
 if ! upload_api_description $GROUPID "$service_token"; then
   exit 1
 fi
+
+echo "finished test sucessfully"
