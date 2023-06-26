@@ -24,8 +24,9 @@ function get_default_access_token() {
 function test_anonymous_user() {
   if ! curl -s --fail-with-body -k "$sr_url/apis/registry/v2/users/me" -H "$cache_header" ; then
     echo "ERROR - Anonymous readonly not allowed"
-    exit 1
+    return 1
   fi
+  return 0
 }
 
 function test_jwt_auth() {
@@ -34,8 +35,9 @@ function test_jwt_auth() {
   echo $response
   if [[ $response =~ "error_code" ]]; then
     echo "ERROR - Authorized access using jwt failed"
-    exit 1
+    return 1
   fi
+  return 0
 }
 
 function upload_api_description() {
@@ -46,9 +48,11 @@ function upload_api_description() {
   if [[ $response =~ "error_code" ]]; then
     echo "Error uploading API description:"
     echo "$response"
+    return 1
   else
     echo "API description uploaded successfully."
   fi
+  return 0
 }
 
 API_DESCRIPTION='{
@@ -74,14 +78,24 @@ API_DESCRIPTION='{
 service_token=$(get_default_access_token $TENANT)
 
 echo "INFO - groups lookup with anonymous user:"
-test_anonymous_user
+if ! test_anonymous_user; then
+  exit 1
+fi
 
+echo
 echo "Uploading API description as anonymous..."
-upload_api_description $GROUPID $empty_token "$API_DESCRIPTION"
+if upload_api_description $GROUPID "" "$API_DESCRIPTION"; then
+echo "Upload should have failed"
+  exit 1
+fi
 
 echo
 echo "Test jwt auth:"
-test_jwt_auth $service_token
+if ! test_jwt_auth $service_token; then
+  exit 1
+fi
 
 echo "Uploading API description..."
-upload_api_description $GROUPID $service_token "$API_DESCRIPTION"
+if ! upload_api_description $GROUPID $service_token "$API_DESCRIPTION"; then
+  exit 1
+fi
