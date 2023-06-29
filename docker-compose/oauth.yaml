@@ -13,7 +13,7 @@ services:
       #- ASPNETCORE_ENVIRONMENT=Development
       - OAuth__Mode=Asymmetric
     profiles:
-      - oauth_legacy
+      - oauth
 
   # Not enabled by default
   cheetah.oauth.simulator.https:
@@ -36,44 +36,7 @@ services:
     profiles:
       - oauth_https
 
-  # Exporting changes done in Keycloak:
-  # docker exec -it kc /opt/jboss/keycloak/bin/standalone.sh -Djboss.socket.binding.port-offset=100 -Dkeycloak.migration.action=export -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.realmName=my_realm -Dkeycloak.migration.usersExportStrategy=REALM_FILE -Dkeycloak.migration.file=/tmp/my_realm.json
-  keycloak:
-    image: quay.io/keycloak/keycloak:21.0.1
-    hostname: cheetahoauthsimulator
-    command: ["start-dev"]
-    #command:
-    # - start-dev
-    # # - -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
-    # - "-Dkeycloak.migration.action=import"
-    # - "-Dkeycloak.migration.provider=dir"
-    # - "-Dkeycloak.migration.dir=/opt/keycloak/data/import/"
-    ports:
-      - 9050:8080
-    volumes:
-      #- keycloak-data:/opt/jboss/keycloak/standalone/data
-      - ../config/keycloak/import/:/opt/keycloak/data/import/
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KEYCLOAK_LOGLEVEL=DEBUG
-      - KEYCLOAK_LOGS_STDOUT=true
-      - KEYCLOAK_LOG_FILE_DIR=/opt/jboss/keycloak/standalone/log
-      - KEYCLOAK_LOG_FILE_NAME=keycloak.log
-      - KEYCLOAK_LOG_FILE_PATH=/opt/jboss/keycloak/standalone/log/keycloak.log
-      #- "KC_HTTP_ENABLED=true"
-      #- KC_HOSTNAME=auth-server
-      #- KC_HTTP_RELATIVE_PATH=/auth
-      #- "KC_HOSTNAME_STRICT_HTTPS=false"
-      #- "JAVA_OPTS_APPEND=-Dkeycloak.migration.action=import -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/opt/keycloak/data/import/ -Dkeycloak.migration.strategy=IGNORE_EXISTING"
-      - "JAVA_OPTS_APPEND=-Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/opt/keycloak/data/import/example-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
-    profiles:
-      - oauth
-    mem_limit: 512M
-
-volumes:
-  keycloak-data:
-
 networks:
   default:
     name: "cheetah-infrastructure"
+
