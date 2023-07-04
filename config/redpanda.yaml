@@ -1,12 +1,16 @@
 # See: https://github.com/cloudhut/kowl/tree/master/docs/config for reference config files.
 kafka:
   brokers:
-    - kafka:19094 # Special redpanda listener using SCRAM-SHA-512 authentication
+    - kafka:19092
   sasl:
     enabled: true
-    mechanism: SCRAM-SHA-512
-    username: redpanda
-    password: password
+    mechanism: OAUTHBEARER
+    #username: redpanda
+    #password: password
+    oauth:
+      tokenEndpoint: http://cheetahoauthsimulator:80/oauth2/token
+      clientId: redpanda
+      clientSecret: 1234
   schemaregistry:
     enabled: true
     urls: [http://schema-registry:8080/apis/ccompat/v7]

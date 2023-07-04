@@ -70,7 +70,7 @@ services:
       - kafka
 
   redpanda:
-    image: docker.redpanda.com/vectorized/console:v2.1.1
+    image: redpandadata/console-unstable:master-f155c44
     entrypoint: /bin/sh
     command: -c "/app/console"
     mem_limit: 512m

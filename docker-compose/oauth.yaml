@@ -12,6 +12,7 @@ services:
     environment:
       #- ASPNETCORE_ENVIRONMENT=Development
       - OAuth__Mode=Asymmetric
+      - Simulator__DefaultKafkaRole=*_all
     profiles:
       - oauth
 
