@@ -25,8 +25,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
         # OpenSearch is required for integration tests
-      - name: docker network create cheetah-infrastructure
-        run: docker network create cheetah-infrastructure
+      #- name: docker network create cheetah-infrastructure
+      #  run: docker network create cheetah-infrastructure
       - name: Run development environment
         run: docker compose up --quiet-pull --force-recreate -d
 
