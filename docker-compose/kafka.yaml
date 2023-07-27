@@ -14,6 +14,8 @@ services:
     mem_limit: 512m
     profiles:
       - kafka
+      - basic
+      - full
 
   kafka:
     image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.33.0-kafka-3.3.2-trifork-1.4.0
@@ -47,6 +49,8 @@ services:
       retries: 10
     profiles:
       - kafka
+      - basic
+      - full
 
   kafka-setup:
     image: quay.io/strimzi/kafka:0.33.2-kafka-3.3.2
@@ -68,6 +72,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: ignored
     profiles:
       - kafka
+      - full
 
   redpanda:
     image: redpandadata/console-unstable:master-f155c44
@@ -95,6 +100,7 @@ services:
         condition: service_completed_successfully
     profiles:
       - redpanda
+      - full
 
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
@@ -110,6 +116,8 @@ services:
       KAFKA_BROKERS: kafka:19093
     profiles:
       - prometheus
+      - observability
+      - full
 
   schema-registry:
     mem_limit: 256m
@@ -160,6 +168,7 @@ services:
       retries: 10
     profiles:
       - schemaregistry
+      - full
 
 networks:
   default:

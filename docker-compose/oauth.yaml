@@ -15,6 +15,8 @@ services:
       - Simulator__DefaultKafkaRole=*_all
     profiles:
       - oauth
+      - basic
+      - full
 
   # Not enabled by default
   cheetah.oauth.simulator.https:
@@ -40,4 +42,3 @@ services:
 networks:
   default:
     name: "cheetah-infrastructure"
-

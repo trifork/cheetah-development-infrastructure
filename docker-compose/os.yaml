@@ -45,6 +45,8 @@ services:
       - 9600:9600
     profiles:
       - opensearch
+      - basic
+      - full
     healthcheck:
       test: curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1
       interval: 30s
@@ -70,6 +72,7 @@ services:
       - ../config/opensearch-configurer/cluster/:/app/cluster/
     profiles:
       - opensearch
+      - full
 
   # login kibanaserver:kibanaserver
   opensearch-dashboards:
@@ -89,6 +92,7 @@ services:
         condition: service_healthy
     profiles:
       - opensearch_dashboard
+      - full
 
 volumes:
   opensearch:

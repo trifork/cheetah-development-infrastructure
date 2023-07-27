@@ -1,0 +1,42 @@
+version: "3"
+services:
+  prometheus:
+    image: quay.io/prometheus/prometheus:v2.36.2
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - 9090:9090
+    #restart: always
+    volumes:
+      - ../config/prometheus:/etc/prometheus/
+    #  - prometheus_data:/prometheus
+    profiles:
+      - prometheus
+      - observability
+      - full
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: docker.io/grafana/grafana:10.0.1
+    #restart: always
+    environment:
+      GF_INSTALL_PLUGINS: "grafana-clock-panel,grafana-simple-json-datasource"
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: false
+      GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+    volumes:
+      #- grafana_data:/var/lib/grafana
+      - ../config/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - 32769:3000
+    profiles:
+      - grafana
+      - observability
+      - full
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
