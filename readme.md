@@ -40,7 +40,7 @@ The kafka setup consists of different services:
 Run:
 
 ```bash
-docker compose --profile=kafka --profile=oauth up -d
+docker compose --profile=kafka --profile=oauth --profile=schemaregistry --profile=redpanda up -d
 ```
 
 When all of the services are running, you can go to:
@@ -78,7 +78,7 @@ Files placed in any subdirectory of [config/opensearch-configurer/](config/opens
 Run:
 
 ```bash
-docker compose --profile=opensearch --profile=oauth up -d
+docker compose --profile=opensearch --profile=oauth --profile=opensearch_dashboard up -d
 ```
 
 When all of the services are running, you can go to:

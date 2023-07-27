@@ -94,7 +94,7 @@ services:
       kafka-setup:
         condition: service_completed_successfully
     profiles:
-      - kafka
+      - redpanda
 
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
@@ -159,7 +159,7 @@ services:
       timeout: 10s
       retries: 10
     profiles:
-      - kafka
+      - schemaregistry
 
 networks:
   default:
