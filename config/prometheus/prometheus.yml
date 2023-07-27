@@ -10,3 +10,16 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets: ["host.docker.internal:1854"]
+  - job_name: opensearch
+    scrape_interval: 10s
+    metrics_path: "/_prometheus/metrics"
+    basic_auth:
+      username: admin
+      password: admin
+    static_configs:
+      - targets:
+          - opensearch:9200
+  - job_name: "node_exporter"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["host.docker.internal:9100"]
