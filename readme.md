@@ -91,3 +91,31 @@ When all of the services are running, you can go to:
 
 Services should connect using the OAuth2 protocol. When working locally, you can use `admin:admin` user. This is only possibly locally.
 You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SECURITY_PLUGIN=true` to disable security completely.
+
+## List of all profiles in docker compose
+
+**List of profiles:**
+
+- full
+- kafka
+- opensearch
+- oauth
+- redpanda
+- schemaregistry
+- opensearch_dashboard
+- observability
+- prometheus
+- grafana
+
+Here is further explanation on what each profile starts.
+
+| Images / profiles     | full  | kafka  | opensearch | oauth  | redpanda | schemaregistry | opensearch_dashboard | observability | prometheus | grafana |
+|:----:                 |:----: | :----: | :----:     | :----: | :----:   | :----:         |:----:                |:----:         |:----:      |:----:   |
+|Kafka                  | x     | x      |            |        |          |                |                      |               |            |         |
+|Opensearch             | x     |        | x          |        |          |                |                      |               |            |         |
+|OAuth simulator        | x     |        |            | x      |          |                |                      |               |            |         |
+|Redpanda console       | x     |        |            |        | x        |                |                      |               |            |         |
+|Schema registry        | x     |        |            |        |          | x              |                      |               |            |         |
+|Opensearch dashboard   | x     |        |            |        |          |                | x                    |               |            |         |
+|Prometheus             | x     |        |            |        |          |                |                      | x             | x          |         |
+|Grafana                | x     |        |            |        |          |                |                      | x             |            | x       |
