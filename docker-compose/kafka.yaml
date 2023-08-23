@@ -38,9 +38,10 @@ services:
       - "9093:9093" # Requires No authentication
     environment:
       LOG_DIR: "/tmp/logs"
-      KAFKA_ROOT_LOGGER_LEVEL: debug
     volumes:
       - ../config/kafka/server.properties:/opt/kafka/custom-config/server.properties
+      - ../config/kafka/log4j.properties:/opt/kafka/config/log4j.properties
+      - ../logs/:/tmp/logs/
     healthcheck:
       test: nc -z kafka 19092 || exit -1
       start_period: 15s
