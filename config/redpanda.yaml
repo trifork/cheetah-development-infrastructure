@@ -3,7 +3,7 @@ kafka:
   brokers:
     - kafka:19092
   sasl:
-    enabled: true
+    enabled: false
     mechanism: OAUTHBEARER
     #username: redpanda
     #password: password

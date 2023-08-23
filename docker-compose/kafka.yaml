@@ -18,7 +18,7 @@ services:
       - full
 
   kafka:
-    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.33.0-kafka-3.3.2-trifork-1.4.0
+    image: quay.io/strimzi/kafka:0.33.0-kafka-3.3.2
     platform: linux/amd64
     hostname: kafka
     mem_limit: 1024m
@@ -136,7 +136,7 @@ services:
       - "8081:8080" # http://localhost:8081/ui/
     environment:
       # Kafka
-      ENABLE_KAFKA_SASL: true
+      ENABLE_KAFKA_SASL: false
       CLIENT_ID: sr
       CLIENT_SECRET: testSecret
       OAUTH_TOKEN_ENDPOINT_URI: http://cheetahoauthsimulator/oauth2/token
