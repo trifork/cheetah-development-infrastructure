@@ -10,6 +10,12 @@ for topic in JobNameInputTopic _kafkasql-journal; do
 done
 echo "Creating topics done"
 
+echo "Fixing problem with local kafka in Docker compose"
+bash bin/kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:19093  --partitions 1 --replication-factor 1 --topic Temp --config retention.ms=94608000000
+echo "Some message" | bash bin/kafka-console-producer.sh --bootstrap-server kafka:19093 --topic Temp 
+bash bin/kafka-topics.sh --delete --bootstrap-server kafka:19093  --topic Temp 
+echo "Done fixing kafka"
+
 # Alter in case they already existed
 ## Options:
 #cleanup.policy
