@@ -45,7 +45,6 @@ services:
       - 9600:9600
     profiles:
       - opensearch
-      - basic
       - full
     healthcheck:
       test: curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1
@@ -91,7 +90,7 @@ services:
       opensearch:
         condition: service_healthy
     profiles:
-      - opensearch_dashboard
+      - opensearch
       - full
 
 volumes:

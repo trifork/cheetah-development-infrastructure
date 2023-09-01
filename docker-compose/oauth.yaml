@@ -14,8 +14,8 @@ services:
       - OAuth__Mode=Asymmetric
       - Simulator__DefaultKafkaRole=*_all
     profiles:
-      - oauth
-      - basic
+      - opensearch
+      - kafka
       - full
 
   # Not enabled by default

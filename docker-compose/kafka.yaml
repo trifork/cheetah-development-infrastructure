@@ -14,7 +14,6 @@ services:
     mem_limit: 512m
     profiles:
       - kafka
-      - basic
       - full
 
   kafka:
@@ -49,7 +48,6 @@ services:
       retries: 10
     profiles:
       - kafka
-      - basic
       - full
 
   kafka-setup:
@@ -99,7 +97,7 @@ services:
       kafka-setup:
         condition: service_completed_successfully
     profiles:
-      - redpanda
+      - kafka
       - full
 
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
@@ -115,7 +113,6 @@ services:
     environment:
       KAFKA_BROKERS: kafka:19093
     profiles:
-      - prometheus
       - observability
       - full
 
@@ -167,7 +164,7 @@ services:
       timeout: 10s
       retries: 10
     profiles:
-      - schemaregistry
+      - kafka
       - full
 
 networks:

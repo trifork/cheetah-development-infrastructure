@@ -11,7 +11,6 @@ services:
       - ../config/prometheus:/etc/prometheus/
     #  - prometheus_data:/prometheus
     profiles:
-      - prometheus
       - observability
       - full
     extra_hosts:
@@ -33,7 +32,6 @@ services:
     ports:
       - 32769:3000
     profiles:
-      - grafana
       - observability
       - full
 
@@ -48,7 +46,6 @@ services:
     volumes:
       - "/:/host:ro"
     profiles:
-      - prometheus
       - observability
       - full
 
