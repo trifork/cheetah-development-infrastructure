@@ -110,6 +110,6 @@ Here is further explanation on what each profile starts.
 |Redpanda console       | x     | x      |            |               |
 |Schema registry        | x     | x      |            |               |
 |Opensearch             | x     |        | x          |               |
-|Opensearch dashboard   | x     |        |            |               |
+|Opensearch dashboard   | x     |        | x          |               |
 |Prometheus             | x     |        |            | x             |
 |Grafana                | x     |        |            | x             |
