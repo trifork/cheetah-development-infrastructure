@@ -97,26 +97,19 @@ You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SEC
 **List of profiles:**
 
 - full
-- basic
 - kafka
 - opensearch
-- oauth
-- redpanda
-- schemaregistry
-- opensearch_dashboard
 - observability
-- prometheus
-- grafana
 
 Here is further explanation on what each profile starts.
 
-| Images / profiles     | full  | basic | kafka  | opensearch | oauth  | redpanda | schemaregistry | opensearch_dashboard | observability | prometheus | grafana |
-|:----:                 |:----: | :---: | :----: | :----:     | :----: | :----:   | :----:         |:----:                |:----:         |:----:      |:----:   |
-|Kafka                  | x     | x     | x      |            |        |          |                |                      |               |            |         |
-|Opensearch             | x     | x     |        | x          |        |          |                |                      |               |            |         |
-|OAuth simulator        | x     | x     |        |            | x      |          |                |                      |               |            |         |
-|Redpanda console       | x     |       |        |            |        | x        |                |                      |               |            |         |
-|Schema registry        | x     |       |        |            |        |          | x              |                      |               |            |         |
-|Opensearch dashboard   | x     |       |        |            |        |          |                | x                    |               |            |         |
-|Prometheus             | x     |       |        |            |        |          |                |                      | x             | x          |         |
-|Grafana                | x     |       |        |            |        |          |                |                      | x             |            | x       |
+| Images / profiles     | full  | kafka  | opensearch | observability |
+|:----:                 |:----: | :----: | :----:     |:----:         |
+|Kafka                  | x     | x      |            |               |
+|OAuth simulator        | x     | x      | x          |               |
+|Redpanda console       | x     | x      |            |               |
+|Schema registry        | x     | x      |            |               |
+|Opensearch             | x     |        | x          |               |
+|Opensearch dashboard   | x     |        |            |               |
+|Prometheus             | x     |        |            | x             |
+|Grafana                | x     |        |            | x             |
