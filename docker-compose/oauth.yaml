@@ -6,7 +6,7 @@ services:
     hostname: cheetahoauthsimulator
     ports:
       - "1752:80"
-    image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:main-6159635761
+    image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:1.7.1
     platform: linux/amd64
     environment:
       #- ASPNETCORE_ENVIRONMENT=Development
@@ -22,7 +22,7 @@ services:
     hostname: cheetahoauthsimulator
     ports:
       - "1852:1852"
-    image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:main-6159635761
+    image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:1.7.1 
     platform: linux/amd64
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
