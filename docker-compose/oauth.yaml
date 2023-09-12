@@ -8,7 +8,7 @@ services:
       - "1752:80"
     image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:latest
     platform: linux/amd64
-
+    stop_grace_period: 1s
     environment:
       #- ASPNETCORE_ENVIRONMENT=Development
       - OAuth__Mode=Asymmetric
