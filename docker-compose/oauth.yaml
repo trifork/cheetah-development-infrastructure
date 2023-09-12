@@ -6,9 +6,8 @@ services:
     hostname: cheetahoauthsimulator
     ports:
       - "1752:80"
-    image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:latest
+    image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:main-6159635761
     platform: linux/amd64
-    stop_grace_period: 1s
     environment:
       #- ASPNETCORE_ENVIRONMENT=Development
       - OAuth__Mode=Asymmetric
@@ -23,7 +22,7 @@ services:
     hostname: cheetahoauthsimulator
     ports:
       - "1852:1852"
-    image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:latest
+    image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:main-6159635761
     platform: linux/amd64
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
