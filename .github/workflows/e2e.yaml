@@ -28,7 +28,7 @@ jobs:
       #- name: docker network create cheetah-infrastructure
       #  run: docker network create cheetah-infrastructure
       - name: Run development environment
-        run: docker compose up --quiet-pull --force-recreate -d --profile opensearch kafka oauth schemaregistry
+        run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry up --quiet-pull --force-recreate -d 
 
       - name: Start mye2eclient container in shared network
         run: docker run -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:latest
