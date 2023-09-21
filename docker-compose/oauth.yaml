@@ -15,6 +15,7 @@ services:
     profiles:
       - opensearch
       - kafka
+      - core
       - full
 
   # Not enabled by default

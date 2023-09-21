@@ -45,6 +45,7 @@ services:
       - 9600:9600
     profiles:
       - opensearch
+      - core
       - full
     healthcheck:
       test: curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1

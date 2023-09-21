@@ -103,13 +103,13 @@ You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SEC
 
 Here is further explanation on what each profile starts.
 
-| Images / profiles     | full  | kafka  | opensearch | observability |
-|:----:                 |:----: | :----: | :----:     |:----:         |
-|Kafka                  | x     | x      |            |               |
-|OAuth simulator        | x     | x      | x          |               |
-|Redpanda console       | x     | x      |            |               |
-|Schema registry        | x     | x      |            |               |
-|Opensearch             | x     |        | x          |               |
-|Opensearch dashboard   | x     |        | x          |               |
-|Prometheus             | x     |        |            | x             |
-|Grafana                | x     |        |            | x             |
+|  Images / profiles   | full  | core  | kafka | opensearch | observability |
+| :------------------: | :---: | :---: | :---: | :--------: | :-----------: |
+|        Kafka         |   x   |   x   |   x   |            |               |
+|   OAuth simulator    |   x   |   x   |   x   |     x      |               |
+|   Redpanda console   |   x   |       |   x   |            |               |
+|   Schema registry    |   x   |   x   |   x   |            |               |
+|      Opensearch      |   x   |   x   |       |     x      |               |
+| Opensearch dashboard |   x   |       |       |     x      |               |
+|      Prometheus      |   x   |       |       |            |       x       |
+|       Grafana        |   x   |       |       |            |       x       |
