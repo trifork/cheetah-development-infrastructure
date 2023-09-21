@@ -19,6 +19,9 @@ services:
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
       #- DISABLE_SECURITY_PLUGIN=true
       - DISABLE_INSTALL_DEMO_CONFIG=true
+    depends_on:
+      cheetah.oauth.simulator:
+        condition: service_healthy
     mem_limit: 2048m
     ulimits:
       memlock:
