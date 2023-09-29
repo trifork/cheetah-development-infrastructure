@@ -36,6 +36,8 @@ services:
     ports:
       - "9092:9092" # Requires OAuth2 authentication
       - "9093:9093" # Requires No authentication
+    expose:
+      - "19092"
     environment:
       LOG_DIR: "/tmp/logs"
       KAFKA_ROOT_LOGGER_LEVEL: debug
