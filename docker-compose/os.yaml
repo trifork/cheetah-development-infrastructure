@@ -7,7 +7,7 @@ services:
     image: cheetah-opensearch
     hostname: opensearch
     build:
-      context: ../config/opensearch/
+      context: ./config/opensearch/
       dockerfile: Dockerfile
       args:
         - OPENSEARCH_VERSION=2.6.0
@@ -32,17 +32,17 @@ services:
         hard: 262144
     volumes:
       - opensearch:/data
-      - ../config/opensearch/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
-      - ../config/opensearch/security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
-      - ../config/opensearch/security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml
-      - ../config/opensearch/security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml
-      - ../config/opensearch/security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml
+      - ./config/opensearch/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
+      - ./config/opensearch/security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
+      - ./config/opensearch/security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml
+      - ./config/opensearch/security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml
+      - ./config/opensearch/security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml
       # Demo certs
-      - ../config/opensearch/certs/esnode-key.pem:/usr/share/opensearch/config/esnode-key.pem
-      - ../config/opensearch/certs/esnode.pem:/usr/share/opensearch/config/esnode.pem
-      - ../config/opensearch/certs/kirk-key.pem:/usr/share/opensearch/config/kirk-key.pem
-      - ../config/opensearch/certs/opensearch.keystore:/usr/share/opensearch/config/opensearch.keystore
-      - ../config/opensearch/certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem
+      - ./config/opensearch/certs/esnode-key.pem:/usr/share/opensearch/config/esnode-key.pem
+      - ./config/opensearch/certs/esnode.pem:/usr/share/opensearch/config/esnode.pem
+      - ./config/opensearch/certs/kirk-key.pem:/usr/share/opensearch/config/kirk-key.pem
+      - ./config/opensearch/certs/opensearch.keystore:/usr/share/opensearch/config/opensearch.keystore
+      - ./config/opensearch/certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem
     ports:
       - 9200:9200
       - 9600:9600
@@ -67,12 +67,12 @@ services:
         condition: service_healthy
     volumes:
       # TODO: when the base directory is configurable, use the following instead
-      # - ../config/opensearch-configurer/:/path/to/basedir/
-      - ../config/opensearch-configurer/lifecycle_policies/:/app/lifecycle_policies/
-      - ../config/opensearch-configurer/pipelines/:/app/pipelines/
-      - ../config/opensearch-configurer/component_templates/:/app/component_templates/
-      - ../config/opensearch-configurer/index_templates/:/app/index_templates/
-      - ../config/opensearch-configurer/cluster/:/app/cluster/
+      # - ./config/opensearch-configurer/:/path/to/basedir/
+      - ./config/opensearch-configurer/lifecycle_policies/:/app/lifecycle_policies/
+      - ./config/opensearch-configurer/pipelines/:/app/pipelines/
+      - ./config/opensearch-configurer/component_templates/:/app/component_templates/
+      - ./config/opensearch-configurer/index_templates/:/app/index_templates/
+      - ./config/opensearch-configurer/cluster/:/app/cluster/
     profiles:
       - opensearch
       - full
@@ -84,9 +84,9 @@ services:
     ports:
       - 5602:5601
     volumes:
-      - ../config/opensearch_dashboards/opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
-      - ../config/opensearch_dashboards/opensearch_dashboards.crt:/usr/share/opensearch-dashboards/config/opensearch_dashboards.crt
-      - ../config/opensearch_dashboards/opensearch_dashboards.key:/usr/share/opensearch-dashboards/config/opensearch_dashboards.key
+      - ./config/opensearch_dashboards/opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
+      - ./config/opensearch_dashboards/opensearch_dashboards.crt:/usr/share/opensearch-dashboards/config/opensearch_dashboards.crt
+      - ./config/opensearch_dashboards/opensearch_dashboards.key:/usr/share/opensearch-dashboards/config/opensearch_dashboards.key
     environment:
       - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
       #- DISABLE_SECURITY_DASHBOARDS_PLUGIN=true

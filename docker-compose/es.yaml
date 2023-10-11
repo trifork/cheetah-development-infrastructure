@@ -31,7 +31,7 @@ services:
 
   es-cfg:
     build:
-      context: ../config/elasticsearch
+      context: ./config/elasticsearch
       dockerfile: Dockerfile
     depends_on:
       es:

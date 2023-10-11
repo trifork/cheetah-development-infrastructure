@@ -42,7 +42,7 @@ services:
       LOG_DIR: "/tmp/logs"
       KAFKA_ROOT_LOGGER_LEVEL: debug
     volumes:
-      - ../config/kafka/server.properties:/opt/kafka/custom-config/server.properties
+      - ./config/kafka/server.properties:/opt/kafka/custom-config/server.properties
     healthcheck:
       test: nc -z kafka 19092 || exit -1
       start_period: 15s
@@ -59,8 +59,8 @@ services:
     platform: linux/amd64
     container_name: kafka-setup
     volumes:
-      - ../config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
-      - ../config/kafka/kafkasetup.config:/etc/config/kafkasetup.config
+      - ./config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
+      - ./config/kafka/kafkasetup.config:/etc/config/kafkasetup.config
     command: "bash /etc/config/kafkaconfig.sh"
     depends_on:
       kafka:
@@ -84,7 +84,7 @@ services:
     environment:
       CONFIG_FILEPATH: /tmp/config.yml
     volumes:
-      - ../config/redpanda.yaml:/tmp/config.yml
+      - ./config/redpanda.yaml:/tmp/config.yml
     ports:
       - "9898:8080"
     healthcheck:
