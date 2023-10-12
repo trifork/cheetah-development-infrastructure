@@ -72,6 +72,7 @@ services:
       # We override the image's `command` anyways, hence this container will not start a broker.
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
+      KAFKA_TOPICS: ${INITIAL_KAFKA_TOPICS}
     profiles:
       - kafka
       - full
