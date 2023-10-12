@@ -28,7 +28,7 @@ jobs:
       #- name: docker network create cheetah-infrastructure
       #  run: docker network create cheetah-infrastructure
       - name: Run development environment
-        run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry up --quiet-pull --force-recreate -d 
+        run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry up --quiet-pull --force-recreate -d
 
       - name: Start mye2eclient container in shared network
         run: docker run -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:latest
@@ -48,7 +48,7 @@ jobs:
 
       - name: Check docker health
         run: |
-          echo $(docker compose ps -a | grep 'unhealthy')
+          $(docker compose ps -a | grep 'unhealthy')
           docker compose ps -a | grep 'unhealthy' && echo "Services unhealthy" && exit 1 || exit 0
 
       - name: opensearch test
