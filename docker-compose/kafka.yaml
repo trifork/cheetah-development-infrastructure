@@ -100,6 +100,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+      cheetah.oauth.simulator:
+        condition: service_healthy
       schema-registry:
         condition: service_healthy
       kafka-setup:
