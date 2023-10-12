@@ -25,7 +25,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
-      
+
       # OpenSearch is required for integration tests
       # - name: docker network create cheetah-infrastructure
       #  run: docker network create cheetah-infrastructure
@@ -61,5 +61,6 @@ jobs:
 
       - name: schemaregistry test
         run: docker exec mye2eclient bash /opt/tests/schemaregistry.sh
+
     # - name: "see logs"
     #   run: docker logs cheetah-lib-templates-java-e2e-job-name-job
