@@ -49,7 +49,7 @@ cache_header="cache-control: no-cache"
 os_url="http://opensearch:9200"
 
 service_token=$(get_default_access_token $TENANT)
-admin_token=$(get_customaccess_token $TENANT 'admin')
+#admin_token=$(get_customaccess_token $TENANT 'admin')
 
 echo "INFO - indices lookup with anonymous user:"
 if curl -s --fail-with-body -k "$os_url/_cat/indices" -H "$cache_header" ; then
