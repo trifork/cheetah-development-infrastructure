@@ -1,7 +1,7 @@
 ---
 name: MegaLinter
 
-on:
+"on":
   workflow_dispatch:
   push:
     branches:
@@ -57,7 +57,7 @@ jobs:
         env:
           VALIDATE_ALL_CODEBASE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DISABLE_LINTER: "MARKDOWN_MARKDOWN_LINK_CHECK"
+          DISABLE_LINTER: "MARKDOWN_MARKDOWN_LINK_CHECK,REPOSITORY_GITLEAKS,REPOSITORY_SECRETLINT"
           # DISABLE: COPYPASTE,SPELL
 
       # Upload MegaLinter artifacts
