@@ -13,6 +13,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       LOG_DIR: /tmp/logs
     mem_limit: 512m
+    restart: unless-stopped
     profiles:
       - kafka
       - core
@@ -44,6 +45,7 @@ services:
       KAFKA_ROOT_LOGGER_LEVEL: debug
     volumes:
       - ./config/kafka/server.properties:/opt/kafka/custom-config/server.properties
+    restart: unless-stopped
     healthcheck:
       test: nc -z kafka 19092 || exit -1
       start_period: 15s
@@ -136,6 +138,7 @@ services:
         condition: service_completed_successfully
     ports:
       - "8081:8080" # http://localhost:8081/ui/
+    restart: unless-stopped
     environment:
       # Kafka
       ENABLE_KAFKA_SASL: true
