@@ -16,6 +16,8 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  checks: write
+  actions: write
 
 env:
   # When active, APPLY_FIXES must also be defined as environment variable
