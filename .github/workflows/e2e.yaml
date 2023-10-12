@@ -61,6 +61,3 @@ jobs:
 
       - name: schemaregistry test
         run: docker exec mye2eclient bash /opt/tests/schemaregistry.sh
-
-    # - name: "see logs"
-    #   run: docker logs cheetah-lib-templates-java-e2e-job-name-job

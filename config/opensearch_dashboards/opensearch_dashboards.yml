@@ -2,7 +2,7 @@
 # Documentation: https://opensearch.org/docs/latest/dashboards/branding/#sample-configuration
 server.name: kibana
 server.host: "0.0.0.0"
-server.customResponseHeaders: {"Access-Control-Allow-Credentials": "true"}
+server.customResponseHeaders: {"Access-Control-Allow-Credentials":"true"}
 # server.ssl.enabled: true
 server.ssl.certificate: /usr/share/opensearch-dashboards/config/opensearch_dashboards.crt
 server.ssl.key: /usr/share/opensearch-dashboards/config/opensearch_dashboards.key
