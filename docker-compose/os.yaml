@@ -1,23 +1,24 @@
+---
 version: "2.1"
 
 services:
   # login fallback: admin:admin
   # services should use oauth
   opensearch:
-    image: cheetah-opensearch
+    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:latest
     hostname: opensearch
-    build:
-      context: ./config/opensearch/
-      dockerfile: Dockerfile
-      args:
-        - OPENSEARCH_VERSION=2.6.0
+    # build:
+    #    context: ./config/opensearch/
+    #    dockerfile: Dockerfile
+    #    args:
+    #      - OPENSEARCH_VERSION=2.6.0
     environment:
       - cluster.name=opensearch-cluster
       - node.name=os01
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-      #- DISABLE_SECURITY_PLUGIN=true
+      # - DISABLE_SECURITY_PLUGIN=true
       - DISABLE_INSTALL_DEMO_CONFIG=true
     depends_on:
       cheetah.oauth.simulator:
@@ -89,7 +90,7 @@ services:
       - ./config/opensearch_dashboards/opensearch_dashboards.key:/usr/share/opensearch-dashboards/config/opensearch_dashboards.key
     environment:
       - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
-      #- DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    # - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
     depends_on:
       opensearch:
         condition: service_healthy

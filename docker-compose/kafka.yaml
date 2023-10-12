@@ -1,3 +1,4 @@
+---
 version: "2.1"
 
 services:
@@ -159,7 +160,7 @@ services:
       quarkus.oidc.enabled: true
       quarkus.oidc.auth-server-url: http://cheetahoauthsimulator:80
       quarkus.oidc.jwks-path: /.well-known/jwks.json
-      #quarkus.log.level: DEBUG
+      # quarkus.log.level: DEBUG
       quarkus.oidc.roles.role-claim-path: roles
 
     healthcheck:

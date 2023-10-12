@@ -1,5 +1,6 @@
+---
 name: "e2e"
-on:
+"on":
   workflow_dispatch:
 
   push:
@@ -24,11 +25,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
-        # OpenSearch is required for integration tests
-      #- name: docker network create cheetah-infrastructure
+
+      # OpenSearch is required for integration tests
+      # - name: docker network create cheetah-infrastructure
       #  run: docker network create cheetah-infrastructure
       - name: Run development environment
-        run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry up --quiet-pull --force-recreate -d 
+        run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry up --quiet-pull --force-recreate -d
 
       - name: Start mye2eclient container in shared network
         run: docker run -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:latest
@@ -59,5 +61,3 @@ jobs:
 
       - name: schemaregistry test
         run: docker exec mye2eclient bash /opt/tests/schemaregistry.sh
-      #- name: "see logs"
-      #  run: docker logs cheetah-lib-templates-java-e2e-job-name-job

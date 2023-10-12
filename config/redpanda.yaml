@@ -1,3 +1,4 @@
+---
 # See: https://github.com/cloudhut/kowl/tree/master/docs/config for reference config files.
 kafka:
   brokers:
@@ -5,8 +6,8 @@ kafka:
   sasl:
     enabled: true
     mechanism: OAUTHBEARER
-    #username: redpanda
-    #password: password
+    # username: redpanda
+    # password: password
     oauth:
       tokenEndpoint: http://cheetahoauthsimulator:80/oauth2/token
       clientId: redpanda

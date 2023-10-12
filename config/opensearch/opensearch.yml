@@ -1,22 +1,23 @@
+---
 # Documentation: https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/
 cluster.name: docker-singlenode
 
 # Bind to all interfaces because we don't know what IP address Docker will assign to us.
 network.host: 0.0.0.0
 
-#plugins.security.ssl.transport.enabled: true
+# plugins.security.ssl.transport.enabled: true
 plugins.security.ssl.transport.pemcert_filepath: esnode.pem
 plugins.security.ssl.transport.pemkey_filepath: esnode-key.pem
 plugins.security.ssl.transport.pemtrustedcas_filepath: root-ca.pem
 plugins.security.ssl.transport.enforce_hostname_verification: false
-#plugins.security.ssl.http.enabled: true
+# plugins.security.ssl.http.enabled: true
 plugins.security.ssl.http.pemcert_filepath: esnode.pem
 plugins.security.ssl.http.pemkey_filepath: esnode-key.pem
 plugins.security.ssl.http.pemtrustedcas_filepath: root-ca.pem
 plugins.security.allow_unsafe_democertificates: true
 plugins.security.allow_default_init_securityindex: true
 plugins.security.ssl.http.clientauth_mode: OPTIONAL
-#plugins.security.authcz.rest_impersonation_user:
+# plugins.security.authcz.rest_impersonation_user:
 #  "impersonator":
 #    - "*"
 plugins.security.authcz.admin_dn:
