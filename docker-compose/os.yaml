@@ -67,8 +67,8 @@ services:
       opensearch:
         condition: service_healthy
     volumes:
-      # TODO: when the base directory is configurable, use the following instead
-      # - ./config/opensearch-configurer/:/path/to/basedir/
+    # TODO: when the base directory is configurable, use the following instead
+    # - ./config/opensearch-configurer/:/path/to/basedir/
       - ./config/opensearch-configurer/lifecycle_policies/:/app/lifecycle_policies/
       - ./config/opensearch-configurer/pipelines/:/app/pipelines/
       - ./config/opensearch-configurer/component_templates/:/app/component_templates/
@@ -90,7 +90,7 @@ services:
       - ./config/opensearch_dashboards/opensearch_dashboards.key:/usr/share/opensearch-dashboards/config/opensearch_dashboards.key
     environment:
       - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
-      #- DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    # - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
     depends_on:
       opensearch:
         condition: service_healthy

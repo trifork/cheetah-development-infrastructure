@@ -33,4 +33,3 @@ config:
             openid_connect_url: http://cheetahoauthsimulator:80/.well-known/openid-configuration
         authentication_backend:
           type: noop # unnecessary
-
