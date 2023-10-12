@@ -7,18 +7,18 @@ services:
   opensearch:
     image: ${DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:latest
     hostname: opensearch
-  # build:
-  #    context: ./config/opensearch/
-  #    dockerfile: Dockerfile
-  #    args:
-  #      - OPENSEARCH_VERSION=2.6.0
+    # build:
+    #    context: ./config/opensearch/
+    #    dockerfile: Dockerfile
+    #    args:
+    #      - OPENSEARCH_VERSION=2.6.0
     environment:
       - cluster.name=opensearch-cluster
       - node.name=os01
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-    # - DISABLE_SECURITY_PLUGIN=true
+      # - DISABLE_SECURITY_PLUGIN=true
       - DISABLE_INSTALL_DEMO_CONFIG=true
     depends_on:
       cheetah.oauth.simulator:
@@ -67,8 +67,8 @@ services:
       opensearch:
         condition: service_healthy
     volumes:
-    # TODO: when the base directory is configurable, use the following instead
-    # - ./config/opensearch-configurer/:/path/to/basedir/
+      # TODO: when the base directory is configurable, use the following instead
+      # - ./config/opensearch-configurer/:/path/to/basedir/
       - ./config/opensearch-configurer/lifecycle_policies/:/app/lifecycle_policies/
       - ./config/opensearch-configurer/pipelines/:/app/pipelines/
       - ./config/opensearch-configurer/component_templates/:/app/component_templates/

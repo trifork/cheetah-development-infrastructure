@@ -9,7 +9,7 @@ services:
     image: ${DOCKER_REGISTRY-}cheetah-oauth-simulator:1.7.2
     platform: linux/amd64
     environment:
-    # - ASPNETCORE_ENVIRONMENT=Development
+      # - ASPNETCORE_ENVIRONMENT=Development
       - OAuth__Mode=Asymmetric
       - Simulator__DefaultKafkaRole=*_all
     profiles:

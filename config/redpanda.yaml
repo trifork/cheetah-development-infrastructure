@@ -6,8 +6,8 @@ kafka:
   sasl:
     enabled: true
     mechanism: OAUTHBEARER
-  # username: redpanda
-  # password: password
+    # username: redpanda
+    # password: password
     oauth:
       tokenEndpoint: http://cheetahoauthsimulator:80/oauth2/token
       clientId: redpanda
