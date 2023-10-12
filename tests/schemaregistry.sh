@@ -17,7 +17,8 @@ function get_default_access_token() {
     cache-control:'no-cache' \
     grant_type=client_credentials scope= client_id="$tenant" client_secret=123
   )
-  local access_token=$(printf '%s' "$response" | jq -r '.access_token')
+  local access_token
+  access_token=$(printf '%s' "$response" | jq -r '.access_token')
   echo "$access_token"
 }
 

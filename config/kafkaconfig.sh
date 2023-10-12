@@ -1,4 +1,4 @@
-#!/usr/bin bash
+#!/bin/bash
 
 echo "Creating Kafka User redpanda"
 bash bin/kafka-configs.sh --bootstrap-server kafka:19093 --alter --add-config 'SCRAM-SHA-512=[password=password]' --entity-type users --entity-name redpanda

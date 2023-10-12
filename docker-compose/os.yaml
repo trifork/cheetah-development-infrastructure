@@ -7,11 +7,11 @@ services:
   opensearch:
     image: ${DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:latest
     hostname: opensearch
-    #build:
-    #   context: ./config/opensearch/
-    #   dockerfile: Dockerfile
-    #   args:
-    #     - OPENSEARCH_VERSION=2.6.0
+  # build:
+  #    context: ./config/opensearch/
+  #    dockerfile: Dockerfile
+  #    args:
+  #      - OPENSEARCH_VERSION=2.6.0
     environment:
       - cluster.name=opensearch-cluster
       - node.name=os01
