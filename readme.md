@@ -31,7 +31,7 @@ The kafka setup consists of different services:
 - **kafka** - Strimzi Kafka with the [Cheetah Kafka Authorizer](https://github.com/trifork/cheetah-infrastructure-utils-kafka)
 - **zookeeper** - Strimzi Zookeeper
 - **redpanda** - A Console provides a user interface to manage multiple Kafka connect clusters. <https://docs.redpanda.com/docs/manage/console/>
-- **kafka-setup** - A bash script which sets up a Kafka User for redpanda to use when connecting to Kafka, as well as some predefined topics.
+- **kafka-setup** - A bash script which sets up a Kafka User for redpanda to use when connecting to Kafka, as well as some predefined topics. The topics to be created are determined by the environment variable INITIAL_KAFKA_TOPICS, which can be set in the `.env` file or overritten in your local environment. 
 - **schema-registry** - [Schema registry](https://www.apicur.io/registry/docs/apicurio-registry/2.4.x/index.html)
 - **kafka-minion** - [Kafka Prometheus exporter](https://github.com/cloudhut/kminion)
 
