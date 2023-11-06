@@ -18,7 +18,6 @@ services:
       - kafka
       - core
       - full
-      - schema-registry
 
   # Not enabled by default
   cheetah.oauth.simulator.https:

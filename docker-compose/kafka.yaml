@@ -18,7 +18,6 @@ services:
       - kafka
       - core
       - full
-      - schema-registry
 
   kafka:
     image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.33.0-kafka-3.3.2-trifork-1.4.0
@@ -57,7 +56,6 @@ services:
       - kafka
       - core
       - full
-      - schema-registry
 
   kafka-setup:
     image: quay.io/strimzi/kafka:0.33.2-kafka-3.3.2
@@ -79,8 +77,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: ignored
       KAFKA_TOPICS: ${INITIAL_KAFKA_TOPICS}
     profiles:
-      - schema-registry
       - kafka
+      - core
       - full
 
   redpanda:
@@ -178,8 +176,8 @@ services:
       timeout: 10s
       retries: 10
     profiles:
-      - schema-registry
       - kafka
+      - core
       - full
 
 networks:
