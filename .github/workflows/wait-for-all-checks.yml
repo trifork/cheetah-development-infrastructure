@@ -1,3 +1,4 @@
+---
 name: summary
 on:
   pull_request:
