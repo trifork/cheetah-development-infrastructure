@@ -69,11 +69,11 @@ services:
     volumes:
       # TODO: when the base directory is configurable, use the following instead
       # - ./config/opensearch-configurer/:/path/to/basedir/
-      - ./config/opensearch-configurer/lifecycle_policies/:/app/lifecycle_policies/
-      - ./config/opensearch-configurer/pipelines/:/app/pipelines/
-      - ./config/opensearch-configurer/component_templates/:/app/component_templates/
-      - ./config/opensearch-configurer/index_templates/:/app/index_templates/
-      - ./config/opensearch-configurer/cluster/:/app/cluster/
+      - ./config/opensearch-configurer/lifecycle_policies/:/app/tmp/lifecycle_policies/
+      - ./config/opensearch-configurer/pipelines/:/app/tmp/pipelines/
+      - ./config/opensearch-configurer/component_templates/:/app/tmp/component_templates/
+      - ./config/opensearch-configurer/index_templates/:/app/tmp/index_templates/
+      - ./config/opensearch-configurer/cluster/:/app/tmp/cluster/
     profiles:
       - opensearch
       - full
