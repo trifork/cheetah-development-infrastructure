@@ -1,0 +1,134 @@
+{
+    "realm": "local-development",
+    "enabled": true,
+    "roles": {
+      "client": {
+        "flink": [],
+        "opensearch": [
+          {
+            "name": "opensearch_*_read"
+          },
+          {
+            "name": "opensearch_*_write"
+          }
+        ],
+        "kafka": [
+          {
+            "name": "kafka_*_describe"
+          },
+          {
+            "name": "kafka_*_all"
+          }
+        ]
+      }
+    },
+    "users": [
+      {
+        "username": "service-account-flink",
+        "enabled": true,
+        "serviceAccountClientId": "flink",
+        "clientRoles": {
+          "opensearch": [
+            "opensearch_*_write",
+            "opensearch_*_read"
+          ],
+          "kafka": [
+            "kafka_*_all"
+          ]
+        }
+      },
+      {
+        "username": "service-account-storage-job",
+        "enabled": true,
+        "serviceAccountClientId": "storage-job",
+        "clientRoles": {
+          "opensearch": [
+            "opensearch_*_write"
+          ],
+          "kafka": [
+            "kafka_*_all"
+          ]
+        }
+      }
+    ],
+    "clients": [
+      {
+        "clientId": "flink",
+        "name": "flink",
+        "enabled": true,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "flink-secret",
+        "serviceAccountsEnabled": true,
+        "publicClient": false,
+        "optionalClientScopes": [
+          "opensearch",
+          "kafka"
+        ]
+      },
+      {
+        "clientId": "storage-job",
+        "name": "storage-job",
+        "enabled": true,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "storage-job-secret",
+        "serviceAccountsEnabled": true,
+        "publicClient": false,
+        "optionalClientScopes": [
+          "opensearch",
+          "kafka"
+        ]
+      },
+      {
+        "clientId": "opensearch",
+        "name": "opensearch"
+      },
+      {
+        "clientId": "kafka",
+        "name": "kafka"
+      }
+    ],
+    "clientScopes": [
+      {
+        "name": "opensearch",
+        "protocol": "openid-connect",
+        "protocolMappers": [
+          {
+            "name": "client roles",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-usermodel-client-role-mapper",
+            "consentRequired": false,
+            "config": {
+              "multivalued": "true",
+              "access.token.claim": "true",
+              "claim.name": "roles",
+              "jsonType.label": "String",
+              "usermodel.clientRoleMapping.clientId": "opensearch"
+            }
+          }
+        ]
+      },
+      {
+        "name": "kafka",
+        "protocol": "openid-connect",
+        "protocolMappers": [
+          {
+            "name": "client roles",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-usermodel-client-role-mapper",
+            "config": {
+              "multivalued": "true",
+              "access.token.claim": "true",
+              "claim.name": "roles",
+              "jsonType.label": "String",
+              "usermodel.clientRoleMapping.clientId": "kafka"
+            }
+          }
+        ]
+      }
+    ],
+    "defaultDefaultClientScopes": [],
+    "defaultOptionalClientScopes": [
+      "opensearch",
+      "kafka"
+    ]
+  }

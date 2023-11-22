@@ -1,0 +1,30 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.5
+    command:
+      - "start-dev"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: true
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3"]
+      interval: 3s
+      timeout: 1s
+      retries: 30
+  keycloak-cli:
+    image: quay.io/adorsys/keycloak-config-cli:5.9.0-22.0.4
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    volumes:
+      - ./config/keycloak:/config
+    environment:
+      - KEYCLOAK_URL=http://keycloak:8080
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_AVAILABILITY-CHECK_ENABLED=true
+      - SPRING_PROFILES_ACTIVE=dev
+      - IMPORT_CACHE_ENABLED=false
