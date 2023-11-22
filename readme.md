@@ -61,7 +61,8 @@ When all of the services are running, you can go to:
 
 ### Authentication
 
-To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [server.properties](/config/kafka/server.properties). This will cause all connections from unauthenticated sources to be rejected by `CheetahKafkaAuthorizer`.
+To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [server.properties](/config/kafka/server.properties).  
+This will cause all connections from unauthenticated sources to be rejected by `CheetahKafkaAuthorizer`.
 
 ## OpenSearch
 
@@ -89,8 +90,34 @@ When all of the services are running, you can go to:
 
 ### Authentication
 
-Services should connect using the OAuth2 protocol. When working locally, you can use `admin:admin` user. This is only possibly locally.
+Services should connect using the OAuth2 protocol.  
 You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SECURITY_PLUGIN=true` to disable security completely.
+
+#### Basic auth access
+
+When working locally, you can use `admin:admin` user and query OpenSearch like this:
+
+```sh
+curl -k -s -u "admin:admin" $OPENSEARCH_URL/_cat/indices
+```
+
+#### OAuth2 token
+
+If you do not want to use basicauth locally, you can get a token using this curl command:
+
+```sh
+ACCESS_TOKEN=$(curl -s -X POST $OPENSEARCH_TOKEN_URL \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "grant_type=client_credentials&client_id=$OPENSEARCH_CLIENT_ID&client_secret=$OPENSEARCH_CLIENT_SECRET&scope=$OPENSEARCH_SCOPE" \
+     | jq -r '.access_token')
+     #| grep -o '"access_token":"[^"]*' | grep -o '[^"]*$')
+```
+
+And query OpenSearch like this:
+
+```sh
+curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
+```
 
 ## List of all profiles in docker compose
 
