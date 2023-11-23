@@ -3,7 +3,7 @@
 set -euo pipefail
 
 sr_url="http://schema-registry:8080"
-TENANT=1
+TENANT=flink
 GROUPID=124
 empty_token=""
 
@@ -12,7 +12,7 @@ function get_default_access_token() {
 	local response
 
 	response=$(
-		http --check-status --ignore-stdin --follow --all --form POST 'http://cheetahoauthsimulator:80/oauth2/token' \
+		http --check-status --ignore-stdin --follow --all --form POST 'http://keycloak:8080/realms/local-development/protocol/openid-connect/token' \
 			accept:'*/*' \
 			Content-Type:'application/x-www-form-urlencoded' \
 			cache-control:'no-cache' \
