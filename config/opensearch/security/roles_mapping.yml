@@ -22,10 +22,10 @@ _meta:
 #     - "claimtest_full_access"
 #   description: "claimtest_full_access"
 
-default_service:
+opensearch_all_access:
   reserved: true
   backend_roles:
-    - "default_service"
+    - "opensearch_all_access"
   description: "Default role for all services"
 
 ## Demo roles mapping

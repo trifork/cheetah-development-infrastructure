@@ -40,7 +40,7 @@ _meta:
 #         - "data_access"
 #         - "indices_monitor"
 
-default_service:
+opensearch_all_access:
   reserved: true # can’t be changed using the REST API
   cluster_permissions:
     - "cluster:monitor/health"

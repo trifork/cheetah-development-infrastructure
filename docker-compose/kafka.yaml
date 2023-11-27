@@ -89,7 +89,7 @@ services:
     environment:
       CONFIG_FILEPATH: /tmp/config.yml
     volumes:
-      - ./config/redpanda.yaml:/tmp/config.yml
+      - ./config/redpanda-cluster.yaml:/tmp/config.yml
     ports:
       - "9898:8080"
     healthcheck:
@@ -145,8 +145,9 @@ services:
     environment:
       # Kafka
       ENABLE_KAFKA_SASL: true
-      CLIENT_ID: sr
-      CLIENT_SECRET: testSecret
+      CLIENT_ID: kafka-admin
+      CLIENT_SECRET: kafka-admin-secret
+      SCOPE: schema-registry
       OAUTH_TOKEN_ENDPOINT_URI: http://keycloak:8080/realms/local-development/protocol/openid-connect/token
       KAFKA_BOOTSTRAP_SERVERS: kafka:19092
       KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT

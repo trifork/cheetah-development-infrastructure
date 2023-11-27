@@ -61,8 +61,10 @@ services:
     image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:latest
     command: "opensearch:9200 --service"
     environment:
-      - OS_USER=admin
-      - OS_PASS=admin
+      - OS_USER=opensearch-admin
+      - OS_PASS=opensearch-admin-secret
+      - OS_SCOPE=opensearch
+      - OS_TOKENENDPOINT=http://keycloak:8080/realms/local-development/protocol/openid-connect/token
     depends_on:
       opensearch:
         condition: service_healthy

@@ -3,11 +3,11 @@
     "enabled": true,
     "roles": {
       "client": {
-        "flink": [],
+        "default-access": [],
         "redpanda": [],
         "opensearch": [
           {
-            "name": "default_service"
+            "name": "opensearch_all_access"
           }
         ],
         "kafka": [
@@ -27,16 +27,42 @@
     },
     "clients": [
       {
-        "clientId": "flink",
-        "name": "flink",
+        "clientId": "default-access",
+        "name": "default-access",
         "enabled": true,
         "clientAuthenticatorType": "client-secret",
-        "secret": "flink-secret",
+        "secret": "default-access-secret",
         "serviceAccountsEnabled": true,
         "publicClient": false,
         "optionalClientScopes": [
           "opensearch",
-          "kafka"
+          "kafka",
+          "schema-registry"
+        ]
+      },
+      {
+        "clientId": "kafka-admin",
+        "name": "kafka-admin",
+        "enabled": true,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "kafka-admin-secret",
+        "serviceAccountsEnabled": true,
+        "publicClient": false,
+        "optionalClientScopes": [
+          "kafka",
+          "schema-registry"
+        ]
+      },
+      {
+        "clientId": "opensearch-admin",
+        "name": "opensearch-admin",
+        "enabled": true,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "opensearch-admin-secret",
+        "serviceAccountsEnabled": true,
+        "publicClient": false,
+        "optionalClientScopes": [
+          "opensearch"
         ]
       },
       {
@@ -80,12 +106,12 @@
     ],
     "users": [
       {
-        "username": "service-account-flink",
+        "username": "service-account-default-access",
         "enabled": true,
-        "serviceAccountClientId": "flink",
+        "serviceAccountClientId": "default-access",
         "clientRoles": {
           "opensearch": [
-            "default_service"
+            "opensearch_all_access"
           ],
           "kafka": [
             "Kafka_*_all"
@@ -96,12 +122,35 @@
         }
       },
       {
+        "username": "service-account-kafka-admin",
+        "enabled": true,
+        "serviceAccountClientId": "kafka-admin",
+        "clientRoles": {
+          "kafka": [
+            "Kafka_*_all"
+          ],
+          "schema-registry": [
+            "sr-producer"
+          ]
+        }
+      },
+      {
+        "username": "service-account-opensearch-admin",
+        "enabled": true,
+        "serviceAccountClientId": "opensearch-admin",
+        "clientRoles": {
+          "opensearch": [
+            "opensearch_all_access"
+          ]
+        }
+      },
+      {
         "username": "service-account-storage-job",
         "enabled": true,
         "serviceAccountClientId": "storage-job",
         "clientRoles": {
           "opensearch": [
-            "default_service"
+            "opensearch_all_access"
           ],
           "kafka": [
             "Kafka_*_all"
