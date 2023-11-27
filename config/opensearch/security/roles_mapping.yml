@@ -23,7 +23,6 @@ _meta:
 #   description: "claimtest_full_access"
 
 opensearch_all_access:
-  reserved: true
   backend_roles:
     - "opensearch_all_access"
   description: "Default role for all services"

@@ -64,6 +64,7 @@ opensearch_all_access:
         - "indices:admin/get"
         - "indices:admin/create"
         - "indices:admin/delete"
+        - "indices:admin/refresh*"
 
 # Restrict users so they can only view visualization and dashboard on OpenSearchDashboards
 kibana_read_only:
