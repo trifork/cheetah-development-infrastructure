@@ -22,6 +22,11 @@ _meta:
 #     - "claimtest_full_access"
 #   description: "claimtest_full_access"
 
+#opendistro_security_anonymous:
+#  reserved: true
+#  backend_roles:
+#    - "opendistro_security_anonymous_backendrole"
+
 default_service:
   reserved: true
   backend_roles:
