@@ -10,22 +10,17 @@ _meta:
 
 # Define your roles mapping here
 
-# claimtest_read_access:
-#   reserved: true
-#   backend_roles:
-#     - "claimtest_read_access"
-#   description: "claimtest_read_access"
-
-# claimtest_full_access:
-#   reserved: true
-#   backend_roles:
-#     - "claimtest_full_access"
-#   description: "claimtest_full_access"
-
-opensearch_all_access:
+default_write:
   backend_roles:
-    - "opensearch_all_access"
-  description: "Default role for all services"
+    - "opensearch_default_write"
+
+default_read:
+  backend_roles:
+    - "opensearch_default_read"
+
+developer:
+  backend_roles:
+    - "opensearch_developer"
 
 ## Demo roles mapping
 
@@ -33,6 +28,7 @@ all_access:
   reserved: false
   backend_roles:
     - "admin"
+    - "opensearch_all_access"
   description: "Maps admin to all_access"
 
 own_index:
@@ -41,28 +37,8 @@ own_index:
     - "*"
   description: "Allow full access to an index named like the username"
 
-logstash:
+dashboard:
   reserved: false
-  backend_roles:
-    - "logstash"
-
-kibana_user:
-  reserved: false
-  backend_roles:
-    - "kibanauser"
-  description: "Maps kibanauser to kibana_user"
-
-readall:
-  reserved: false
-  backend_roles:
-    - "readall"
-
-manage_snapshots:
-  reserved: false
-  backend_roles:
-    - "snapshotrestore"
-
-kibana_server:
-  reserved: true
   users:
-    - "kibanaserver"
+    - "dashboard"
+  description: "Maps kibanaserver to dashboard"

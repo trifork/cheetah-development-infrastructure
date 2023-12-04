@@ -89,7 +89,7 @@ services:
     environment:
       CONFIG_FILEPATH: /tmp/config.yml
     volumes:
-      - ./config/redpanda-cluster.yaml:/tmp/config.yml
+      - ./config/redpanda-admin.yaml:/tmp/config.yml
     ports:
       - "9898:8080"
     healthcheck:

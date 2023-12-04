@@ -7,6 +7,9 @@ _meta:
 
 config:
   dynamic:
+    kibana:
+      multitenancy_enabled: false
+      server_username: dashboard
     http:
       anonymous_auth_enabled: true
     authc:

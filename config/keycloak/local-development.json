@@ -3,11 +3,18 @@
     "enabled": true,
     "roles": {
       "client": {
-        "default-access": [],
-        "redpanda": [],
         "opensearch": [
           {
             "name": "opensearch_all_access"
+          },
+          {
+            "name": "opensearch_default_write"
+          },
+          {
+            "name": "opensearch_default_read"
+          },
+          {
+            "name": "opensearch_developer"
           }
         ],
         "kafka": [
@@ -26,6 +33,51 @@
       }
     },
     "clients": [
+      {
+        "clientId": "users",
+        "name": "users",
+        "enabled": true,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "users-secret",
+        "serviceAccountsEnabled": false,
+        "publicClient": false,
+        "optionalClientScopes": [
+          "kafka",
+          "schema-registry",
+          "opensearch"
+        ],
+        "redirectUris": [
+          "*"
+        ]
+      },
+      {
+        "clientId": "default-write",
+        "name": "default-write",
+        "enabled": true,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "default-write-secret",
+        "serviceAccountsEnabled": true,
+        "publicClient": false,
+        "optionalClientScopes": [
+          "kafka",
+          "schema-registry",
+          "opensearch"
+        ]
+      },
+      {
+        "clientId": "default-read",
+        "name": "default-read",
+        "enabled": true,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "default-read-secret",
+        "serviceAccountsEnabled": true,
+        "publicClient": false,
+        "optionalClientScopes": [
+          "kafka",
+          "schema-registry",
+          "opensearch"
+        ]
+      },
       {
         "clientId": "default-access",
         "name": "default-access",
@@ -106,6 +158,29 @@
     ],
     "users": [
       {
+        "username": "developer",
+        "enabled": true,
+        "credentials": [
+          {
+            "type": "password",
+            "value": "developer",
+            "temporary": false
+          }
+        ],
+        "clientRoles": {
+          "opensearch": [
+            "opensearch_default_read",
+            "opensearch_developer"
+          ],
+          "kafka": [
+            "Kafka_*_all"
+          ],
+          "schema-registry": [
+            "sr-producer"
+          ]
+        }
+      },
+      {
         "username": "service-account-default-access",
         "enabled": true,
         "serviceAccountClientId": "default-access",
@@ -128,6 +203,38 @@
         "clientRoles": {
           "kafka": [
             "Kafka_*_all"
+          ],
+          "schema-registry": [
+            "sr-producer"
+          ]
+        }
+      },
+      {
+        "username": "service-account-default-write",
+        "enabled": true,
+        "serviceAccountClientId": "default-write",
+        "clientRoles": {
+          "kafka": [
+            "Kafka_*_all"
+          ],
+          "opensearch": [
+            "opensearch_default_write"
+          ],
+          "schema-registry": [
+            "sr-producer"
+          ]
+        }
+      },
+      {
+        "username": "service-account-default-read",
+        "enabled": true,
+        "serviceAccountClientId": "default-read",
+        "clientRoles": {
+          "kafka": [
+            "Kafka_*_all"
+          ],
+          "opensearch": [
+            "opensearch_default_read"
           ],
           "schema-registry": [
             "sr-producer"
@@ -184,6 +291,7 @@
             "config": {
               "multivalued": "true",
               "access.token.claim": "true",
+              "id.token.claim": "true",
               "claim.name": "roles",
               "jsonType.label": "String",
               "usermodel.clientRoleMapping.clientId": "opensearch"
@@ -202,6 +310,7 @@
             "config": {
               "multivalued": "true",
               "access.token.claim": "true",
+              "id.token.claim": "true",
               "claim.name": "roles",
               "jsonType.label": "String",
               "usermodel.clientRoleMapping.clientId": "kafka"
@@ -220,6 +329,7 @@
             "config": {
               "multivalued": "true",
               "access.token.claim": "true",
+              "id.token.claim": "true",
               "claim.name": "roles",
               "jsonType.label": "String",
               "usermodel.clientRoleMapping.clientId": "schema-registry"

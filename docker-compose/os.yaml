@@ -21,8 +21,8 @@ services:
       # - DISABLE_SECURITY_PLUGIN=true
       - DISABLE_INSTALL_DEMO_CONFIG=true
     depends_on:
-      cheetah.oauth.simulator:
-        condition: service_healthy
+      keycloak-setup:
+        condition: service_completed_successfully
     mem_limit: 2048m
     ulimits:
       memlock:
@@ -53,9 +53,9 @@ services:
       - full
     healthcheck:
       test: curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      interval: 5s
+      timeout: 3s
+      retries: 30
 
   opensearch-configurer:
     image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:latest
@@ -65,6 +65,7 @@ services:
       - OS_PASS=opensearch-admin-secret
       - OS_SCOPE=opensearch
       - OS_TOKENENDPOINT=http://keycloak:8080/realms/local-development/protocol/openid-connect/token
+      - OAUTHLIB_INSECURE_TRANSPORT=true
     depends_on:
       opensearch:
         condition: service_healthy
