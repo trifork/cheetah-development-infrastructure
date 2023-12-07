@@ -31,7 +31,7 @@
           }
         ],
         "custom-role": [
-          {"name":"deviceidentity.write"},{"name":"deviceidentity.read"}
+          $(env:DEMO_ROLES_DEFINITION)
         ]
       }
     },
@@ -163,11 +163,11 @@
         "name": "custom-role"
       },
       {
-        "clientId": "DemoClient",
-        "name": "DemoClient",
+        "clientId": "$(env:DEMO_CLIENT_NAME)",
+        "name": "$(env:DEMO_CLIENT_NAME)",
         "enabled": true,
         "clientAuthenticatorType": "client-secret",
-        "secret": "DemoClientSecret",
+        "secret": "$(env:DEMO_CLIENT_SECRET)",
         "serviceAccountsEnabled": true,
         "publicClient": false,
         "defaultClientScopes": ["custom-role"]
@@ -295,12 +295,12 @@
         }
       },
       {
-        "username": "service-account-DemoClient",
+        "username": "service-account-$(env:DEMO_CLIENT_NAME)",
         "enabled": true,
-        "serviceAccountClientId": "DemoClient",
+        "serviceAccountClientId": "$(env:DEMO_CLIENT_NAME)",
         "clientRoles":
         {
-          "custom-role": ["deviceidentity.write","deviceidentity.read"]
+          "custom-role": $(env:DEMO_CLIENT_ROLES)
         }
       }
     ],
