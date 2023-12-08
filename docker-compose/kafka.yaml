@@ -15,8 +15,9 @@ services:
     mem_limit: 512m
     restart: unless-stopped
     profiles:
-      - kafka
+      - kafka-core
       - core
+      - kafka
       - full
 
   kafka:
@@ -53,8 +54,9 @@ services:
       timeout: 10s
       retries: 10
     profiles:
-      - kafka
+      - kafka-core
       - core
+      - kafka
       - full
 
   kafka-setup:
@@ -77,8 +79,9 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: ignored
       KAFKA_TOPICS: ${INITIAL_KAFKA_TOPICS}
     profiles:
-      - kafka
+      - kafka-core
       - core
+      - kafka
       - full
 
   redpanda:
@@ -176,8 +179,9 @@ services:
       timeout: 10s
       retries: 10
     profiles:
-      - kafka
+      - schema-registry-core
       - core
+      - kafka
       - full
 
 networks:
