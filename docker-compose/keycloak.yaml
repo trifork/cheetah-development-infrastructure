@@ -16,13 +16,16 @@ services:
       interval: 3s
       timeout: 1s
       retries: 30
+
   keycloak-setup:
     image: quay.io/adorsys/keycloak-config-cli:5.9.0-22.0.4
+    user: root
+    entrypoint: ["/bin/bash", "-c", "mkdir -p /config && /tmp/keycloak_env_var_substitution.sh /tmp/local-development-pre-sub.json /config/local-development.json && exec \"$@\""]
     depends_on:
       keycloak:
         condition: service_healthy
     volumes:
-      - ./config/keycloak:/config
+      - ./config/keycloak_pre_substitution:/tmp
     environment:
       - KEYCLOAK_URL=http://keycloak:8080
       - KEYCLOAK_USER=admin

@@ -1,16 +1,13 @@
 #!/bin/bash
 
-# Input and output file names
-input_file="local-development-pre-sub.json"
-output_file="../keycloak/local-development.json"
+set -euo pipefail
 
-# Define the substitutions
-demo_client_roles='deviceidentity.write,deviceidentity.read'
-demo_client_secret='DemoClientSecret'
-demo_client_name='DemoClient'
+# Input and output file names
+input_file="$1"
+output_file="$2"
 
 # Split the demo_client_roles string into an array
-IFS=',' read -ra roles_array <<< "$demo_client_roles"
+IFS=',' read -ra roles_array <<< "$DEMO_CLIENT_ROLES"
 
 # Build the roles_definition_substitution string for $(env:DEMO_ROLES_DEFINITION)
 roles_definition_substitution=""
@@ -31,9 +28,7 @@ client_roles_substitution+="]"
 
 # Perform substitutions and save to output file
 sed -e "s/\$(env:DEMO_ROLES_DEFINITION)/$roles_definition_substitution/g" \
+    -e "s/\$(env:DEMO_CLIENT_NAME)/$DEMO_CLIENT_NAME/g" \
+    -e "s/\$(env:DEMO_CLIENT_SECRET)/$DEMO_CLIENT_SECRET/g" \
     -e "s/\$(env:DEMO_CLIENT_ROLES)/$client_roles_substitution/g" \
-    -e "s/\$(env:DEMO_CLIENT_SECRET)/$demo_client_secret/g" \
-    -e "s/\$(env:DEMO_CLIENT_NAME)/$demo_client_name/g" \
     "$input_file" > "$output_file"
-
-echo "Substitutions completed. Output saved to $output_file"
