@@ -3,17 +3,6 @@ _meta:
   type: "roles"
   config_version: 2
 
-# allow anonymous access as super admin
-#opendistro_security_anonymous:
-#  reserved: true
-#  cluster_permissions:
-#    - "*"
-#  index_permissions:
-#    - index_patterns:
-#        - "*"
-#      allowed_actions:
-#        - "*"
-
 # https://github.com/opensearch-project/security/blob/main/config/roles.yml
 
 default_write:

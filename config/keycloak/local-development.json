@@ -30,8 +30,8 @@
             "name": "sr-producer"
           }
         ],
-        "custom-role": [
-          {"name":"deviceidentity.write"},{"name":"deviceidentity.read"}
+        "custom-client": [
+          $(env:DEMO_ROLES_DEFINITION)
         ]
       }
     },
@@ -121,19 +121,6 @@
         ]
       },
       {
-        "clientId": "storage-job",
-        "name": "storage-job",
-        "enabled": true,
-        "clientAuthenticatorType": "client-secret",
-        "secret": "storage-job-secret",
-        "serviceAccountsEnabled": true,
-        "publicClient": false,
-        "optionalClientScopes": [
-          "opensearch",
-          "kafka"
-        ]
-      },
-      {
         "clientId": "redpanda",
         "name": "redpanda",
         "enabled": true,
@@ -159,18 +146,18 @@
         "name": "schema-registry"
       },
       {
-        "clientId": "custom-role",
-        "name": "custom-role"
+        "clientId": "custom-client",
+        "name": "custom-client"
       },
       {
-        "clientId": "DemoClient",
-        "name": "DemoClient",
+        "clientId": "$(env:DEMO_CLIENT_NAME)",
+        "name": "$(env:DEMO_CLIENT_NAME)",
         "enabled": true,
         "clientAuthenticatorType": "client-secret",
-        "secret": "DemoClientSecret",
+        "secret": "$(env:DEMO_CLIENT_SECRET)",
         "serviceAccountsEnabled": true,
         "publicClient": false,
-        "defaultClientScopes": ["custom-role"]
+        "defaultClientScopes": ["custom-client"]
       }
     ],
     "users": [
@@ -232,7 +219,7 @@
         "serviceAccountClientId": "default-write",
         "clientRoles": {
           "kafka": [
-            "Kafka_*_all"
+            "Kafka_*_write"
           ],
           "opensearch": [
             "opensearch_default_write"
@@ -248,13 +235,10 @@
         "serviceAccountClientId": "default-read",
         "clientRoles": {
           "kafka": [
-            "Kafka_*_all"
+            "Kafka_*_read"
           ],
           "opensearch": [
             "opensearch_default_read"
-          ],
-          "schema-registry": [
-            "sr-producer"
           ]
         }
       },
@@ -265,19 +249,6 @@
         "clientRoles": {
           "opensearch": [
             "opensearch_all_access"
-          ]
-        }
-      },
-      {
-        "username": "service-account-storage-job",
-        "enabled": true,
-        "serviceAccountClientId": "storage-job",
-        "clientRoles": {
-          "opensearch": [
-            "opensearch_all_access"
-          ],
-          "kafka": [
-            "Kafka_*_all"
           ]
         }
       },
@@ -295,12 +266,12 @@
         }
       },
       {
-        "username": "service-account-DemoClient",
+        "username": "service-account-$(env:DEMO_CLIENT_NAME)",
         "enabled": true,
-        "serviceAccountClientId": "DemoClient",
+        "serviceAccountClientId": "$(env:DEMO_CLIENT_NAME)",
         "clientRoles":
         {
-          "custom-role": ["deviceidentity.write","deviceidentity.read"]
+          "custom-client": $(env:DEMO_CLIENT_ROLES)
         }
       }
     ],
@@ -364,7 +335,7 @@
         ]
       },
       {
-        "name": "custom-role",
+        "name": "custom-client",
         "protocol": "openid-connect",
         "protocolMappers": [
           {
@@ -377,13 +348,15 @@
               "id.token.claim": "true",
               "claim.name": "roles",
               "jsonType.label": "String",
-              "usermodel.clientRoleMapping.clientId": "custom-role"
+              "usermodel.clientRoleMapping.clientId": "custom-client"
             }
           }
         ]
       }
     ],
-    "defaultDefaultClientScopes": [],
+    "defaultDefaultClientScopes": [
+      "custom-client"
+    ],
     "defaultOptionalClientScopes": [
       "opensearch",
       "kafka",

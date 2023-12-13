@@ -20,7 +20,7 @@ docker compose up --quiet-pull
 ### Security model
 
 The development infrastructure follows the [Reference Security Model](https://docs.cheetah.trifork.dev/reference/security).  
-For local development we are using [Cheetah OAuth Simulator](https://github.com/trifork/cheetah-infrastructure-utils-oauth) inside `docker-compose/oauth.yaml` as a local static IDP.
+For local development we are using [Keycloak](https://www.keycloak.org/) inside `docker-compose/keycloak.yaml` as a local IDP.
 
 See sections below for details on security model configuration.
 
@@ -79,7 +79,7 @@ Files placed in any subdirectory of [config/opensearch-configurer/](config/opens
 Run:
 
 ```bash
-docker compose --profile=opensearch --profile=oauth --profile=opensearch_dashboard up -d
+docker compose --profile=opensearch --profile=opensearch_dashboard up -d
 ```
 
 When all of the services are running, you can go to:
@@ -124,6 +124,7 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 **List of profiles:**
 
 - full
+- core
 - kafka
 - opensearch
 - observability
@@ -133,10 +134,97 @@ Here is further explanation on what each profile starts.
 |  Images / profiles   | full  | core  | kafka | opensearch | observability |
 | :------------------: | :---: | :---: | :---: | :--------: | :-----------: |
 |        Kafka         |   x   |   x   |   x   |            |               |
-|   OAuth simulator    |   x   |   x   |   x   |     x      |               |
+|       Keycloak       |   x   |   x   |   x   |     x      |               |
 |   Redpanda console   |   x   |       |   x   |            |               |
 |   Schema registry    |   x   |   x   |   x   |            |               |
 |      Opensearch      |   x   |   x   |       |     x      |               |
 | Opensearch dashboard |   x   |       |       |     x      |               |
+| Opensearch configurer|   x   |   x   |   x   |     x      |       x       |
 |      Prometheus      |   x   |       |       |            |       x       |
 |       Grafana        |   x   |       |       |            |       x       |
+
+## Keycloak
+
+Keycloak is used as a local identity provider, to be able to mimic a production security model with service to service authentication.
+
+### Useful urls:
+
+- OpenID Endpoint Configuration: http://localhost:8080/realms/local-development/.well-known/openid-configuration
+- Token Endpoint http://localhost:8080/realms/local-development/protocol/openid-connect/token 
+
+### Default clients:
+
+A set of default clients have been defined which covers most common usecases.
+
+All roles are mapped to the `roles` claim in the JWT. This configuration is defined in [local-development.json](./config/keycloak/local-development.json) and is applied to keycloak using the `keycloak-setup` service.
+To modify the configuration either go to the [admin console](http://localhost:8080/admin) (Username: `admin` Password: `admin`) or edit the `local-development.json` following this [guide](./config/keycloak/setup.md)
+
+- Default access
+     * Description: Read and write access to all data Kafka, OpenSearch and Schema registry
+     * client_id: `default-access`
+     * client_secret: `default-access-secret`
+     * default_scopes: [ ] 
+     * optional_scopes:
+          - `kafka`
+               * Roles:
+                    - `Kafka_*_all`
+          - `opensearch`
+               * Roles:
+                    - `opensearch_default_access`
+          - `schema-registry`
+               * Roles:
+                    - `sr-producer`
+- Default write
+     * Description: Write access to all data in Kafka, OpenSearch and Schema registry
+     * client_id: `default-write`
+     * client_secret: `default-write-secret`
+     * default_scopes: [ ] 
+     * optional_scopes:
+          - `kafka`
+               * Roles:
+                    - `Kafka_*_write`
+          - `opensearch`
+               * Roles:
+                    - `opensearch_default_write`
+          - `schema-registry`
+               * Roles:
+                    - `sr-producer`
+- Default read
+     * Description: Read access to all data in Kafka, OpenSearch and Schema registry
+     * client_id: `default-read`
+     * client_secret: `default-read-secret`
+     * default_scopes: [ ] 
+     * optional_scopes:
+          - `kafka`
+               * Roles:
+                    - `Kafka_*_read`
+          - `opensearch`
+               * Roles:
+                    - `opensearch_default_read`
+- Users
+     * Description: User login via browser (See [Users](#users) for user details)
+     * client_id: `users`
+     * client_secret: `users-secret`
+     * default_scopes: [ ] 
+     * optional_scopes:
+          - `kafka`
+          - `opensearch`
+          - `schema-registry`
+- Custom client
+     * Description: A custom client which can be configured using Environment variables. Useful for pipelines where services require custom roles.
+     * client_id: $DEMO_CLIENT_NAME
+     * client_secret: $DEMO_CLIENT_SECRET
+     * default_scopes:
+          -  `custom-client`
+               * Roles: $DEMO_CLIENT_ROLES - Should be a comma separated list e.g. (`my_view_role,my_edit_role,my_admin_role`)
+     * optional_scopes: [ ]
+
+### Users:
+- developer
+     * Username: `developer`
+     * Password: `developer`
+     * Roles:
+          - `opensearch_developer`
+          - `opensearch_default_read`
+          - `Kafka_*_all`
+          - `sr-producer`
