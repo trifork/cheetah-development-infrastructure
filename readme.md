@@ -130,13 +130,13 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 
 Here is further explanation on what each profile starts.
 
-|  Images / profiles   | oauth-core  | kafka-core | schema-registry-core | opensearch-core | core  | kafka | opensearch | observability | full  |
-| :------------------: | :---------: | :--------: | :------------------: | :-------------: | :---: | :---: | :--------: | :-----------: | :---: |
-|        Kafka         |             |     x      |                      |                 |   x   |   x   |            |               |   x   |
-|   OAuth simulator    |      x      |            |                      |                 |   x   |   x   |     x      |               |   x   |
-|   Redpanda console   |             |            |                      |                 |       |   x   |            |               |   x   |
-|   Schema registry    |             |            |           x          |                 |   x   |   x   |            |               |   x   |
-|      Opensearch      |             |            |                      |        x        |   x   |       |     x      |               |   x   |
-| Opensearch dashboard |             |            |                      |                 |       |       |     x      |               |   x   |
-|      Prometheus      |             |            |                      |                 |       |       |            |       x       |   x   |
-|       Grafana        |             |            |                      |                 |       |       |            |       x       |   x   |
+|  Images / profiles   | kafka-core | schema-registry-core | opensearch-core | core  | kafka | opensearch | observability | full  |
+| :------------------: | :--------: | :------------------: | :-------------: | :---: | :---: | :--------: | :-----------: | :---: |
+|        Kafka         |     x      |                      |                 |   x   |   x   |            |               |   x   |
+|   OAuth simulator    |     x      |           x          |        x        |   x   |   x   |     x      |               |   x   |
+|   Redpanda console   |            |                      |                 |       |   x   |            |               |   x   |
+|   Schema registry    |            |           x          |                 |   x   |   x   |            |               |   x   |
+|      Opensearch      |            |                      |        x        |   x   |       |     x      |               |   x   |
+| Opensearch dashboard |            |                      |                 |       |       |     x      |               |   x   |
+|      Prometheus      |            |                      |                 |       |       |            |       x       |   x   |
+|       Grafana        |            |                      |                 |       |       |            |       x       |   x   |
