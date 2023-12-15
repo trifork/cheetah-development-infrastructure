@@ -23,6 +23,12 @@
           },
           {
             "name": "Kafka_*_all"
+          },
+          {
+            "name": "Kafka_*_read"
+          },
+          {
+            "name": "Kafka_*_write"
           }
         ],
         "schema-registry": [
