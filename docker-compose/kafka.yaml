@@ -81,8 +81,38 @@ services:
       - core
       - full
 
+  redpanda-admin:
+    image: docker.redpanda.com/redpandadata/console:v2.3.8
+    entrypoint: /bin/sh
+    command: -c "/app/console"
+    mem_limit: 512m
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+    volumes:
+      - ./config/redpanda-admin.yaml:/tmp/config.yml
+    ports:
+      - "9899:8080"
+    healthcheck:
+      test: curl redpandaadmin:8080/admin/health || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      kafka:
+        condition: service_healthy
+      cheetah.oauth.simulator:
+        condition: service_healthy
+      schema-registry:
+        condition: service_healthy
+      kafka-setup:
+        condition: service_completed_successfully
+    profiles:
+      - kafka
+      - full
+
   redpanda:
-    image: redpandadata/console-unstable:master-f155c44
+    image: docker.redpanda.com/redpandadata/console:v2.3.8
     entrypoint: /bin/sh
     command: -c "/app/console"
     mem_limit: 512m
@@ -183,3 +213,4 @@ services:
 networks:
   default:
     name: "cheetah-infrastructure"
+    external: true

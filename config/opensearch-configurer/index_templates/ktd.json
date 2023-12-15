@@ -1,0 +1,56 @@
+{
+  "index_patterns": [
+    "*ktd*"
+  ],
+  "template": {
+    "settings": {
+      "number_of_shards": "3",
+      "number_of_replicas": "0",
+      "refresh_interval": "30s"
+    },
+    "mappings": {
+      "_source": {
+        "enabled": true
+      },
+      "properties": {
+        "Aflæsningstidspunkt": {
+          "type": "date"
+        },
+        "Målerserienummer": {
+          "type": "keyword"
+        },
+        "Infokoder": {
+          "type": "keyword"
+        },
+        "Volumen 1": {
+          "type": "float",
+          "ignore_malformed": true
+        },
+        "Timetæller": {
+          "type": "integer"
+        },
+        "Logget volumen 1": {
+          "type": "float",
+          "ignore_malformed": true
+        },
+        "Akustisk støj": {
+          "type": "keyword"
+        },
+        "Enhed": {
+          "type": "keyword"
+        },
+        "Enhed_1": {
+          "type": "keyword"
+        },
+        "Enhed_2": {
+          "type": "keyword"
+        },
+        "Enhed_3": {
+          "type": "keyword"
+        }
+      }
+    }
+  },
+  "composed_of": [],
+  "priority": 3
+}

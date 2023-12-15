@@ -1,5 +1,7 @@
 {
-  "index_patterns": "performance-test-results",
+  "index_patterns": [
+    "test-index_test*"
+  ],
   "template": {
     "settings": {
       "number_of_shards": 3,
@@ -24,5 +26,7 @@
         }
       }
     }
-  }
+  },
+  "composed_of": [],
+  "priority": 0
 }
