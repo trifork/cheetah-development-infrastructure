@@ -6,6 +6,7 @@ kafka:
   sasl:
     enabled: true
     mechanism: OAUTHBEARER
+    # this file is used to simulate the security model on a cluster which uses OAuth for security
     # username: redpanda
     # password: password
     oauth:
