@@ -132,7 +132,7 @@ Here is further explanation on what each profile starts.
 
 |  Images / profiles   | kafka-core | schema-registry-core | opensearch-core | core  | kafka | opensearch | observability | full  |
 | :------------------: | :--------: | :------------------: | :-------------: | :---: | :---: | :--------: | :-----------: | :---: |
-|        Kafka         |     x      |                      |                 |   x   |   x   |            |               |   x   |
+|        Kafka         |     x      |           x          |                 |   x   |   x   |            |               |   x   |
 |   OAuth simulator    |     x      |           x          |        x        |   x   |   x   |     x      |               |   x   |
 |   Redpanda console   |            |                      |                 |       |   x   |            |               |   x   |
 |   Schema registry    |            |           x          |                 |   x   |   x   |            |               |   x   |
