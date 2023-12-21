@@ -15,7 +15,7 @@ default_write:
     - indices:admin/create
   index_permissions:
     - index_patterns:  
-        - "transformandstore*"
+        - "*"
       allowed_actions:
         - write
         - create_index
