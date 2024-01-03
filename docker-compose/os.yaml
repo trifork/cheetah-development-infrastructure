@@ -73,6 +73,23 @@ services:
       - opensearch
       - full
 
+  # curl localhost:1951/_plugins/_security/api/account | jq
+  cheetah.proxy:
+    image: ${DOCKER_REGISTRY-}cheetah-proxy:latest
+    hostname: cheetahproxy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "Prometheus__port=1861"
+      - "Proxy__Downstream_Url=http://opensearch:9200"
+      - "OAuth2__ClientId=admin"
+      - "OAuth2__ClientSecret=admin"
+      - "OAuth2__Scopes=cheetahproxy"
+      - "OAuth2__TokenEndpoint=http://cheetahoauthsimulator:80/oauth2/token"
+      - Logging__LogLevel__Microsoft=Warning
+      - Logging__LogLevel__Yarp=Warning
+    ports:
+      - "1951:8080"
+
   # login kibanaserver:kibanaserver
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:2.11.1
@@ -84,7 +101,7 @@ services:
       - ./config/opensearch_dashboards/opensearch_dashboards.crt:/usr/share/opensearch-dashboards/config/opensearch_dashboards.crt
       - ./config/opensearch_dashboards/opensearch_dashboards.key:/usr/share/opensearch-dashboards/config/opensearch_dashboards.key
     environment:
-      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - 'OPENSEARCH_HOSTS=["http://cheetahproxy:8080"]'
     # - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
     depends_on:
       opensearch:
