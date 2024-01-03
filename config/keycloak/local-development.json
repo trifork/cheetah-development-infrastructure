@@ -29,6 +29,12 @@
           },
           {
             "name": "Kafka_*_write"
+          },
+          {
+            "name": "Kafka__kafkasql-journal_read"
+          },
+          {
+            "name": "Kafka__kafkasql-journal_write"
           }
         ],
         "schema-registry": [
@@ -149,7 +155,15 @@
       },
       {
         "clientId": "schema-registry",
-        "name": "schema-registry"
+        "name": "schema-registry",
+        "enabled": true,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "schema-registry-secret",
+        "serviceAccountsEnabled": true,
+        "publicClient": false,
+        "optionalClientScopes": [
+          "kafka"
+        ]
       },
       {
         "clientId": "custom-client",
@@ -216,6 +230,17 @@
           ],
           "schema-registry": [
             "sr-producer"
+          ]
+        }
+      },
+      {
+        "username": "service-account-schema-registry",
+        "enabled": true,
+        "serviceAccountClientId": "schema-registry",
+        "clientRoles": {
+          "kafka": [
+            "Kafka__kafkasql-journal_read",
+            "Kafka__kafkasql-journal_write"
           ]
         }
       },

@@ -145,9 +145,9 @@ services:
     environment:
       # Kafka
       ENABLE_KAFKA_SASL: true
-      CLIENT_ID: kafka-admin
-      CLIENT_SECRET: kafka-admin-secret
-      SCOPE: schema-registry
+      CLIENT_ID: schema-registry
+      CLIENT_SECRET: schema-registry-secret
+      OAUTH_SCOPE: kafka
       OAUTH_TOKEN_ENDPOINT_URI: http://keycloak:8080/realms/local-development/protocol/openid-connect/token
       KAFKA_BOOTSTRAP_SERVERS: kafka:19092
       KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
