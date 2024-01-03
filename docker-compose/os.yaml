@@ -5,13 +5,8 @@ services:
   # login fallback: admin:admin
   # services should use oauth
   opensearch:
-    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:latest
+    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:0.5.0
     hostname: opensearch
-    # build:
-    #    context: ./config/opensearch/
-    #    dockerfile: Dockerfile
-    #    args:
-    #      - OPENSEARCH_VERSION=2.6.0
     environment:
       - cluster.name=opensearch-cluster
       - node.name=os01
@@ -58,7 +53,7 @@ services:
       retries: 30
 
   opensearch-configurer:
-    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:latest
+    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:0.5.0
     command: "opensearch:9200 --service"
     environment:
       - OS_USER=opensearch-admin
@@ -83,7 +78,7 @@ services:
 
   # login kibanaserver:kibanaserver
   opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.6.0
+    image: opensearchproject/opensearch-dashboards:2.11.1
     hostname: opensearch-dashboards
     ports:
       - 5602:5601
