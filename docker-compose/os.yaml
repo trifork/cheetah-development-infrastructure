@@ -59,7 +59,7 @@ services:
       - OS_USER=opensearch-admin
       - OS_PASS=opensearch-admin-secret
       - OS_SCOPE=opensearch
-      - OS_TOKENENDPOINT=http://keycloak:8080/realms/local-development/protocol/openid-connect/token
+      - OS_TOKENENDPOINT=http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       - OAUTHLIB_INSECURE_TRANSPORT=true
     depends_on:
       opensearch:

@@ -12,7 +12,7 @@ function get_default_access_token() {
 	local response
 
 	response=$(
-		http --check-status --ignore-stdin --follow --all --form POST 'http://keycloak:8080/realms/local-development/protocol/openid-connect/token' \
+		http --check-status --ignore-stdin --follow --all --form POST 'http://keycloak:1852/realms/local-development/protocol/openid-connect/token' \
 			accept:'*/*' \
 			Content-Type:'application/x-www-form-urlencoded' \
 			cache-control:'no-cache' \

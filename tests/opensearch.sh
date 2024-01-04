@@ -12,7 +12,7 @@ function get_default_access_token() {
 	local access_token
 	response=$(
 		curl --fail -s -X 'POST' \
-			'http://keycloak:8080/realms/local-development/protocol/openid-connect/token' \
+			'http://keycloak:1852/realms/local-development/protocol/openid-connect/token' \
 			-H 'accept: */*' \
 			-H 'Content-Type: application/x-www-form-urlencoded' \
 			-H 'cache-control: no-cache' \

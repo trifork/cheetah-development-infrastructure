@@ -8,11 +8,12 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HEALTH_ENABLED: true
       KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_PORT: 1852
       KC_HOSTNAME: localhost
     ports:
-      - 1852:8080
+      - 1852:1852
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/1852;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3"]
       interval: 3s
       timeout: 1s
       retries: 30
@@ -27,7 +28,7 @@ services:
     volumes:
       - ./config/keycloak:/tmp
     environment:
-      - KEYCLOAK_URL=http://keycloak:8080
+      - KEYCLOAK_URL=http://keycloak:1852
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
       - KEYCLOAK_AVAILABILITY-CHECK_ENABLED=true

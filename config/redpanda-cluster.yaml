@@ -10,7 +10,7 @@ kafka:
     # username: redpanda
     # password: password
     oauth:
-      tokenEndpoint: http://keycloak:8080/realms/local-development/protocol/openid-connect/token
+      tokenEndpoint: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       clientId: kafka-admin
       clientSecret: kafka-admin-secret
       scope: kafka schema-registry

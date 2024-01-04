@@ -148,7 +148,7 @@ services:
       CLIENT_ID: schema-registry
       CLIENT_SECRET: schema-registry-secret
       OAUTH_SCOPE: kafka
-      OAUTH_TOKEN_ENDPOINT_URI: http://keycloak:8080/realms/local-development/protocol/openid-connect/token
+      OAUTH_TOKEN_ENDPOINT_URI: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       KAFKA_BOOTSTRAP_SERVERS: kafka:19092
       KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
       REGISTRY_KAFKASQL_TOPIC: _kafkasql-journal
@@ -165,7 +165,7 @@ services:
       REGISTRY_AUTH_ROLES_DEVELOPER: "sr-producer" # "sr-developer"
       # https://quarkus.io/guides/security-oidc-configuration-properties-reference
       quarkus.oidc.enabled: true
-      quarkus.oidc.auth-server-url: http://localhost:8080/realms/local-development
+      quarkus.oidc.auth-server-url: http://keycloak:1852/realms/local-development
       quarkus.oidc.jwks-path: /protocol/openid-connect/certs
       # quarkus.log.level: DEBUG
       quarkus.oidc.roles.role-claim-path: roles
