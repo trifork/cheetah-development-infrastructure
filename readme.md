@@ -157,7 +157,7 @@ Keycloak is used as a local identity provider, to be able to mimic a production 
 A set of default clients have been defined which covers most common usecases.
 
 All roles are mapped to the `roles` claim in the JWT. This configuration is defined in [local-development.json](./config/keycloak/local-development.json) and is applied to keycloak using the `keycloak-setup` service.
-To modify the configuration either go to the [admin console](http://localhost:8080/admin) (Username: `admin` Password: `admin`) or edit the `local-development.json` following this [guide](./config/keycloak/setup.md)
+To modify the configuration either go to the [admin console](http://localhost:1852/admin) (Username: `admin` Password: `admin`) or edit the `local-development.json` following this [guide](./config/keycloak/setup.md)
 
 - Default access
      * Description: Read and write access to all data Kafka, OpenSearch and Schema registry
