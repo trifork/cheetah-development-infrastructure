@@ -202,7 +202,7 @@ To modify the configuration either go to the [admin console](http://localhost:80
                * Roles:
                     - `opensearch_default_read`
 - Users
-     * Description: User login via browser (See [Users](#users) for user details)
+     * Description: User login via browser such as OpenSearch Dashboard (See [Users](#users) for user details)
      * client_id: `users`
      * client_secret: `users-secret`
      * default_scopes: [ ] 
