@@ -149,7 +149,7 @@ Keycloak is used as a local identity provider, to be able to mimic a production 
 
 ### Useful urls:
 
-- OpenID Endpoint Configuration: http://localhost:8080/realms/local-development/.well-known/openid-configuration
+- OpenID Endpoint Configuration: http://localhost:1852/realms/local-development/.well-known/openid-configuration
 - Token Endpoint http://localhost:8080/realms/local-development/protocol/openid-connect/token 
 
 ### Default clients:
