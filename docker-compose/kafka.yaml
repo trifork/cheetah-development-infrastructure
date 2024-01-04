@@ -20,7 +20,7 @@ services:
       - full
 
   kafka:
-    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.38.0-kafka-3.6.0-trifork-1.5.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.38.0-kafka-3.6.0-trifork-1.5.0
     platform: linux/amd64
     hostname: kafka
     mem_limit: 1024m
