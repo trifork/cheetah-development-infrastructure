@@ -5,7 +5,7 @@ services:
   # login fallback: admin:admin
   # services should use oauth
   opensearch:
-    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:0.5.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:0.5.0
     hostname: opensearch
     environment:
       - cluster.name=opensearch-cluster
@@ -53,7 +53,7 @@ services:
       retries: 5
 
   opensearch-configurer:
-    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:0.5.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:0.5.0
     command: "opensearch:9200 --service"
     environment:
       - OS_USER=admin
