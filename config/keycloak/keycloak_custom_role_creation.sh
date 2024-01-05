@@ -8,7 +8,7 @@ input_file="$1"
 output_file="$2"
 
 # Split the demo_client_roles string into an array
-IFS=',' read -ra roles_array <<< "$DEMO_CLIENT_ROLES"
+IFS=',' read -ra roles_array <<<"$DEMO_CLIENT_ROLES"
 
 # Build the roles_definition_substitution string for $(env:DEMO_ROLES_DEFINITION)
 roles_definition_substitution=""
