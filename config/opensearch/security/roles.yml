@@ -14,7 +14,7 @@ default_write:
     - indices:admin/delete
     - indices:admin/create
   index_permissions:
-    - index_patterns:  
+    - index_patterns:
         - "*"
       allowed_actions:
         - write
