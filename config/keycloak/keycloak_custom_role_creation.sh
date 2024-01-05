@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "Running keycloak_custom_role_creation.sh"
 
 set -euo pipefail
 
