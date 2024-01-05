@@ -16,7 +16,7 @@ function get_default_access_token() {
 			-H 'accept: */*' \
 			-H 'Content-Type: application/x-www-form-urlencoded' \
 			-H 'cache-control: no-cache' \
-			-d "grant_type=client_credentials&scope=&client_id=$tenant&client_secret=$tenant-secret"
+			-d "grant_type=client_credentials&scope=opensearch&client_id=$tenant&client_secret=$tenant-secret"
 	)
 	access_token=$(printf '%s' "$response" | jq -r '.access_token')
 	echo "$access_token"
