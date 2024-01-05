@@ -19,9 +19,10 @@ services:
       retries: 30
 
   keycloak-setup:
-    image: quay.io/adorsys/keycloak-config-cli:5.9.0-22.0.4
-    user: root
-    entrypoint: ["/bin/bash", "-c", "mkdir -p /config && /tmp/keycloak_custom_role_creation.sh /tmp/local-development.json /config/local-development.json && exec java $JAVA_OPTS -jar /app/keycloak-config-cli.jar $0 $@"]
+    build:
+      context: ./config/keycloak
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/bash", "-c", "/tmp/keycloak_custom_role_creation.sh /tmp/local-development.json /config/local-development.json && exec java $JAVA_OPTS -jar /app/keycloak-config-cli.jar $0 $@"]
     depends_on:
       keycloak:
         condition: service_healthy
