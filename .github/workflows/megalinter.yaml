@@ -61,7 +61,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISABLE_LINTERS: "MARKDOWN_MARKDOWN_LINK_CHECK,REPOSITORY_GITLEAKS,REPOSITORY_SECRETLINT"
           DISABLE_ERRORS_LINTERS: "YAML_YAMLLINT"
-          FILTER_REGEX_EXCLUDE: "config/keycloak/local-development.json|config/keycloak/Dockerfile"
+          FILTER_REGEX_EXCLUDE: "(config/keycloak/local-development.json|config/keycloak/Dockerfile)"
           # YAML_YAMLLINT_DISABLE_ERRORS: "true"
           # DISABLE: COPYPASTE,SPELL
 
