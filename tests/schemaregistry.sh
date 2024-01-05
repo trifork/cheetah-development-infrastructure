@@ -3,7 +3,7 @@
 set -euo pipefail
 
 sr_url="http://schema-registry:8080"
-TENANT=flink
+TENANT=default-access
 GROUPID=124
 empty_token=""
 
@@ -16,7 +16,7 @@ function get_default_access_token() {
 			accept:'*/*' \
 			Content-Type:'application/x-www-form-urlencoded' \
 			cache-control:'no-cache' \
-			grant_type=client_credentials scope= client_id="$tenant" client_secret=123
+			grant_type=client_credentials scope= client_id="$tenant" client_secret="$tenant-secret"
 	)
 	local access_token
 	access_token=$(printf '%s' "$response" | jq -r '.access_token')
