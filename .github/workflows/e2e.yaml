@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DOCKER_REGISTRY: ghcr.io/trifork/
+  CHEETAH_DOCKER_REGISTRY: ghcr.io/trifork/
 
 jobs:
   should-run:
