@@ -3,8 +3,8 @@
 set -euo pipefail
 
 sr_url="http://schema-registry:8080"
-TENANT=1
-GROUPID=124
+TENANT=default-access
+GROUPID=1245
 empty_token=""
 
 function get_default_access_token() {
@@ -12,11 +12,11 @@ function get_default_access_token() {
 	local response
 
 	response=$(
-		http --check-status --ignore-stdin --follow --all --form POST 'http://cheetahoauthsimulator:80/oauth2/token' \
+		http --check-status --ignore-stdin --follow --all --form POST 'http://keycloak:1852/realms/local-development/protocol/openid-connect/token' \
 			accept:'*/*' \
 			Content-Type:'application/x-www-form-urlencoded' \
 			cache-control:'no-cache' \
-			grant_type=client_credentials scope= client_id="$tenant" client_secret=123
+			grant_type=client_credentials scope=schema-registry client_id="$tenant" client_secret="$tenant-secret"
 	)
 	local access_token
 	access_token=$(printf '%s' "$response" | jq -r '.access_token')
