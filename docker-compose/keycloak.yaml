@@ -24,6 +24,15 @@ services:
       interval: 3s
       timeout: 1s
       retries: 30
+    profiles:
+      - kafka-core
+      - opensearch-core
+      - schema-registry-core
+      - core
+      - kafka
+      - opensearch
+      - observability
+      - full
 
   keycloak-setup:
     build:
@@ -45,3 +54,12 @@ services:
       - DEMO_CLIENT_NAME=${DEMO_CLIENT_NAME}
       - DEMO_CLIENT_SECRET=${DEMO_CLIENT_SECRET}
       - DEMO_CLIENT_ROLES=${DEMO_CLIENT_ROLES}
+    profiles:
+      - kafka-core
+      - opensearch-core
+      - schema-registry-core
+      - core
+      - kafka
+      - opensearch
+      - observability
+      - full

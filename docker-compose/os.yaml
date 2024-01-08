@@ -43,8 +43,9 @@ services:
       - 9200:9200
       - 9600:9600
     profiles:
-      - opensearch
+      - opensearch-core
       - core
+      - opensearch
       - full
     healthcheck:
       test: curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1
@@ -73,6 +74,8 @@ services:
       - ./config/opensearch-configurer/index_templates/:/app/tmp/index_templates/
       - ./config/opensearch-configurer/cluster/:/app/tmp/cluster/
     profiles:
+      - opensearch-core
+      - core
       - opensearch
       - full
 
