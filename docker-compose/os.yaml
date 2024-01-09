@@ -55,6 +55,7 @@ services:
 
   opensearch-configurer:
     image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:0.5.0
+    container_name: opensearch-configurer
     command: "opensearch:9200 --service"
     environment:
       - OS_USER=opensearch-admin
