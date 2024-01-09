@@ -133,12 +133,12 @@ Here is further explanation on what each profile starts.
 
 |  Images / profiles    | kafka-core  | opensearch-core | schema-registry-core  | core  | kafka | opensearch  | observability | full  |
 | :-------------------: | :---------: | :-------------: | :-------------------: | :---: | :---: | :---------: | :-----------: | :---: |
-|       Keycloak        |      x      |        x        |           x           |   x   |   x   |      x      |               |   x   |
-|        Kafka          |      x      |                 |           x           |   x   |   x   |             |               |   x   |
+|       Keycloak        |      x      |        x        |           x           |   x   |   x   |      x      |       x       |   x   |
+|        Kafka          |      x      |                 |           x           |   x   |   x   |             |       x       |   x   |
 |   Redpanda console    |             |                 |                       |       |   x   |             |               |   x   |
 |      Opensearch       |             |        x        |                       |   x   |       |      x      |               |   x   |
 | Opensearch dashboard  |             |                 |                       |       |       |      x      |               |   x   |
-| Opensearch configurer |             |        x        |                       |   x   |   x   |      x      |       x       |   x   |
+| Opensearch configurer |             |        x        |                       |   x   |       |      x      |               |   x   |
 |   Schema registry     |             |                 |           x           |   x   |   x   |             |               |   x   |
 |      Prometheus       |             |                 |                       |       |       |             |       x       |   x   |
 |       Grafana         |             |                 |                       |       |       |             |       x       |   x   |
