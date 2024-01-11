@@ -133,7 +133,7 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 Here is further explanation on what each profile starts.
 
 |  Images / profiles    | kafka-core  | opensearch-core | schema-registry-core  | core  | kafka | opensearch  | observability | timescale | full  |
-| :-------------------: | :---------: | :-------------: | :-------------------: | :---: | :---: | :---------: | :-----------: |           | :---: |
+| :-------------------: | :---------: | :-------------: | :-------------------: | :---: | :---: | :---------: | :-----------: | :-------: | :---: |
 |       Keycloak        |      x      |        x        |           x           |   x   |   x   |      x      |       x       |           |   x   |
 |        Kafka          |      x      |                 |           x           |   x   |   x   |             |       x       |           |   x   |
 |   Redpanda console    |             |                 |                       |       |   x   |             |               |           |   x   |
@@ -143,7 +143,7 @@ Here is further explanation on what each profile starts.
 |   Schema registry     |             |                 |           x           |   x   |   x   |             |               |           |   x   |
 |      Prometheus       |             |                 |                       |       |       |             |       x       |           |   x   |
 |       Grafana         |             |                 |                       |       |       |             |       x       |           |   x   |
-|      Timescale        |             |                 |                       |       |       |             |       x       |           |   x   |
+|      Timescale        |             |                 |                       |       |       |             |               |     x     |   x   |
 
 ## Keycloak
 
