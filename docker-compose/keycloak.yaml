@@ -1,0 +1,65 @@
+---
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.5
+    hostname: keycloak
+    container_name: keycloak
+    command:
+      - "start-dev"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: true
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_PORT: 1852
+      KC_HOSTNAME: localhost
+    ports:
+      - 1852:1852
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "exec 3<>/dev/tcp/127.0.0.1/1852;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3",
+        ]
+      interval: 3s
+      timeout: 1s
+      retries: 30
+    profiles:
+      - kafka-core
+      - opensearch-core
+      - schema-registry-core
+      - core
+      - kafka
+      - opensearch
+      - observability
+      - full
+
+  keycloak-setup:
+    build:
+      context: ./config/keycloak
+      dockerfile: Dockerfile
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    volumes:
+      - ./config/keycloak/local-development.json:/tmp/local-development.json
+    environment:
+      - KEYCLOAK_URL=http://keycloak:1852
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_AVAILABILITY-CHECK_ENABLED=true
+      - SPRING_PROFILES_ACTIVE=dev
+      - IMPORT_CACHE_ENABLED=false
+      - IMPORT_VARSUBSTITUTION_ENABLED=false
+      - DEMO_CLIENT_NAME=${DEMO_CLIENT_NAME}
+      - DEMO_CLIENT_SECRET=${DEMO_CLIENT_SECRET}
+      - DEMO_CLIENT_ROLES=${DEMO_CLIENT_ROLES}
+    profiles:
+      - kafka-core
+      - opensearch-core
+      - schema-registry-core
+      - core
+      - kafka
+      - opensearch
+      - observability
+      - full

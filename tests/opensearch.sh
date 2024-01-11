@@ -12,39 +12,17 @@ function get_default_access_token() {
 	local access_token
 	response=$(
 		curl --fail -s -X 'POST' \
-			'http://cheetahoauthsimulator:80/oauth2/token' \
+			'http://keycloak:1852/realms/local-development/protocol/openid-connect/token' \
 			-H 'accept: */*' \
 			-H 'Content-Type: application/x-www-form-urlencoded' \
 			-H 'cache-control: no-cache' \
-			-d "grant_type=client_credentials&scope=&client_id=$tenant&client_secret="
+			-d "grant_type=client_credentials&scope=opensearch&client_id=$tenant&client_secret=$tenant-secret"
 	)
 	access_token=$(printf '%s' "$response" | jq -r '.access_token')
 	echo "$access_token"
 }
 
-function get_customaccess_token() {
-	local tenant=$1
-	local roles=$2 # backend roles
-	local response
-	local access_token
-	response=$(curl -s -X 'POST' \
-		'http://cheetahoauthsimulator:80/oauth2/customtoken' \
-		-H 'accept: */*' \
-		-H 'Content-Type: application/json' \
-		-H 'cache-control: no-cache' \
-		-d "{
-    \"clientId\": \"$tenant\",
-    \"claims\": {
-      \"roles\": \"$roles\",
-      \"osuser\": \"hest\"
-    },
-    \"expiresInMinutes\": 120
-  }")
-	access_token=$(printf '%s' "$response" | jq -r '.access_token')
-	echo "$access_token"
-}
-
-TENANT=1
+TENANT=default-access
 cache_header="cache-control: no-cache"
 os_url="http://opensearch:9200"
 

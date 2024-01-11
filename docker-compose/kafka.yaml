@@ -15,12 +15,15 @@ services:
     mem_limit: 512m
     restart: unless-stopped
     profiles:
-      - kafka
+      - kafka-core
+      - schema-registry-core
       - core
+      - kafka
+      - observability
       - full
 
   kafka:
-    image: ${DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.38.0-kafka-3.6.0-trifork-1.5.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.38.0-kafka-3.6.0-trifork-1.5.0
     platform: linux/amd64
     hostname: kafka
     mem_limit: 1024m
@@ -33,8 +36,8 @@ services:
     depends_on:
       zookeeper:
         condition: service_started
-      cheetah.oauth.simulator:
-        condition: service_healthy
+      keycloak-setup:
+        condition: service_completed_successfully
     ports:
       - "9092:9092" # Requires OAuth2 authentication
       - "9093:9093" # Requires No authentication
@@ -53,8 +56,11 @@ services:
       timeout: 10s
       retries: 10
     profiles:
-      - kafka
+      - kafka-core
+      - schema-registry-core
       - core
+      - kafka
+      - observability
       - full
 
   kafka-setup:
@@ -68,8 +74,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-      cheetah.oauth.simulator:
-        condition: service_healthy
+      keycloak-setup:
+        condition: service_completed_successfully
     environment:
       # The following settings are listed here only to satisfy the image's requirements.
       # We override the image's `command` anyways, hence this container will not start a broker.
@@ -77,8 +83,11 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: ignored
       KAFKA_TOPICS: ${INITIAL_KAFKA_TOPICS}
     profiles:
-      - kafka
+      - kafka-core
+      - schema-registry-core
       - core
+      - kafka
+      - observability
       - full
 
   redpanda:
@@ -89,7 +98,7 @@ services:
     environment:
       CONFIG_FILEPATH: /tmp/config.yml
     volumes:
-      - ./config/redpanda.yaml:/tmp/config.yml
+      - ./config/redpanda-admin.yaml:/tmp/config.yml
     ports:
       - "9898:8080"
     healthcheck:
@@ -101,8 +110,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-      cheetah.oauth.simulator:
-        condition: service_healthy
+      keycloak-setup:
+        condition: service_completed_successfully
       schema-registry:
         condition: service_healthy
       kafka-setup:
@@ -135,8 +144,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-      cheetah.oauth.simulator:
-        condition: service_healthy
+      keycloak-setup:
+        condition: service_completed_successfully
       kafka-setup:
         condition: service_completed_successfully
     ports:
@@ -145,9 +154,10 @@ services:
     environment:
       # Kafka
       ENABLE_KAFKA_SASL: true
-      CLIENT_ID: sr
-      CLIENT_SECRET: testSecret
-      OAUTH_TOKEN_ENDPOINT_URI: http://cheetahoauthsimulator/oauth2/token
+      CLIENT_ID: schema-registry
+      CLIENT_SECRET: schema-registry-secret
+      OAUTH_SCOPE: kafka
+      OAUTH_TOKEN_ENDPOINT_URI: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       KAFKA_BOOTSTRAP_SERVERS: kafka:19092
       KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
       REGISTRY_KAFKASQL_TOPIC: _kafkasql-journal
@@ -164,8 +174,8 @@ services:
       REGISTRY_AUTH_ROLES_DEVELOPER: "sr-producer" # "sr-developer"
       # https://quarkus.io/guides/security-oidc-configuration-properties-reference
       quarkus.oidc.enabled: true
-      quarkus.oidc.auth-server-url: http://cheetahoauthsimulator:80
-      quarkus.oidc.jwks-path: /.well-known/jwks.json
+      quarkus.oidc.auth-server-url: http://keycloak:1852/realms/local-development
+      quarkus.oidc.jwks-path: /protocol/openid-connect/certs
       # quarkus.log.level: DEBUG
       quarkus.oidc.roles.role-claim-path: roles
 
@@ -176,8 +186,9 @@ services:
       timeout: 10s
       retries: 10
     profiles:
-      - kafka
+      - schema-registry-core
       - core
+      - kafka
       - full
 
 networks:
