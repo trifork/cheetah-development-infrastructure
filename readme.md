@@ -127,6 +127,7 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 - kafka
 - opensearch
 - observability
+- timescale
 
 Here is further explanation on what each profile starts.
 
