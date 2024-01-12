@@ -1,6 +1,8 @@
 {
     "realm": "local-development",
-    "enabled": true,
+    "enabled": true,  
+    "eventsEnabled": true,
+    "adminEventsEnabled": true,
     "roles": {
       "client": {
         "opensearch": [
