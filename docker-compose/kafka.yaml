@@ -91,14 +91,15 @@ services:
       - full
 
   redpanda:
-    image: redpandadata/console-unstable:master-f155c44
+    image: redpandadata/console:v2.4.0
     entrypoint: /bin/sh
     command: -c "/app/console"
     mem_limit: 512m
     environment:
-      CONFIG_FILEPATH: /tmp/config.yml
+      CONFIG_FILEPATH: /etc/redpanda-config.yml
     volumes:
-      - ./config/redpanda-admin.yaml:/tmp/config.yml
+      - ./config/redpanda-admin.yaml:/etc/redpanda-config.yml # get FULL access to kafka from redpanda
+      #- ./config/redpanda-cluster.yaml:/etc/redpanda-config.yml # use OAUTH2 authentication with limited access like on a cluster
     ports:
       - "9898:8080"
     healthcheck:
@@ -194,3 +195,4 @@ services:
 networks:
   default:
     name: "cheetah-infrastructure"
+    external: true

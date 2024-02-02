@@ -13,8 +13,7 @@ services:
       - timescaledb:/var/lib/postgresql/data
     profiles:
       - timescale
-      - full
-  
+
   pgadmin:
     image: dpage/pgadmin4
     restart: unless-stopped
@@ -30,11 +29,11 @@ services:
       - ./config/pgadmin/servers.json:/pgadmin4/servers.json
     profiles:
       - timescale
-      - full
 
 networks:
   default:
     name: "cheetah-infrastructure"
+    external: true
 
 volumes:
   timescaledb:
