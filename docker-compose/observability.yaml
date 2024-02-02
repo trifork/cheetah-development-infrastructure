@@ -53,4 +53,3 @@ services:
 networks:
   default:
     name: "cheetah-infrastructure"
-    external: true
