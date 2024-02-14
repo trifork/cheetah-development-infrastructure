@@ -1,3 +1,7 @@
+# Customizing keycloak
+
+See available settings here: <https://www.keycloak.org/docs-api/21.0.0/rest-api/index.html>
+
 ## Adding a new set of client credentials
 
 To add a new set of client credentials you need to add:

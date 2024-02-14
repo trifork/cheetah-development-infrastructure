@@ -387,6 +387,7 @@
         ]
       }
     ],
+    "accessTokenLifespan": 1800,
     "defaultDefaultClientScopes": [
       "custom-client"
     ],
