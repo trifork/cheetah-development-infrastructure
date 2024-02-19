@@ -52,9 +52,9 @@ services:
     healthcheck:
       test: nc -z kafka 19092 || exit -1
       start_period: 15s
-      interval: 5s
+      interval: 1m30s
       timeout: 10s
-      retries: 10
+      retries: 3
     profiles:
       - kafka-core
       - schema-registry-core
@@ -105,9 +105,9 @@ services:
     healthcheck:
       test: curl redpanda:8080/admin/health || exit -1
       start_period: 15s
-      interval: 5s
+      interval: 1m30s
       timeout: 10s
-      retries: 10
+      retries: 3
     depends_on:
       kafka:
         condition: service_healthy
@@ -183,9 +183,9 @@ services:
     healthcheck:
       test: curl schema-registry:8080 || exit -1
       start_period: 15s
-      interval: 5s
+      interval: 1m30s
       timeout: 10s
-      retries: 10
+      retries: 3
     profiles:
       - schema-registry-core
       - core

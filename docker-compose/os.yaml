@@ -49,9 +49,9 @@ services:
       - full
     healthcheck:
       test: curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1
-      interval: 5s
-      timeout: 3s
-      retries: 30
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
 
   opensearch-configurer:
     image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:0.5.0
