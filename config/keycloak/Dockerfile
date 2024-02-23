@@ -1,4 +1,4 @@
-FROM quay.io/adorsys/keycloak-config-cli:5.9.0-22.0.4
+FROM quay.io/adorsys/keycloak-config-cli:5.10.0-22.0.4
 
 COPY ./keycloak_custom_role_creation.sh  /tmp/keycloak_custom_role_creation.sh 
 
