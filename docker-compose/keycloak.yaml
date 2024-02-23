@@ -21,9 +21,10 @@ services:
           "CMD-SHELL",
           "exec 3<>/dev/tcp/127.0.0.1/1852;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3",
         ]
-      interval: 3s
-      timeout: 1s
-      retries: 30
+      interval: 30s # (default: 30s)
+      timeout: 10s # (default: 30s)
+      retries: 10 #  (default: 3)
+      start_period: 30s # (default: 0s)
     profiles:
       - kafka-core
       - opensearch-core
