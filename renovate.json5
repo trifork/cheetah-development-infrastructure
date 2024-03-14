@@ -2,5 +2,13 @@
   "extends": [
     "github>trifork/cheetah-infrastructure-utils-workflows:default.json5"
   ],
-  "automerge": false
+  "packageRules": [
+    "matchUpdateTypes": [
+       "minor",
+       "major",
+       "patch"
+      ],
+      "automerge": false
+    }
+  ]
 }
