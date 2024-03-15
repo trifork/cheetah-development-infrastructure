@@ -91,7 +91,7 @@ services:
       - full
 
   redpanda:
-    image: redpandadata/console:v2.4.0
+    image: redpandadata/console:v2.4.5
     entrypoint: /bin/sh
     command: -c "/app/console"
     mem_limit: 512m
