@@ -25,6 +25,7 @@ services:
       timeout: 10s # (default: 30s)
       retries: 10 #  (default: 3)
       start_period: 30s # (default: 0s)
+      start_interval: 5s # be more aggressive with the start interval, as keycloak blocks other containers from starting
     profiles:
       - kafka-core
       - opensearch-core
