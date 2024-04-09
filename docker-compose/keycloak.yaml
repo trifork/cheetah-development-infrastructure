@@ -37,6 +37,7 @@ services:
       - full
 
   keycloak-setup:
+    container_name: keycloak-setup
     build:
       context: ./config/keycloak
       dockerfile: Dockerfile

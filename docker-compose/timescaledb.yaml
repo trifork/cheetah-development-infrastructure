@@ -1,5 +1,6 @@
 services:
   timescaledb:
+    container_name: timescaledb
     image: timescale/timescaledb:latest-pg12
     restart: unless-stopped
     mem_limit: 1024m
@@ -15,6 +16,7 @@ services:
       - timescale
 
   pgadmin:
+    container_name: pgadmin
     image: dpage/pgadmin4
     restart: unless-stopped
     ports:
