@@ -24,6 +24,7 @@ plugins.security.authcz.admin_dn:
   - CN=kirk,OU=client,O=client,L=test, C=de
 
 plugins.security.audit.type: debug # internal_opensearch
+plugins.security.audit.config.log_request_body: false # use less I/O
 plugins.security.enable_snapshot_restore_privilege: true
 plugins.security.check_snapshot_restore_write_privileges: true
 plugins.security.restapi.roles_enabled:
