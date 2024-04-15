@@ -3,6 +3,7 @@ version: "2.1"
 
 services:
   zookeeper:
+    container_name: zookeeper
     image: quay.io/strimzi/kafka:0.39.0-kafka-3.6.1
     platform: linux/amd64
     command:
@@ -23,6 +24,7 @@ services:
       - full
 
   kafka:
+    container_name: kafka
     image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.39.0-kafka-3.6.1-trifork-1.5.0
     platform: linux/amd64
     hostname: kafka
@@ -45,9 +47,10 @@ services:
       - "19092"
     environment:
       LOG_DIR: "/tmp/logs"
-      KAFKA_ROOT_LOGGER_LEVEL: debug
+      KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties"
     volumes:
       - ./config/kafka/server.properties:/opt/kafka/custom-config/server.properties
+      # - ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties # enables debug logging
     restart: unless-stopped
     healthcheck:
       test: nc -z kafka 19092 || exit -1
@@ -91,6 +94,7 @@ services:
       - full
 
   redpanda:
+    container_name: redpanda
     image: redpandadata/console:v2.4.5
     entrypoint: /bin/sh
     command: -c "/app/console"
