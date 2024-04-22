@@ -48,28 +48,28 @@ function upload_api_description() {
 	local token=$2
 	local api_description
 	api_description='{
-    "type": "OpenAPI",
-    "info": {
-        "title": "My API",
-        "version": "1.0.0"
-    },
-    "paths": {
-        "/users": {
-            "get": {
-                "summary": "Get all users",
-                "responses": {
-                    "200": {
-                        "description": "Successful response"
-                    }
-                }
-            }
-        }
-    }
-  }'
+		"type": "OpenAPI",
+		"info": {
+			"title": "My API",
+			"version": "1.0.0"
+		},
+		"paths": {
+			"/users": {
+				"get": {
+					"summary": "Get all users",
+					"responses": {
+						"200": {
+							"description": "Successful response"
+						}
+					}
+				}
+			}
+		}
+  	}'
 	local response
 	response=$(http --body POST "$sr_url/apis/registry/v2/groups/$group_id/artifacts" Content-Type:"application/json; artifactType=OPENAPI" Authorization:"bearer $token" <<<"$api_description")
 	echo "$response"
-	if [[ ${#response} == 0 ]]; then
+	if [[ $(echo "$response" | jq -r '.status') == 401 ]]; then
 		echo "Error uploading API description!"
 		return 1
 	else
