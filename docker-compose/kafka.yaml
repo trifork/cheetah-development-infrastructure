@@ -68,6 +68,7 @@ services:
 
   kafka-kraft:
     image: my-kafka
+    container_name: kafka-kraft
     platform: linux/arm64
     hostname: kafka
     mem_limit: 1024m
@@ -89,7 +90,7 @@ services:
       LOG_DIR: "/tmp/logs"
       KAFKA_ROOT_LOGGER_LEVEL: debug
     volumes:
-      - ./config/kafka/kraft.properties:/opt/kafka/custom-config/server.properties
+      - ./config/kafka/kraft.properties:/opt/kafka/custom-config/kraft.properties
     restart: unless-stopped
     healthcheck:
       test: nc -z kafka 9093 || exit -1
