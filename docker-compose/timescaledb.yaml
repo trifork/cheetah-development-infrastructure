@@ -8,7 +8,6 @@ services:
       - 5432:5432
     environment:
       POSTGRES_DB: mydatabase
-      POSTGRES_USER: postgres
       POSTGRESQL_PASSWORD: admin
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
