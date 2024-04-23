@@ -17,19 +17,18 @@ services:
       keycloak-setup:
         condition: service_completed_successfully
     ports:
-      - "9052:9092" # Requires OAuth2 authentication
-      - "9053:9093" # Requires No authentication
+      - "9092:9092" # Requires OAuth2 authentication
+      - "9093:9093" # Requires No authentication
     expose:
       - "9093"
     environment:
       LOG_DIR: "/tmp/logs"
       KAFKA_ROOT_LOGGER_LEVEL: debug
-      CLUSTER_ID: 'iBzfyk2mT5qGMuO9Yu0WrQ'
     volumes:
       - ./config/kafka/server.properties:/opt/kafka/custom-config/server.properties
     restart: unless-stopped
     healthcheck:
-      test: nc -z 0.0.0.0 9053 || exit -1
+      test: nc -z kafka 9093 || exit -1
       interval: 30s # (default: 30s)
       timeout: 10s # (default: 30s)
       retries: 3 #  (default: 3)
@@ -42,7 +41,7 @@ services:
       - observability
       - full
 
-  kafka-broker:
+  kafka-kraft:
     image: my-kafka
     platform: linux/arm64
     hostname: kafka
@@ -51,25 +50,24 @@ services:
       [
         "sh",
         "-c",
-        "bin/kafka-storage.sh format --ignore-formatted --cluster-id iBzfyk2mT5qGMuO9Yu0WrQ --config /opt/kafka/custom-config/broker.properties && bin/kafka-server-start.sh /opt/kafka/custom-config/broker.properties",
+        "bin/kafka-storage.sh format --ignore-formatted --cluster-id iBzfyk2mT5qGMuO9Yu0WrQ --config /opt/kafka/custom-config/kraft.properties && bin/kafka-server-start.sh /opt/kafka/custom-config/kraft.properties",
       ]
     depends_on:
       keycloak-setup:
         condition: service_completed_successfully
     ports:
-      - "9042:9092" # Requires OAuth2 authentication
-      - "9043:9093" # Requires No authentication
+      - "9092:9092" # Requires OAuth2 authentication
+      - "9093:9093" # Requires No authentication
     expose:
-      - "19042"
+      - "9093"
     environment:
       LOG_DIR: "/tmp/logs"
       KAFKA_ROOT_LOGGER_LEVEL: debug
-      CLUSTER_ID: 'iBzfyk2mT5qGMuO9Yu0WrQ'
     volumes:
-      - ./config/kafka/broker.properties:/opt/kafka/custom-config/broker.properties
+      - ./config/kafka/kraft.properties:/opt/kafka/custom-config/server.properties
     restart: unless-stopped
     healthcheck:
-      test: nc -z kafka 19042 || exit -1
+      test: nc -z kafka 9093 || exit -1
       interval: 30s # (default: 30s)
       timeout: 10s # (default: 30s)
       retries: 3 #  (default: 3)
