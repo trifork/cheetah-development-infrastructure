@@ -16,14 +16,9 @@ services:
     mem_limit: 512m
     restart: unless-stopped
     profiles:
-      - kafka-core
-      - schema-registry-core
-      - core
-      - kafka
-      - observability
-      - full
+      - kafka-zookeeper
 
-  kafka:
+  kafka-zookeeper:
     container_name: kafka
     image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.40.0-kafka-3.7.0-trifork-1.5.0
     platform: linux/amd64
@@ -59,16 +54,11 @@ services:
       retries: 3 #  (default: 3)
       start_period: 30s # (default: 0s)
     profiles:
-      - kafka-core
-      - schema-registry-core
-      - core
-      - kafka
-      - observability
-      - full
+      - kafka-zookeeper
 
-  kafka-kraft:
-    image: my-kafka
-    container_name: kafka-kraft
+  kafka:
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.40.0-kafka-3.7.0-trifork-1.5.0
+    container_name: kafka
     platform: linux/arm64
     hostname: kafka
     mem_limit: 1024m
@@ -91,6 +81,7 @@ services:
       KAFKA_ROOT_LOGGER_LEVEL: debug
     volumes:
       - ./config/kafka/kraft.properties:/opt/kafka/custom-config/kraft.properties
+      # - ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties # enables debug logging
     restart: unless-stopped
     healthcheck:
       test: nc -z kafka 9093 || exit -1
