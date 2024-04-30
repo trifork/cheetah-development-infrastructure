@@ -119,6 +119,30 @@ And query OpenSearch like this:
 curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 ```
 
+## Timescale
+
+The Timescale setup consists of different services:
+* **TimescaleDB** PostgreSQL with the timescale extension
+* **PgAdmin** GUI for managing TimescaleDB
+
+### Running TimescaleDB and its associated services
+
+Run:
+
+```bash
+docker compose --profile=timescale up -d
+```
+
+When all of the services are running, you can go to:
+
+- <http://localhost:5432/> TimescaleDB
+- <http://localhost:5050> to see the PgAdmin UI
+
+### Authentication
+
+By default a single user is setup:
+* **Username**: `postgres`, **Password**: `admin`
+
 ## List of all profiles in docker compose
 
 **List of profiles:**
