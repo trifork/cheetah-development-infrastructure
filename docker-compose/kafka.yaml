@@ -1,6 +1,4 @@
 ---
-version: "2.1"
-
 services:
   zookeeper:
     container_name: zookeeper
@@ -49,7 +47,7 @@ services:
       LOG_DIR: "/tmp/logs"
       KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties" # enables debug logging
     volumes:
-      # - kafka:/var/lib/kafka # enable for persistent storage
+      - kafka:/var/lib/kafka # enable for persistent storage
       - ./config/kafka/server.properties:/opt/kafka/custom-config/server.properties
       - ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties
     restart: unless-stopped
@@ -127,6 +125,7 @@ services:
 
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
+    mem_limit: 128m
     image: quay.io/cloudhut/kminion:master
     hostname: kafka-minion
     container_name: kafka-minion

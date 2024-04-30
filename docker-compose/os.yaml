@@ -1,6 +1,4 @@
 ---
-version: "2.1"
-
 services:
   # login fallback: admin:admin
   # services should use oauth
@@ -19,7 +17,7 @@ services:
     depends_on:
       keycloak-setup:
         condition: service_completed_successfully
-    mem_limit: 2048m
+    mem_limit: 2048m # usually uses 1300m
     ulimits:
       memlock:
         soft: -1
@@ -56,6 +54,7 @@ services:
       start_period: 30s # (default: 0s)
 
   opensearch-configurer:
+    mem_limit: 128m
     image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:0.5.0
     container_name: opensearch-configurer
     command: "opensearch:9200 --service"
@@ -84,6 +83,7 @@ services:
 
   # login kibanaserver:kibanaserver
   opensearch-dashboards:
+    mem_limit: 256m
     container_name: opensearch-dashboards
     image: opensearchproject/opensearch-dashboards:2.11.1
     hostname: opensearch-dashboards

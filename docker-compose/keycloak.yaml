@@ -38,6 +38,7 @@ services:
       - full
 
   keycloak-setup:
+    mem_limit: 512m
     container_name: keycloak-setup
     build:
       context: ./config/keycloak

@@ -17,6 +17,24 @@ docker compose up --quiet-pull
 1. Follow: <https://docs.cheetah.trifork.dev/getting-started/guided-tour/prerequisites#run-standard-jobs>
 1. Run `docker network create cheetah-infrastructure`
 
+## Resource requirements
+
+The infrastructure requires a lot of resources, especially memory when running all services at once.
+
+Here is some basic profiling done while running through WSL with 16GB RAM:
+
+```sh
+# Get MemUsage for all running containers
+docker compose stats --no-stream | awk 'NR>1 {print $4}' | numfmt --from=auto --suffix=B | awk 'BEGIN {sum=0} {sum=sum+$1} END {printf "%.0f\n", sum}' | numfmt --to=iec
+```
+
+|  Profile   | MemUsage |
+| :--------: | :------: |
+|    core    |   2.4G   |
+|   kafka    |   1.3G   |
+| opensearch |   1.9G   |
+|    full    |   2.9G   |
+
 ### Security model
 
 The development infrastructure follows the [Reference Security Model](https://docs.cheetah.trifork.dev/reference/security).  
