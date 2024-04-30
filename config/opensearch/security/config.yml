@@ -13,20 +13,10 @@ config:
     http:
       anonymous_auth_enabled: true
     authc:
-      basic_internal_auth_domain:
-        description: "Authenticate via HTTP Basic against internal users database"
-        http_enabled: true
-        transport_enabled: true
-        order: 0
-        http_authenticator:
-          type: basic
-          challenge: true
-        authentication_backend:
-          type: intern
       openid_auth_domain:
         http_enabled: true
         transport_enabled: true
-        order: 1
+        order: 0
         http_authenticator:
           type: openid
           challenge: false # JWT tokens already contain all required information, so challenge is unnecessary
@@ -36,3 +26,13 @@ config:
             openid_connect_url: http://keycloak:1852/realms/local-development/.well-known/openid-configuration
         authentication_backend:
           type: noop # unnecessary
+      basic_internal_auth_domain:
+        description: "Authenticate via HTTP Basic against internal users database"
+        http_enabled: true
+        transport_enabled: true
+        order: 1
+        http_authenticator:
+          type: basic
+          challenge: true
+        authentication_backend:
+          type: intern

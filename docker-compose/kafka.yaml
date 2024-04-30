@@ -42,10 +42,11 @@ services:
       - "19092"
     environment:
       LOG_DIR: "/tmp/logs"
-      KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties"
+      KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties" # enables debug logging
     volumes:
+      # - kafka:/var/lib/kafka # enable for persistent storage
       - ./config/kafka/server.properties:/opt/kafka/custom-config/server.properties
-      # - ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties # enables debug logging
+      - ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties
     restart: unless-stopped
     healthcheck:
       test: nc -z kafka 19092 || exit -1
@@ -225,6 +226,9 @@ services:
       - core
       - kafka
       - full
+
+volumes:
+  kafka:
 
 networks:
   default:
