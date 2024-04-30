@@ -24,16 +24,20 @@ The infrastructure requires a lot of resources, especially memory when running a
 Here is some basic profiling done while running through WSL with 16GB RAM:
 
 ```sh
+# See if your docker supports memory limits
+docker info --format '{{json .MemoryLimit}}'
+# Get total memory available for docker
+docker info --format '{{json .MemTotal}}' | numfmt --from=auto --to=iec
 # Get MemUsage for all running containers
-docker compose stats --no-stream | awk 'NR>1 {print $4}' | numfmt --from=auto --suffix=B | awk 'BEGIN {sum=0} {sum=sum+$1} END {printf "%.0f\n", sum}' | numfmt --to=iec
+docker compose stats --no-stream | awk 'NR>1 {print $4}' | numfmt --from=auto --suffix=B | awk '{sum+=$1}END{print sum}' | numfmt --to=iec
 ```
 
-|  Profile   | MemUsage |
-| :--------: | :------: |
-|    core    |   2.4G   |
-|   kafka    |   1.3G   |
-| opensearch |   1.9G   |
-|    full    |   2.9G   |
+|  Profile   | MEM USAGE / LIMIT |
+| :--------: | :---------------: |
+|    core    |    2.4G / 4.4G    |
+|   kafka    |    1.3G / 2.2G    |
+| opensearch |    1.9G / 2.9G    |
+|    full    |    2.9G / 5.2G    |
 
 ### Security model
 

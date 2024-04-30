@@ -1,6 +1,7 @@
 ---
 services:
   zookeeper:
+    mem_limit: 256m
     container_name: zookeeper
     image: quay.io/strimzi/kafka:0.40.0-kafka-3.7.0
     platform: linux/amd64
@@ -11,7 +12,6 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       LOG_DIR: /tmp/logs
-    mem_limit: 512m
     restart: unless-stopped
     profiles:
       - kafka-core
@@ -66,6 +66,7 @@ services:
       - full
 
   kafka-setup:
+    mem_limit: 512m
     image: quay.io/strimzi/kafka:0.40.0-kafka-3.7.0
     platform: linux/amd64
     container_name: kafka-setup
@@ -93,11 +94,11 @@ services:
       - full
 
   redpanda:
+    mem_limit: 128m
     container_name: redpanda
     image: redpandadata/console:v2.4.7
     entrypoint: /bin/sh
     command: -c "/app/console"
-    mem_limit: 512m
     environment:
       CONFIG_FILEPATH: /etc/redpanda-config.yml
     volumes:
