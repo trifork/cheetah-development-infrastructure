@@ -34,7 +34,7 @@ docker compose stats --no-stream | awk 'NR>1 {print $4}' | numfmt --from=auto --
 
 |  Profile   | MEM USAGE / LIMIT |
 | :--------: | :---------------: |
-|    core    |    2.4G / 4.4G    |
+|    core    |    2.4G / 4.5G    |
 |   kafka    |    1.3G / 2.2G    |
 | opensearch |    1.9G / 2.9G    |
 |    full    |    2.9G / 5.2G    |

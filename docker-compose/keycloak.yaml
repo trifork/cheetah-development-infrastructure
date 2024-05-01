@@ -13,14 +13,14 @@ services:
       KC_HEALTH_ENABLED: true
       KC_HOSTNAME_STRICT_BACKCHANNEL: false
       KC_HTTP_PORT: 1852
-      KC_HOSTNAME: localhost
+      KC_HOSTNAME: keycloak
     ports:
       - 1852:1852
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "exec 3<>/dev/tcp/127.0.0.1/1852;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3",
+          "exec 3<>/dev/tcp/127.0.0.1/1852;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://keycloak\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3",
         ]
       interval: 30s # (default: 30s)
       timeout: 10s # (default: 30s)
@@ -35,6 +35,7 @@ services:
       - kafka
       - opensearch
       - observability
+      - kui
       - full
 
   keycloak-setup:
@@ -64,6 +65,7 @@ services:
       - opensearch-core
       - schema-registry-core
       - core
+      - kui
       - kafka
       - opensearch
       - observability

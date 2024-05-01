@@ -196,6 +196,7 @@ services:
       - kafka
       - full
 
+
 volumes:
   kafka:
 

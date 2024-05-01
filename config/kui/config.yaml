@@ -1,0 +1,45 @@
+auth:
+  type: OAUTH2
+  oauth2:
+    client:
+      # keycloak:
+      #   clientId: "schema-registry"
+      #   clientSecret: "schema-registry-secret"
+      #   scope: kafka
+      #   issuer-uri: http://keycloak:1852/realms/local-development
+      #   redirect-uri: http://localhost:9099/login/oauth2/code/auth0
+      #   #authorization-uri: http(s)://HOSTNAME/login/oauth/authorize
+      #   token-uri: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      #   user-name-attribute: preferred_username
+      #   client-name: keycloak
+      #   provider: keycloak
+      #   custom-params:
+      #     type: keycloak
+      # keycloak2:
+      #   provider: keycloak
+      #   clientId: "schema-registry"
+      #   clientSecret: "schema-registry-secret"
+      #   scope: kafka
+      #   user-name-attribute: preferred_username
+      #   authorization-uri: http://keycloak:1852/realms/local-development/protocol/openid-connect/auth
+      #   token-uri: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      #   #user-info-uri: http(s)://HOSTNAME/api/v3/user
+      #   custom-params:
+      #     type: keycloak   
+      keycloak:
+        clientId: schema-registry
+        clientSecret: schema-registry
+        scope: openid
+        issuer-uri: http://keycloak:1852/realms/local-development
+        user-name-attribute: preferred_username
+        client-name: keycloak
+        provider: keycloak
+        #custom-params:
+          #type: keycloak
+        custom-params:
+          type: oauth
+          roles-field: roles
+
+#The Issuer "http://localhost:1852/realms/local-development" provided in the configuration metadata did not match the requested issuer 
+#The Issuer "http://keycloak:1852/realms/local-development"
+#
