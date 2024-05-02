@@ -50,6 +50,7 @@ services:
     volumes:
       - kafka:/var/lib/kafka # enable for persistent storage
       - ./config/kafka/server.properties:/opt/kafka/custom-config/server.properties
+      #- ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties
       - ./config/kafka/log4j.cluster.properties:/opt/kafka/custom-config/log4j.properties
     restart: unless-stopped
     healthcheck:
