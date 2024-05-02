@@ -31,7 +31,10 @@ services:
         hard: 262144
     volumes:
       - opensearch:/data
+      # Config
+      - ./config/opensearch/log4j2.properties:/usr/share/opensearch/config/log4j2.properties
       - ./config/opensearch/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
+      # Security config
       - ./config/opensearch/security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
       - ./config/opensearch/security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml
       - ./config/opensearch/security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml
