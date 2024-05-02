@@ -22,6 +22,7 @@ services:
       - full
 
   kafka:
+    cpus: 2
     container_name: kafka
     image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.40.0-kafka-3.7.0-trifork-1.5.0
     platform: linux/amd64
@@ -127,7 +128,7 @@ services:
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
     mem_limit: 128m
-    image: quay.io/cloudhut/kminion:master
+    image: quay.io/cloudhut/kminion:3.19.1
     hostname: kafka-minion
     container_name: kafka-minion
     depends_on:
