@@ -7,7 +7,9 @@ RUN /usr/share/opensearch/bin/opensearch-plugin install --batch 'repository-s3' 
     && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-security-analytics \
     && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-ml
 
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 CMD curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1
+
 # Ensure permissions are correct
 USER root:root
-RUN chown -R $UID:$GID $OPENSEARCH_HOME 
-USER $UID
+#RUN chown -R $UID:$GID $OPENSEARCH_HOME 
+#USER $UID
