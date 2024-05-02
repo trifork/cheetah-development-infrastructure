@@ -27,7 +27,7 @@ services:
         soft: -1
         hard: -1
       nofile:
-        soft: 262144
+        soft: 262144 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
         hard: 262144
     volumes:
       - opensearch:/data
