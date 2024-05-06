@@ -6,3 +6,4 @@ RUN /usr/share/opensearch/bin/opensearch-plugin install --batch 'repository-s3' 
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 CMD curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1
 #trivy:ignore:avd-ds-0002
+USER opensearch
