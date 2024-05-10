@@ -5,6 +5,7 @@ services:
   opensearch:
     image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:local
     container_name: opensearch
+    pull_policy: build
     build:
       context: ./config/opensearch
       dockerfile: Dockerfile

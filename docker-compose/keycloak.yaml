@@ -41,6 +41,7 @@ services:
   keycloak-setup:
     mem_limit: 512m
     container_name: keycloak-setup
+    pull_policy: build
     build:
       context: ./config/keycloak
       dockerfile: Dockerfile
