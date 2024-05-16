@@ -189,9 +189,6 @@ services:
       QUARKUS_OIDC_TOKEN_AUDIENCE: any # should be "schema-registry,kafka" but our keycloak does not set aud on tokens
       QUARKUS_OIDC_TOKEN_ISSUER: "http://keycloak:1852/realms/local-development"
 
-    # todo: try bad isuser and try bad audience
-    # try kamstrup prod .well-known/ URI with token from valid test credentials (same signing key but different issuer)
-
     healthcheck:
       test: curl schema-registry:8080 || exit -1
       interval: 30s # (default: 30s)
