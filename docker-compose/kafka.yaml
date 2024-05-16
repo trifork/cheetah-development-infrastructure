@@ -182,12 +182,11 @@ services:
       # https://quarkus.io/guides/security-oidc-configuration-properties-reference
       QUARKUS_OIDC_ENABLED: true
       QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:1852/realms/local-development
-      QUARKUS_OIDC_JWKS_PATH: /protocol/openid-connect/certs
       # quarkus.log.level: DEBUG
       QUARKUS_OIDC_ROLES_ROLE_CLAIM_PATH: "roles"
       QUARKUS_OIDC_AUTHENTICATION_VERIFY_ACCESS_TOKEN: "true"
-      QUARKUS_OIDC_TOKEN_AUDIENCE: any # should be "schema-registry,kafka" but our keycloak does not set aud on tokens
-      QUARKUS_OIDC_TOKEN_ISSUER: "http://keycloak:1852/realms/local-development"
+      QUARKUS_OIDC_TOKEN_AUDIENCE: any # should be "schema-registry,kafka" but our keycloak does not set 'aud' on tokens
+      QUARKUS_OIDC_TOKEN_ISSUER: "http://localhost:1852/realms/local-development"
 
     healthcheck:
       test: curl schema-registry:8080 || exit -1
