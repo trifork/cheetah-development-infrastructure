@@ -1,22 +1,27 @@
 #!/bin/bash
 
+# local: bash tests/schemaregistry.sh http://localhost:8081 http://localhost:1852
+
 set -euo pipefail
 
-sr_url="http://schema-registry:8080"
+SCHEMAREGISTRY_HOST=${1:-http://schema-registry:8080} # schema registry url
+OIDC_TOKEN_HOST=${2:-http://keycloak:1852}
 TENANT=default-access
 GROUPID=1245
 empty_token=""
+
+echo "Testing $SCHEMAREGISTRY_HOST"
 
 function get_default_access_token() {
 	local tenant=$1
 	local response
 
 	response=$(
-		http --check-status --ignore-stdin --follow --all --form POST 'http://keycloak:1852/realms/local-development/protocol/openid-connect/token' \
+		http --check-status --ignore-stdin --follow --all --form POST "${OIDC_TOKEN_HOST}/realms/local-development/protocol/openid-connect/token" \
 			accept:'*/*' \
 			Content-Type:'application/x-www-form-urlencoded' \
 			cache-control:'no-cache' \
-			grant_type=client_credentials scope=schema-registry client_id="$tenant" client_secret="$tenant-secret"
+			grant_type=client_credentials scope=schema-registry client_id="${tenant}" client_secret="${tenant}-secret"
 	)
 	local access_token
 	access_token=$(printf '%s' "$response" | jq -r '.access_token')
@@ -24,7 +29,7 @@ function get_default_access_token() {
 }
 
 function test_anonymous_user() {
-	if ! http --check-status --ignore-stdin "$sr_url/apis/registry/v2/users/me" cache-control:'no-cache'; then
+	if ! http --check-status --ignore-stdin "$SCHEMAREGISTRY_HOST/apis/registry/v2/users/me" cache-control:'no-cache'; then
 		echo "ERROR - Anonymous readonly not allowed"
 		return 1
 	fi
@@ -34,13 +39,12 @@ function test_anonymous_user() {
 function test_jwt_auth() {
 	local token=$1
 	local response
-	response=$(http --check-status --ignore-stdin "$sr_url/apis/registry/v2/users/me" Authorization:"bearer $token")
-	echo "$response"
-	if [[ $response =~ "error_code" ]]; then
-		echo "ERROR - Authorized access using jwt failed"
+	if http --check-status --ignore-stdin "$SCHEMAREGISTRY_HOST/apis/registry/v2/users/me" Authorization:"bearer $token"; then
+		echo "INFO - Authorized access using jwt successful"
+	else
+		echo "ERROR - Authorized access using jwt failed. Err: " $?
 		return 1
 	fi
-	return 0
 }
 
 function upload_api_description() {
@@ -67,13 +71,14 @@ function upload_api_description() {
 		}
   	}'
 	local response
-	response=$(http --body POST "$sr_url/apis/registry/v2/groups/$group_id/artifacts" Content-Type:"application/json; artifactType=OPENAPI" Authorization:"bearer $token" <<<"$api_description")
+	response=$(http --body POST "$SCHEMAREGISTRY_HOST/apis/registry/v2/groups/$group_id/artifacts" Content-Type:"application/json; artifactType=OPENAPI" Authorization:"bearer $token" <<<"$api_description")
 	echo "$response"
 	if [[ $(echo "$response" | jq -r '.status') == 401 ]]; then
 		echo "Error uploading API description!"
 		return 1
 	else
 		echo "API description uploaded successfully."
+		echo "$response" | jq
 	fi
 	return 0
 }
@@ -101,7 +106,8 @@ fi
 
 echo "Uploading API description..."
 if ! upload_api_description $GROUPID "$service_token"; then
+	echo "Upload failed"
 	exit 1
 fi
 
-echo "finished test sucessfully"
+echo "Finished test sucessfully."
