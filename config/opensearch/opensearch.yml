@@ -26,8 +26,15 @@ plugins.security.authcz.admin_dn:
 plugins.query.size_limit: 10000 # Sets the default size of index that the query engine fetches from OpenSearch.
 
 plugins.security.audit.type: log4j
+plugins.security.audit.config.enable_rest: true
+plugins.security.audit.config.disabled_rest_categories: ""
+plugins.security.audit.config.resolve_bulk_requests: false
+plugins.security.audit.config.ignore_requests: []
+plugins.security.audit.config.ignore_users: NONE
+plugins.security.audit.config.exclude_sensitive_headers: true
+
 plugins.security.audit.config.log4j.logger_name: audit
-plugins.security.audit.config.log4j.level: INFO
+plugins.security.audit.config.log4j.level: DEBUG
 plugins.security.audit.config.index: "'auditlog-'YYYY"
 plugins.security.audit.config.log_request_body: false # use less I/O
 

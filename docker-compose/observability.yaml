@@ -54,6 +54,24 @@ services:
       - observability
       - full
 
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib
+    environment:
+      APPLICATIONINSIGHTS_CONNECTION_STRING: ${APPLICATIONINSIGHTS_CONNECTION_STRING}
+    volumes:
+      - ./config/otel/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+      - ./tmp/logs2:/tmp/logs
+    depends_on:
+      kafka:
+        condition: service_healthy
+    profiles:
+      - observability
+      - full
+
+volumes:
+  kafka:
+  kafkalogs:
+
 networks:
   default:
     name: "cheetah-infrastructure"

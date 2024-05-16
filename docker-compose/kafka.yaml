@@ -24,8 +24,10 @@ services:
   kafka:
     cpus: 2
     container_name: kafka
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.40.0-kafka-3.7.0-trifork-1.5.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.40.0-kafka-3.7.0-trifork-1.7.0
     platform: linux/amd64
+    group_add:
+      - 0
     hostname: kafka
     mem_limit: 1024m
     command:
@@ -49,6 +51,7 @@ services:
       KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties" # enables debug logging
     volumes:
       - kafka:/var/lib/kafka # enable for persistent storage
+      - ./tmp/logs2:/tmp/logs
       - ./config/kafka/server.properties:/opt/kafka/custom-config/server.properties
       #- ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties
       - ./config/kafka/log4j.cluster.properties:/opt/kafka/custom-config/log4j.properties

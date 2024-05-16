@@ -1,0 +1,36 @@
+# https://opentelemetry.io/docs/kubernetes/collector/components/
+# https://opentelemetry.io/docs/kubernetes/helm/collector/#kubernetes-attributes-preset
+# make unstructured body into json using merge_maps? https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/transformprocessor/README.md
+receivers:
+  filelog:
+    include: ["/tmp/logs/*.log"]
+
+# presets:
+#   kubernetesAttributes:
+#     enabled: true
+
+processors:
+  filter/ottl:
+    error_mode: ignore
+    logs:
+      log_record:
+        - 'IsMatch(body, ".*super user.*")'
+  transform:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - set(severity_number, SEVERITY_NUMBER_DEBUG) where IsString(body) and IsMatch(body, "\\sDEBUG\\s")
+
+exporters:
+  logging:
+    loglevel: debug
+  azuremonitor:
+    connection_string: ${env:APPLICATIONINSIGHTS_CONNECTION_STRING}
+
+service:
+  pipelines:
+    logs:
+      receivers: [filelog]
+      processors: [filter/ottl, transform]
+      exporters: [azuremonitor, logging]
