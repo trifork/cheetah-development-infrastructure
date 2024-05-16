@@ -178,13 +178,19 @@ services:
       REGISTRY_AUTH_OBAC_ENABLED: true
       REGISTRY_AUTH_OBAC_LIMIT_GROUP_ACCESS: true
       ROLE_BASED_AUTHZ_SOURCE: "token"
-      REGISTRY_AUTH_ROLES_DEVELOPER: "sr-producer" # "sr-developer"
+      REGISTRY_AUTH_ROLES_DEVELOPER: "sr-producer" # default is "sr-developer"
       # https://quarkus.io/guides/security-oidc-configuration-properties-reference
-      quarkus.oidc.enabled: true
-      quarkus.oidc.auth-server-url: http://keycloak:1852/realms/local-development
-      quarkus.oidc.jwks-path: /protocol/openid-connect/certs
+      QUARKUS_OIDC_ENABLED: true
+      QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:1852/realms/local-development
+      QUARKUS_OIDC_JWKS_PATH: /protocol/openid-connect/certs
       # quarkus.log.level: DEBUG
-      quarkus.oidc.roles.role-claim-path: roles
+      QUARKUS_OIDC_ROLES_ROLE_CLAIM_PATH: "roles"
+      QUARKUS_OIDC_AUTHENTICATION_VERIFY_ACCESS_TOKEN: "true"
+      QUARKUS_OIDC_TOKEN_AUDIENCE: any # should be "schema-registry,kafka" but our keycloak does not set aud on tokens
+      QUARKUS_OIDC_TOKEN_ISSUER: "http://keycloak:1852/realms/local-development"
+
+    # todo: try bad isuser and try bad audience
+    # try kamstrup prod .well-known/ URI with token from valid test credentials (same signing key but different issuer)
 
     healthcheck:
       test: curl schema-registry:8080 || exit -1
