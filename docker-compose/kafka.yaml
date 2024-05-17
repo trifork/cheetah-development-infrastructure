@@ -185,7 +185,7 @@ services:
       # quarkus.log.level: DEBUG
       QUARKUS_OIDC_ROLES_ROLE_CLAIM_PATH: "roles"
       QUARKUS_OIDC_AUTHENTICATION_VERIFY_ACCESS_TOKEN: "true"
-      QUARKUS_OIDC_TOKEN_AUDIENCE: schema-registry,kafka
+      QUARKUS_OIDC_TOKEN_AUDIENCE: schema-registry
       QUARKUS_OIDC_TOKEN_ISSUER: "http://localhost:1852/realms/local-development"
 
     healthcheck:
