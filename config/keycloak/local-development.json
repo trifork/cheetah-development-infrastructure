@@ -400,6 +400,15 @@
               "jsonType.label": "String",
               "usermodel.clientRoleMapping.clientId": "schema-registry"
             }
+          },
+          {
+            "name": "schema-registry-audience",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-audience-mapper",
+            "config": {
+              "included.client.audience": "schema-registry",
+              "access.token.claim": "true"
+            }
           }
         ]
       },
