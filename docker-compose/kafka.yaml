@@ -182,7 +182,6 @@ services:
       # https://quarkus.io/guides/security-oidc-configuration-properties-reference
       quarkus.oidc.enabled: true
       quarkus.oidc.auth-server-url: http://keycloak:1852/realms/local-development
-      quarkus.oidc.jwks-path: /protocol/openid-connect/certs
       # quarkus.log.level: DEBUG
       quarkus.oidc.roles.role-claim-path: roles
 
