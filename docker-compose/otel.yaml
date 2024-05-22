@@ -1,0 +1,18 @@
+---
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./config/otel/metrics.yaml:/etc/otel-collector-config.yaml
+      #- ./config/otel/opensearch-audit-logs.yaml:/etc/otel-collector-config.yaml
+      - ./tmp/logs:/tmp/logs
+    ports:
+      - "4317:4317"
+    profiles:
+      - observability
+      - full
+
+networks:
+  default:
+    name: "cheetah-infrastructure"

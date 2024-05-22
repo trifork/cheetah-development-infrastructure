@@ -1,0 +1,33 @@
+extensions:
+  basicauth/client:
+    client_auth:
+      username: ${env:OBSERVABILITY_USERNAME}
+      password: ${env:OBSERVABILITY_PASSWORD}
+
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: "opensearch"
+          metrics_path: "/_prometheus/metrics"
+          basic_auth:
+            username: admin
+            password: admin
+          scrape_interval: 10s
+          static_configs:
+            - targets: ["opensearch:9200"]
+
+exporters:
+  logging:
+    loglevel: debug
+  prometheusremotewrite: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/prometheusremotewriteexporter/README.md
+    endpoint: "https://visionai-prometheus.cheetah.trifork.dev/api/push"
+    auth:
+      authenticator: basicauth/client
+
+service:
+  extensions: [basicauth/client]
+  pipelines:
+    metrics:
+      receivers: [prometheus]
+      exporters: [prometheusremotewrite]

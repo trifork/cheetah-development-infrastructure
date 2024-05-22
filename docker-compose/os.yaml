@@ -46,6 +46,8 @@ services:
       - ./config/opensearch/certs/kirk-key.pem:/usr/share/opensearch/config/kirk-key.pem
       - ./config/opensearch/certs/opensearch.keystore:/usr/share/opensearch/config/opensearch.keystore
       - ./config/opensearch/certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem
+      # logs
+      - ./tmp/logs/opensearch/:/usr/share/opensearch/logs/
     ports:
       - 9200:9200
       - 9600:9600
