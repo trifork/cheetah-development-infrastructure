@@ -110,19 +110,6 @@
         ]
       },
       {
-        "clientId": "kafka-admin",
-        "name": "kafka-admin",
-        "enabled": true,
-        "clientAuthenticatorType": "client-secret",
-        "secret": "kafka-admin-secret",
-        "serviceAccountsEnabled": true,
-        "publicClient": false,
-        "optionalClientScopes": [
-          "kafka",
-          "schema-registry"
-        ]
-      },
-      {
         "clientId": "opensearch-admin",
         "name": "opensearch-admin",
         "enabled": true,
@@ -222,19 +209,6 @@
           "opensearch": [
             "opensearch_all_access"
           ],
-          "kafka": [
-            "Kafka_*_all"
-          ],
-          "schema-registry": [
-            "sr-producer"
-          ]
-        }
-      },
-      {
-        "username": "service-account-kafka-admin",
-        "enabled": true,
-        "serviceAccountClientId": "kafka-admin",
-        "clientRoles": {
           "kafka": [
             "Kafka_*_all"
           ],
