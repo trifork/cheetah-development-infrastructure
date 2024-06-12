@@ -23,7 +23,7 @@ exporters:
   azuremonitor:
     connection_string: ${env:APPLICATIONINSIGHTS_CONNECTION_STRING}
   loki:
-    endpoint: https://visionai-loki.cheetah.trifork.dev/api/push
+    endpoint: https://loki.visionai.cheetah.trifork.dev/api/push
     default_labels_enabled:
       exporter: false
       job: true

@@ -21,7 +21,7 @@ exporters:
   logging:
     loglevel: debug
   prometheusremotewrite: # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/prometheusremotewriteexporter/README.md
-    endpoint: "https://visionai-prometheus.cheetah.trifork.dev/api/push"
+    endpoint: "https://prometheus.visionai.cheetah.trifork.dev/api/push"
     auth:
       authenticator: basicauth/client
 
