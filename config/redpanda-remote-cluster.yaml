@@ -1,0 +1,22 @@
+---
+# See: https://github.com/cloudhut/kowl/tree/master/docs/config for reference config files.
+kafka:
+  brokers:
+    # kubectl port-forward cheetah-kafka-kafka-0 19093:9093 -n kafka is not always allowed, so we use the nginx proxy
+    # kubectl port-forward --context cheetah deployment/kafka-nginx-proxy 19093:19093 -n kafka-proxy
+    - localhost:19093
+  sasl:
+    enabled: true
+    mechanism: OAUTHBEARER
+    oauth:
+      # kubectl port-forward --context cheetah deployment/keycloak 2854:8080 -n keycloak
+      tokenEndpoint: http://localhost:2854/realms/local-development/protocol/openid-connect/token
+      clientId: redpanda
+      clientSecret: redpanda-secret
+      scope: kafka
+  schemaregistry:
+    enabled: true
+    urls: [http://schema-registry:8080/apis/ccompat/v7]
+    # See http://localhost:8081/apis/ for API documentation
+# server:
+# listenPort: 8080
