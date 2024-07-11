@@ -67,6 +67,7 @@ services:
       - observability
       - full
   
+  # some of the service settings might not be optimal for connect as they've just been copied from above
   kafka-connect:
     cpus: 2
     container_name: kafka-connect
@@ -84,11 +85,11 @@ services:
       zookeeper:
         condition: service_started
       keycloak-setup:
-        condition: service_completed_successfully    
+        condition: service_completed_successfully
+      kafka:
+        condition: service_started
     ports:
       - 8083:8083
-    expose:
-      - "8083"
     environment:
       LOG_DIR: "/tmp/logs"
       KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties" # enables debug logging
@@ -111,6 +112,18 @@ services:
       - kafka
       - observability
       - full
+
+  connect-ui:
+    image: landoop/kafka-connect-ui:0.9.7
+    environment:
+      CONNECT_URL: http://kafka-connect:8083
+      PROXY: 'true'
+    ports:
+      - 8000:8000
+    depends_on:
+      kafka-connect:
+        condition: service_started
+
 
   kafka-setup:
     mem_limit: 512m
