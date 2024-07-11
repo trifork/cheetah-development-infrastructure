@@ -1,13 +1,20 @@
 {
-  "extends": [
-    "github>trifork/cheetah-infrastructure-utils-workflows:default.json5"
-  ],
-  "packageRules": [
-    {
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "automerge": false
-    }
-  ]
+   "extends":[
+      "github>trifork/cheetah-infrastructure-utils-workflows:default.json5"
+   ],
+   "packageRules":[
+      {
+         "prTitle":"fix(deps): minor update {{depName}} from {{currentVersion}} to {{newVersion}}",
+         "matchPackagePatterns":[
+            "*"
+         ],
+         "matchUpdateTypes":[
+            "minor"
+         ],
+         "additionalBranchPrefix":[
+            "{{depName}}-"
+         ]
+      }
+   ],
+   "automerge":false
 }
