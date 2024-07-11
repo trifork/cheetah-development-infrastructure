@@ -79,7 +79,9 @@ services:
       [
         "sh",
         "-c",
-        "bin/connect-standalone.sh /opt/kafka/custom-config/connect-standalone.properties", #run connect-standalone with given properties
+        #https://kafka.apache.org/documentation/#connect_running
+        "bin/connect-distributed.sh /opt/kafka/custom-config/connect-distributed.properties" 
+        #"bin/connect-standalone.sh /opt/kafka/custom-config/connect-standalone.properties", #run connect-standalone with given properties
       ]
     depends_on:
       zookeeper:
@@ -90,6 +92,8 @@ services:
         condition: service_started
     ports:
       - 8083:8083
+    expose:
+      - "8083"
     environment:
       LOG_DIR: "/tmp/logs"
       KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties" # enables debug logging
@@ -97,7 +101,7 @@ services:
       - kafka:/var/lib/kafka # enable for persistent storage
       #- ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties
       - ./config/kafka/log4j.cluster.properties:/opt/kafka/custom-config/log4j.properties
-      - ./config/kafka/connect-standalone.properties:/opt/kafka/custom-config/connect-standalone.properties #kafka-connect properties
+      - ./config/kafka/connect-distributed.properties:/opt/kafka/custom-config/connect-distributed.properties #kafka-connect properties
     restart: unless-stopped
     healthcheck:
       test: nc -z kafka 19092 || exit -1
