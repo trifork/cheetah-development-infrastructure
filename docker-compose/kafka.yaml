@@ -113,7 +113,7 @@ services:
       - observability
       - full
 
-  connect-ui:
+  kafka-connect-ui:
     image: landoop/kafka-connect-ui:0.9.7
     environment:
       CONNECT_URL: http://kafka-connect:8083
