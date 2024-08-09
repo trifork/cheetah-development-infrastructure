@@ -20,10 +20,3 @@ kafka:
     # See http://localhost:8081/apis/ for API documentation
 # server:
 # listenPort: 8080
-  connect:
-    enabled: true
-    clusters:
-      - name: "connect-cluster"
-      #Try deploying the ui, portforwarding it and putting url below
-        url: "http://localhost:8000" 
-
