@@ -67,11 +67,12 @@ services:
       - observability
       - full
   
-  # some of the service settings might not be optimal for connect as they've just been copied from above
   kafka-connect:
     cpus: 2
     container_name: kafka-connect
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.40.0-kafka-3.7.0-trifork-1.5.0
+    build:
+      context: ./config/kafka
+      dockerfile: Dockerfile
     platform: linux/amd64
     hostname: kafka-connect
     mem_limit: 1024m
@@ -79,9 +80,7 @@ services:
       [
         "sh",
         "-c",
-        #https://kafka.apache.org/documentation/#connect_running
-        "bin/connect-distributed.sh /opt/kafka/custom-config/connect-distributed.properties" 
-        #"bin/connect-standalone.sh /opt/kafka/custom-config/connect-standalone.properties", #run connect-standalone with given properties
+        "bin/connect-distributed.sh /opt/kafka/custom-config/connect-distributed.properties", #start connect with properies https://kafka.apache.org/documentation/#connect_running
       ]
     depends_on:
       zookeeper:
@@ -96,10 +95,9 @@ services:
       - "8083"
     environment:
       LOG_DIR: "/tmp/logs"
-      KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties" # enables debug logging
+      KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties"
     volumes:
-      - kafka:/var/lib/kafka # enable for persistent storage
-      #- ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties
+      - kafka:/var/lib/kafka 
       - ./config/kafka/log4j.cluster.properties:/opt/kafka/custom-config/log4j.properties
       - ./config/kafka/connect-distributed.properties:/opt/kafka/custom-config/connect-distributed.properties #kafka-connect properties
     restart: unless-stopped
@@ -118,7 +116,9 @@ services:
       - full
 
   kafka-connect-ui:
+    mem_limit: 512m
     image: landoop/kafka-connect-ui:0.9.7
+    container_name: kafka-connect-ui
     environment:
       CONNECT_URL: http://kafka-connect:8083
       PROXY: 'true'
