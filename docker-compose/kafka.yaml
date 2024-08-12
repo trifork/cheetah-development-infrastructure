@@ -4,7 +4,6 @@ services:
     mem_limit: 256m
     container_name: zookeeper
     image: quay.io/strimzi/kafka:0.40.0-kafka-3.7.0
-    platform: linux/amd64
     command:
       ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
     ports:
@@ -25,7 +24,6 @@ services:
     cpus: 2
     container_name: kafka
     image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.40.0-kafka-3.7.0-trifork-1.5.0
-    platform: linux/amd64
     hostname: kafka
     mem_limit: 1024m
     command:
@@ -70,7 +68,6 @@ services:
   kafka-setup:
     mem_limit: 512m
     image: quay.io/strimzi/kafka:0.40.0-kafka-3.7.0
-    platform: linux/amd64
     container_name: kafka-setup
     volumes:
       - ./config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
