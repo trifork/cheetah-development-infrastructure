@@ -13,7 +13,6 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HEALTH_ENABLED: true
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
-      KC_HTTP_ENABLED: true
       KC_HOSTNAME: http://localhost:1852/
       KC_HTTP_PORT: 1852
     ports:
