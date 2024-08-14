@@ -18,11 +18,15 @@ default_read:
   backend_roles:
     - "opensearch_default_read"
 
+default_delete:
+  backend_roles:
+    - "opensearch_default_delete"
+
 developer:
   backend_roles:
     - "opensearch_developer"
 
-## Demo roles mapping
+## Built-in roles mapping
 
 all_access:
   reserved: false

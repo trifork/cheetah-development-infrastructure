@@ -16,6 +16,9 @@
             "name": "opensearch_default_read"
           },
           {
+            "name": "opensearch_default_delete"
+          },
+          {
             "name": "opensearch_developer"
           }
         ],
@@ -247,7 +250,8 @@
             "Kafka_*_write"
           ],
           "opensearch": [
-            "opensearch_default_write"
+            "opensearch_default_write",
+            "opensearch_default_delete"
           ],
           "schema-registry": [
             "sr-producer"
