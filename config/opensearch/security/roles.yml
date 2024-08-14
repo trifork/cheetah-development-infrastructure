@@ -1,17 +1,16 @@
+# https://github.com/opensearch-project/security/blob/main/config/roles.yml
 ---
 _meta:
   type: "roles"
   config_version: 2
 
-# https://github.com/opensearch-project/security/blob/main/config/roles.yml
-
+# Can write to all indices and create new indices matching the index patterns
 default_write:
   cluster_permissions:
     - cluster:monitor/nodes/info
     - cluster:monitor/health
     - indices:admin/template/get
     - indices:admin/exists
-    - indices:admin/delete
     - indices:admin/create
   index_permissions:
     - index_patterns:
@@ -19,8 +18,8 @@ default_write:
       allowed_actions:
         - write
         - create_index
-        - delete
 
+# Can read all indices and metadata matching the index patterns
 default_read:
   cluster_permissions:
     - cluster:monitor/nodes/info
@@ -36,6 +35,16 @@ default_read:
         - indices_monitor
         - indices:admin/get
 
+# Can delete all indices matching the index patterns
+default_delete:
+  index_permissions:
+    - index_patterns:
+        - "*"
+      allowed_actions:
+        - indices:admin/delete # todo: could delete action group be better?
+
+# Can also read metadata which is not needed for applications but can be useful for debugging.
+# Rolebindings should exist for both this role and default read or write role.
 developer:
   cluster_permissions:
     - cluster_monitor
@@ -58,6 +67,7 @@ developer:
       allowed_actions:
         - "read"
         - "write"
+
 dashboard:
   cluster_permissions:
     - cluster_monitor
