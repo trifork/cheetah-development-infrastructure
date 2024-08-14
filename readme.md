@@ -242,6 +242,7 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `opensearch`
                * Roles:
                     - `opensearch_default_write`
+                    - `opensearch_default_delete`
           - `schema-registry`
                * Roles:
                     - `sr-producer`
