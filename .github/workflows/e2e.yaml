@@ -26,6 +26,7 @@ jobs:
   e2e-test:
     needs: should-run
     if: ${{ needs.should-run.outputs.should-run }}
+    timeout-minutes: 5
 
     runs-on: ubuntu-latest
     steps:
