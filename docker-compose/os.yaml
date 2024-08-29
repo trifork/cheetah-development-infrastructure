@@ -45,7 +45,7 @@ services:
       - ./config/opensearch/certs/esnode.pem:/usr/share/opensearch/config/esnode.pem
       - ./config/opensearch/certs/kirk-key.pem:/usr/share/opensearch/config/kirk-key.pem
       #   For this feature (encrypted-repo-opensearch)to work the keystore is created in the Dockerfile
-      # - ./config/opensearch/certs/opensearch.keystore:/usr/share/opensearch/config/opensearch.keystore
+      #- ./config/opensearch/certs/opensearch.keystore:/usr/share/opensearch/config/opensearch.keystore
       - ./config/opensearch/certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem
 
       # Custom certs for encrypted-repo-opensearch

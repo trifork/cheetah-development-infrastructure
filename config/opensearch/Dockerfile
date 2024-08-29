@@ -5,7 +5,7 @@ RUN /usr/share/opensearch/bin/opensearch-plugin install --batch 'repository-s3' 
     && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-skills \
     && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-ml
 
-# RUN /usr/share/opensearch/bin/opensearch-keystore create
+RUN /usr/share/opensearch/bin/opensearch-keystore create
 
 COPY ./certs/key.pem /usr/share/opensearch/config/key.pem
 COPY ./certs/public.pem /usr/share/opensearch/config/public.pem
@@ -15,7 +15,6 @@ RUN export ENCRYPTED_FS_DEFAULT_PRIVATE_KEY=$(cat /usr/share/opensearch/config/k
     && opensearch-keystore add-file --force encrypted.fs.default.private_key /usr/share/opensearch/config/key.pem \
     && opensearch-keystore add-file --force encrypted.fs.default.public_key /usr/share/opensearch/config/public.pem
 
-RUN cat /usr/share/opensearch/config/key.pem
 RUN /usr/share/opensearch/bin/opensearch-plugin install --batch 'https://github.com/Aiven-Open/encrypted-repository-opensearch/releases/download/v2.14.0.0/encrypted-repository-2.14.0.0.zip'
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 CMD curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1
