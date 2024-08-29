@@ -1,7 +1,9 @@
 FROM opensearchproject/opensearch:2.14.0
 
 RUN /usr/share/opensearch/bin/opensearch-plugin install --batch 'repository-s3' 'https://github.com/Aiven-Open/prometheus-exporter-plugin-for-opensearch/releases/download/2.14.0.0/prometheus-exporter-2.14.0.0.zip' \
-    && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-security-analytics
+    && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-security-analytics \
+    && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-skills \
+    && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-ml
 
 #RUN /usr/share/opensearch/bin/opensearch-keystore create
 
