@@ -44,8 +44,15 @@ services:
       - ./config/opensearch/certs/esnode-key.pem:/usr/share/opensearch/config/esnode-key.pem
       - ./config/opensearch/certs/esnode.pem:/usr/share/opensearch/config/esnode.pem
       - ./config/opensearch/certs/kirk-key.pem:/usr/share/opensearch/config/kirk-key.pem
-      - ./config/opensearch/certs/opensearch.keystore:/usr/share/opensearch/config/opensearch.keystore
+      #   For this feature (encrypted-repo-opensearch)to work the keystore is created in the Dockerfile
+      #- ./config/opensearch/certs/opensearch.keystore:/usr/share/opensearch/config/opensearch.keystore
       - ./config/opensearch/certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem
+
+      # Custom certs for encrypted-repo-opensearch
+      - ./config/opensearch/certs/key.pem:/usr/share/opensearch/config/key.pem
+      - ./config/opensearch/certs/public.pem:/usr/share/opensearch/config/public.pem
+      # Snapshot repository path
+      - ./Users/snapshots/:/snapshots/
     ports:
       - 9200:9200
       - 9600:9600
@@ -93,7 +100,7 @@ services:
   opensearch-dashboards:
     mem_limit: 256m
     container_name: opensearch-dashboards
-    image: opensearchproject/opensearch-dashboards:2.11.1
+    image: opensearchproject/opensearch-dashboards:2.14.0
     hostname: opensearch-dashboards
     ports:
       - 5602:5601
