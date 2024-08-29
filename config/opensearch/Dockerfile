@@ -10,8 +10,8 @@ RUN /usr/share/opensearch/bin/opensearch-keystore create
 COPY ./certs/key.pem /usr/share/opensearch/config/key.pem
 COPY ./certs/public.pem /usr/share/opensearch/config/public.pem
 
-RUN export ENCRYPTED_FS_DEFAULT_PRIVATE_KEY=$(cat /usr/share/opensearch/config/key.pem) \
-    && export ENCRYPTED_FS_DEFAULT_PUBLIC_KEY=$(cat /usr/share/opensearch/config/public.pem) \
+RUN export ENCRYPTED_FS_DEFAULT_PRIVATE_KEY="$(cat /usr/share/opensearch/config/key.pem)" \
+    && export ENCRYPTED_FS_DEFAULT_PUBLIC_KEY="$(cat /usr/share/opensearch/config/public.pem)" \
     && opensearch-keystore add-file --force encrypted.fs.default.private_key /usr/share/opensearch/config/key.pem \
     && opensearch-keystore add-file --force encrypted.fs.default.public_key /usr/share/opensearch/config/public.pem
 
