@@ -95,18 +95,24 @@ jobs:
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
 
+      - name: Check for changes
+        id: git_status
+        run: |
+          if git diff --quiet; then
+            echo "changes=false" >> $GITHUB_ENV
+            echo "No changes detected."
+          else
+            echo "Changes detected"
+            echo "changes=true" >> $GITHUB_ENV
+          fi
+
       # Push new commit if applicable (for now works only on PR from same repository, not from forks)
       - name: Prepare commit
-        if: steps.ml.outputs.has_updated_sources == 1 && (env.APPLY_FIXES_EVENT == 'all' || env.APPLY_FIXES_EVENT == github.event_name) && env.APPLY_FIXES_MODE == 'commit' && github.ref != 'refs/heads/main' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && !contains(github.event.head_commit.message, 'skip fix')
+        if: ${{ steps.ml.outputs.has_updated_sources == 1 && (env.APPLY_FIXES_EVENT == 'all' || env.APPLY_FIXES_EVENT == github.event_name) && env.APPLY_FIXES_MODE == 'commit' && github.ref != 'refs/heads/main' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && !contains(github.event.head_commit.message, 'skip fix') && env.changes == 'true' }}
         run: sudo chown -Rc $UID .git/
 
       - name: Setup git and add changes
-        if: steps.ml.outputs.has_updated_sources == 1 &&
-            (env.APPLY_FIXES_EVENT == 'all' || env.APPLY_FIXES_EVENT == github.event_name) &&
-            env.APPLY_FIXES_MODE == 'commit' &&
-            github.ref != 'refs/heads/main' &&
-            (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) &&
-            !contains(github.event.head_commit.message, 'skip fix')
+        if: ${{ steps.ml.outputs.has_updated_sources == 1 && (env.APPLY_FIXES_EVENT == 'all' || env.APPLY_FIXES_EVENT == github.event_name) && env.APPLY_FIXES_MODE == 'commit' && github.ref != 'refs/heads/main' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && !contains(github.event.head_commit.message, 'skip fix') && env.changes == 'true' }}
         env:
           branch_name: ${{ github.head_ref || github.ref_name }}
         run: |
@@ -116,12 +122,7 @@ jobs:
           git add .
 
       - name: Commit applied linter fixes
-        if: steps.ml.outputs.has_updated_sources == 1 &&
-            (env.APPLY_FIXES_EVENT == 'all' || env.APPLY_FIXES_EVENT == github.event_name) &&
-            env.APPLY_FIXES_MODE == 'commit' &&
-            github.ref != 'refs/heads/main' &&
-            (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) &&
-            !contains(github.event.head_commit.message, 'skip fix')
+        if: ${{ steps.ml.outputs.has_updated_sources == 1 && (env.APPLY_FIXES_EVENT == 'all' || env.APPLY_FIXES_EVENT == github.event_name) && env.APPLY_FIXES_MODE == 'commit' && github.ref != 'refs/heads/main' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && !contains(github.event.head_commit.message, 'skip fix') && env.changes == 'true' }}
         id: commit
         uses: qoomon/actions--create-commit@v1
         with:
@@ -129,6 +130,6 @@ jobs:
           allow-empty: true
 
       - name: Push changes
-        if: steps.commit.outputs.commit
+        if: ${{ steps.commit.outputs.commit || env.changes == 'true' }}
         run: |
           git push origin ${{ github.head_ref || github.ref_name }}
