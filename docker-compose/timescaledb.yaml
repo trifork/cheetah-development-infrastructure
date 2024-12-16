@@ -17,7 +17,7 @@ services:
 
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4:8.13
+    image: dpage/pgadmin4:8.14
     restart: unless-stopped
     ports:
       - "5050:80"
