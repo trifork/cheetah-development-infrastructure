@@ -63,7 +63,7 @@ services:
 
   opensearch-configurer:
     mem_limit: 128m
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:0.5.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:1.1.0
     container_name: opensearch-configurer
     command: "opensearch:9200 --service"
     environment:
