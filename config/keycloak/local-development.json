@@ -16,6 +16,9 @@
             "name": "opensearch_default_read"
           },
           {
+            "name": "opensearch_default_delete"
+          },
+          {
             "name": "opensearch_developer"
           }
         ],
@@ -110,19 +113,6 @@
         ]
       },
       {
-        "clientId": "kafka-admin",
-        "name": "kafka-admin",
-        "enabled": true,
-        "clientAuthenticatorType": "client-secret",
-        "secret": "kafka-admin-secret",
-        "serviceAccountsEnabled": true,
-        "publicClient": false,
-        "optionalClientScopes": [
-          "kafka",
-          "schema-registry"
-        ]
-      },
-      {
         "clientId": "opensearch-admin",
         "name": "opensearch-admin",
         "enabled": true,
@@ -153,7 +143,15 @@
       },
       {
         "clientId": "kafka",
-        "name": "kafka"
+        "name": "kafka",
+        "enabled": true,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "kafka-secret",
+        "serviceAccountsEnabled": true,
+        "publicClient": false,
+        "optionalClientScopes": [
+          "kafka"
+        ]
       },
       {
         "clientId": "schema-registry",
@@ -223,15 +221,12 @@
         }
       },
       {
-        "username": "service-account-kafka-admin",
+        "username": "service-account-kafka",
         "enabled": true,
-        "serviceAccountClientId": "kafka-admin",
+        "serviceAccountClientId": "kafka",
         "clientRoles": {
           "kafka": [
             "Kafka_*_all"
-          ],
-          "schema-registry": [
-            "sr-producer"
           ]
         }
       },
@@ -255,7 +250,8 @@
             "Kafka_*_write"
           ],
           "opensearch": [
-            "opensearch_default_write"
+            "opensearch_default_write",
+            "opensearch_default_delete"
           ],
           "schema-registry": [
             "sr-producer"
@@ -326,6 +322,15 @@
               "jsonType.label": "String",
               "usermodel.clientRoleMapping.clientId": "opensearch"
             }
+          },
+          {
+            "name": "opensearch-audience",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-audience-mapper",
+            "config": {
+              "included.client.audience": "opensearch",
+              "access.token.claim": "true"
+            }
           }
         ]
       },
@@ -345,6 +350,15 @@
               "jsonType.label": "String",
               "usermodel.clientRoleMapping.clientId": "kafka"
             }
+          },
+          {
+            "name": "kafka-audience",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-audience-mapper",
+            "config": {
+              "included.client.audience": "kafka",
+              "access.token.claim": "true"
+            }
           }
         ]
       },
@@ -363,6 +377,15 @@
               "claim.name": "roles",
               "jsonType.label": "String",
               "usermodel.clientRoleMapping.clientId": "schema-registry"
+            }
+          },
+          {
+            "name": "schema-registry-audience",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-audience-mapper",
+            "config": {
+              "included.client.audience": "schema-registry",
+              "access.token.claim": "true"
             }
           }
         ]

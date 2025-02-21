@@ -17,6 +17,36 @@ docker compose up --quiet-pull
 1. Follow: <https://docs.cheetah.trifork.dev/getting-started/guided-tour/prerequisites#run-standard-jobs>
 1. Run `docker network create cheetah-infrastructure`
 
+## Resource requirements
+
+The infrastructure requires a lot of resources, especially memory when running all services at once.
+
+Here is some basic profiling done while running through WSL2 with 16GB RAM:
+
+```sh
+# See if your docker supports memory limits
+docker info --format '{{json .MemoryLimit}}'
+# Get total memory for docker
+docker info --format '{{json .MemTotal}}' | numfmt --from=auto --to=iec
+# Get total CPUs for docker
+docker info --format '{{json .NCPU}}'
+```
+
+|  Profile   | MEM USAGE / LIMIT |
+| :--------: | :---------------: |
+|    core    |   2.4GB / 4.4GB   |
+|   kafka    |   1.3GB / 2.2GB   |
+| opensearch |   1.9GB / 2.9GB   |
+|    full    |   2.9GB / 5.2GB   |
+
+Estimated requirements:
+
+|   Profile   | CPUs  | Docker available memory (RAM) | Disk space (Images) |
+| :---------: | :---: | :---------------------------: | :-----------------: |
+|   Minimum   |   2   |              4GB              |       >6.6GB        |
+| Recommended |   8   |              8GB              |        >20GB        |
+|    Best     |  16   |             16GB              |        >40GB        |
+
 ### Security model
 
 The development infrastructure follows the [Reference Security Model](https://docs.cheetah.trifork.dev/reference/security).  
@@ -31,7 +61,7 @@ The kafka setup consists of different services:
 - **kafka** - Strimzi Kafka with the [Cheetah Kafka Authorizer](https://github.com/trifork/cheetah-infrastructure-utils-kafka)
 - **redpanda** - A Console provides a user interface to manage multiple Kafka connect clusters. <https://docs.redpanda.com/docs/manage/console/>
 - **kafka-setup** - A bash script which sets up a Kafka User for redpanda to use when connecting to Kafka, as well as some predefined topics. The topics to be created are determined by the environment variable INITIAL_KAFKA_TOPICS, which can be set in the `.env` file or overritten in your local environment. 
-- **schema-registry** - [Schema registry](https://www.apicur.io/registry/docs/apicurio-registry/2.4.x/index.html)
+- **schema-registry** - [Schema registry](https://www.apicur.io/registry/docs/apicurio-registry/2.5.x/index.html)
 - **kafka-minion** - [Kafka Prometheus exporter](https://github.com/cloudhut/kminion)
 
 ### Running Kafka and its associated services
@@ -211,6 +241,7 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `opensearch`
                * Roles:
                     - `opensearch_default_write`
+                    - `opensearch_default_delete`
           - `schema-registry`
                * Roles:
                     - `sr-producer`

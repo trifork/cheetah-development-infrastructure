@@ -24,3 +24,10 @@ opensearch_security.openid.client_id: users
 opensearch_security.openid.client_secret: users-secret
 opensearch_security.openid.base_redirect_url: http://localhost:5602
 opensearch_security.openid.scope: opensearch
+
+# https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/src/core/server/logging/README.md#usage
+logging:
+  loggers:
+    - context: opensearch.data # disable logs from opensearch which may contain PII
+      level: off
+      appenders: []

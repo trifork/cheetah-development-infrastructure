@@ -1,11 +1,9 @@
 ---
-version: "2.1"
-
 services:
   zookeeper:
+    mem_limit: 256m
     container_name: zookeeper
-    image: quay.io/strimzi/kafka:0.40.0-kafka-3.7.0
-    platform: linux/amd64
+    image: quay.io/strimzi/kafka:0.43.0-kafka-3.7.1
     command:
       ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
     ports:
@@ -13,15 +11,14 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       LOG_DIR: /tmp/logs
-    mem_limit: 512m
     restart: unless-stopped
     profiles:
       - kafka-zookeeper
 
   kafka-zookeeper:
+    cpus: 2
     container_name: kafka
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.40.0-kafka-3.7.0-trifork-1.5.0
-    platform: linux/amd64
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.43.0-kafka-3.7.1-trifork-1.7.0
     hostname: kafka
     mem_limit: 1024m
     command:
@@ -44,9 +41,10 @@ services:
       LOG_DIR: "/tmp/logs"
       KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties" # enables debug logging
     volumes:
-      # - kafka:/var/lib/kafka # enable for persistent storage
+      - kafka:/var/lib/kafka # enable for persistent storage
       - ./config/kafka/server.properties:/opt/kafka/custom-config/server.properties
-      - ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties
+      #- ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties
+      - ./config/kafka/log4j.cluster.properties:/opt/kafka/custom-config/log4j.properties
     restart: unless-stopped
     healthcheck:
       test: nc -z kafka 19092 || exit -1
@@ -99,8 +97,8 @@ services:
       - full
 
   kafka-setup:
-    image: quay.io/strimzi/kafka:0.40.0-kafka-3.7.0
-    platform: linux/amd64
+    mem_limit: 512m
+    image: quay.io/strimzi/kafka:0.43.0-kafka-3.7.1
     container_name: kafka-setup
     volumes:
       - ./config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
@@ -126,11 +124,11 @@ services:
       - full
 
   redpanda:
+    mem_limit: 128m
     container_name: redpanda
-    image: redpandadata/console:v2.4.7
+    image: redpandadata/console:v2.7.2
     entrypoint: /bin/sh
     command: -c "/app/console"
-    mem_limit: 512m
     environment:
       CONFIG_FILEPATH: /etc/redpanda-config.yml
     volumes:
@@ -158,7 +156,8 @@ services:
 
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
-    image: quay.io/cloudhut/kminion:master
+    mem_limit: 128m
+    image: redpandadata/kminion:v2.2.10
     hostname: kafka-minion
     container_name: kafka-minion
     depends_on:
@@ -174,7 +173,7 @@ services:
 
   schema-registry:
     mem_limit: 256m
-    image: apicurio/apicurio-registry-kafkasql:2.5.10.Final
+    image: apicurio/apicurio-registry-kafkasql:2.6.5.Final
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
@@ -207,13 +206,15 @@ services:
       REGISTRY_AUTH_OBAC_ENABLED: true
       REGISTRY_AUTH_OBAC_LIMIT_GROUP_ACCESS: true
       ROLE_BASED_AUTHZ_SOURCE: "token"
-      REGISTRY_AUTH_ROLES_DEVELOPER: "sr-producer" # "sr-developer"
+      REGISTRY_AUTH_ROLES_DEVELOPER: "sr-producer" # default is "sr-developer"
       # https://quarkus.io/guides/security-oidc-configuration-properties-reference
-      quarkus.oidc.enabled: true
-      quarkus.oidc.auth-server-url: http://keycloak:1852/realms/local-development
-      quarkus.oidc.jwks-path: /protocol/openid-connect/certs
+      QUARKUS_OIDC_ENABLED: true
+      QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:1852/realms/local-development
       # quarkus.log.level: DEBUG
-      quarkus.oidc.roles.role-claim-path: roles
+      QUARKUS_OIDC_ROLES_ROLE_CLAIM_PATH: "roles"
+      QUARKUS_OIDC_AUTHENTICATION_VERIFY_ACCESS_TOKEN: "true"
+      QUARKUS_OIDC_TOKEN_AUDIENCE: schema-registry
+      QUARKUS_OIDC_TOKEN_ISSUER: "http://localhost:1852/realms/local-development"
 
     healthcheck:
       test: curl schema-registry:8080 || exit -1

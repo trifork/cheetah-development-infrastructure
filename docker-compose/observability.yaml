@@ -1,9 +1,9 @@
 ---
-version: "3"
 services:
   prometheus:
+    mem_limit: 128m
     container_name: prometheus
-    image: quay.io/prometheus/prometheus:v2.36.2
+    image: quay.io/prometheus/prometheus:v2.55.1
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
@@ -19,8 +19,9 @@ services:
       - "host.docker.internal:host-gateway"
 
   grafana:
+    mem_limit: 256m
     container_name: grafana
-    image: docker.io/grafana/grafana:10.0.1
+    image: docker.io/grafana/grafana:10.4.15
     # restart: always
     environment:
       GF_INSTALL_PLUGINS: "grafana-clock-panel,grafana-simple-json-datasource"
@@ -39,6 +40,7 @@ services:
       - full
 
   node_exporter:
+    mem_limit: 128m
     image: quay.io/prometheus/node-exporter:latest
     container_name: node_exporter
     command:
