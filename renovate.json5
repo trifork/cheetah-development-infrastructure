@@ -1,13 +1,17 @@
 {
-  "extends": [
-    "github>trifork/cheetah-infrastructure-utils-workflows:default.json5"
-  ],
-  "packageRules": [
-    {
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "automerge": false
-    }
-  ]
+   extends: [
+      'github>trifork/cheetah-infrastructure-utils-workflows:default.json5',
+   ],
+   packageRules: [
+      {
+         matchUpdateTypes: [
+            'minor',
+         ],
+         additionalBranchPrefix: '{{depName}}-',
+         matchPackageNames: [
+            '*',
+         ],
+      },
+   ],
+   automerge: false,
 }

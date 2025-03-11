@@ -25,7 +25,8 @@ config:
             roles_key: roles
             openid_connect_url: http://keycloak:1852/realms/local-development/.well-known/openid-configuration
             required_issuer: http://localhost:1852/realms/local-development
-            required_audience: opensearch
+            # Todo: enable when 2.15 is ready
+            # required_audience: opensearch
         authentication_backend:
           type: noop # unnecessary
       basic_internal_auth_domain:
