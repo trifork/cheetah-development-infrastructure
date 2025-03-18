@@ -1,58 +1,33 @@
 ---
 services:
-  zookeeper:
-    mem_limit: 256m
-    container_name: zookeeper
-    image: quay.io/strimzi/kafka:0.43.0-kafka-3.7.1
-    command:
-      ["sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties"]
-    ports:
-      - "2181:2181"
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      LOG_DIR: /tmp/logs
-    restart: unless-stopped
-    profiles:
-      - kafka-core
-      - schema-registry-core
-      - core
-      - kafka
-      - observability
-      - full
-
   kafka:
-    cpus: 2
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.45.0-kafka-3.9.0-trifork-1.7.0-RC.2
     container_name: kafka
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.43.0-kafka-3.7.1-trifork-1.7.0
     hostname: kafka
     mem_limit: 1024m
     command:
       [
         "sh",
         "-c",
-        "bin/kafka-server-start.sh /opt/kafka/custom-config/server.properties",
+        "bin/kafka-storage.sh format --ignore-formatted --cluster-id iBzfyk2mT5qGMuO9Yu0WrQ --config /opt/kafka/custom-config/kraft.properties && bin/kafka-server-start.sh /opt/kafka/custom-config/kraft.properties",
       ]
     depends_on:
-      zookeeper:
-        condition: service_started
       keycloak-setup:
         condition: service_completed_successfully
     ports:
       - "9092:9092" # Requires OAuth2 authentication
       - "9093:9093" # Requires No authentication
     expose:
-      - "19092"
+      - "9093"
     environment:
       LOG_DIR: "/tmp/logs"
-      KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties" # enables debug logging
+      KAFKA_ROOT_LOGGER_LEVEL: debug
     volumes:
-      - kafka:/var/lib/kafka # enable for persistent storage
-      - ./config/kafka/server.properties:/opt/kafka/custom-config/server.properties
-      #- ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties
-      - ./config/kafka/log4j.cluster.properties:/opt/kafka/custom-config/log4j.properties
+      - ./config/kafka/kraft.properties:/opt/kafka/custom-config/kraft.properties
+      # - ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties # enables debug logging
     restart: unless-stopped
     healthcheck:
-      test: nc -z kafka 19092 || exit -1
+      test: nc -z kafka 9093 || exit -1
       interval: 30s # (default: 30s)
       timeout: 10s # (default: 30s)
       retries: 3 #  (default: 3)
@@ -66,8 +41,7 @@ services:
       - full
 
   kafka-setup:
-    mem_limit: 512m
-    image: quay.io/strimzi/kafka:0.43.0-kafka-3.7.1
+    image: quay.io/strimzi/kafka:0.45.0-kafka-3.9.0
     container_name: kafka-setup
     volumes:
       - ./config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
