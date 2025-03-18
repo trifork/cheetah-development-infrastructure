@@ -57,3 +57,6 @@ node.max_local_storage_nodes: 3
 prometheus.indices: "true"
 prometheus.cluster.settings: "true"
 prometheus.metric_name.prefix: opensearch_
+
+# path to where the snapshots are stored
+path.repo: ["/snapshots/"]
