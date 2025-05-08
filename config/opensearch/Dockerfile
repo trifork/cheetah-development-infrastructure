@@ -1,4 +1,4 @@
-FROM opensearchproject/opensearch:2.19.1
+FROM opensearchproject/opensearch:2.19.2
 
 RUN /usr/share/opensearch/bin/opensearch-plugin install --batch 'repository-s3' 'https://github.com/trifork/cheetah-prometheus-exporter-plugin-for-opensearch/releases/download/2.19.1.0/prometheus-exporter-2.19.1.0.zip' \
     && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-security-analytics \
