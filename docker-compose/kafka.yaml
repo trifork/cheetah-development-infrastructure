@@ -100,7 +100,7 @@ services:
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
     mem_limit: 128m
-    image: redpandadata/kminion:v2.2.12
+    image: redpandadata/kminion:v2.2.13
     hostname: kafka-minion
     container_name: kafka-minion
     depends_on:
