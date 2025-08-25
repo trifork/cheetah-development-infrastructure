@@ -8,7 +8,7 @@ services:
       - 5432:5432
     environment:
       POSTGRES_DB: mydatabase
-      POSTGRESQL_PASSWORD: admin
+      POSTGRES_PASSWORD: admin
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - timescaledb:/var/lib/postgresql/data
