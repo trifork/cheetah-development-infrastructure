@@ -1,7 +1,7 @@
 ---
 services:
   kafka:
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.45.0-kafka-3.9.0-trifork-1.7.0-RC.2
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.45.0-kafka-3.9.0-trifork-1.8.0
     container_name: kafka
     hostname: kafka
     mem_limit: 1024m
@@ -69,7 +69,7 @@ services:
   redpanda:
     mem_limit: 128m
     container_name: redpanda
-    image: redpandadata/console:v2.8.8
+    image: redpandadata/console:v2.8.9
     entrypoint: /bin/sh
     command: -c "/app/console"
     environment:
