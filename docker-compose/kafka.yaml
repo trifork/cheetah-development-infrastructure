@@ -74,9 +74,13 @@ services:
     command: -c "/app/console"
     environment:
       CONFIG_FILEPATH: /etc/redpanda-config.yml
+    network_mode: host # internal docker does not use localhost but a "random" IP? 217.xx.0.xx
     volumes:
-      - ./config/redpanda-admin.yaml:/etc/redpanda-config.yml # get FULL access to kafka from redpanda
-      #- ./config/redpanda-cluster.yaml:/etc/redpanda-config.yml # use OAUTH2 authentication with limited access like on a cluster
+      #- ./config/redpanda-admin.yaml:/etc/redpanda-config.yml # get FULL access to kafka from redpanda
+      - ./config/redpanda-remote-cluster.yaml:/etc/redpanda-config.yml
+    extra_hosts: # experiments
+      #- "localhost:cheetah-kafka-kafka-brokers.kafka"
+      - "host.docker.internal:host-gateway"
     ports:
       - "9898:8080"
     healthcheck:
