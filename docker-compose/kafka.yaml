@@ -116,7 +116,7 @@ services:
 
   schema-registry:
     mem_limit: 256m
-    image: apicurio/apicurio-registry-kafkasql:2.6.8.Final
+    image: apicurio/apicurio-registry-kafkasql:2.6.13.Final
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
