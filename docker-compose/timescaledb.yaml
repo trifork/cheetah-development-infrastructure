@@ -1,14 +1,14 @@
 services:
   timescaledb:
     container_name: timescaledb
-    image: timescale/timescaledb:2.17.2-pg16-bitnami
+    image: timescale/timescaledb:2.17.2-pg16
     restart: unless-stopped
     mem_limit: 1024m
     ports:
       - 5432:5432
     environment:
       POSTGRES_DB: mydatabase
-      POSTGRESQL_PASSWORD: admin
+      POSTGRES_PASSWORD: admin
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - timescaledb:/var/lib/postgresql/data
