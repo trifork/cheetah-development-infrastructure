@@ -69,7 +69,7 @@ services:
   redpanda:
     mem_limit: 128m
     container_name: redpanda
-    image: redpandadata/console:v2.8.9
+    image: redpandadata/console:v2.8.10
     entrypoint: /bin/sh
     command: -c "/app/console"
     environment:
@@ -100,7 +100,7 @@ services:
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
     mem_limit: 128m
-    image: redpandadata/kminion:v2.2.13
+    image: redpandadata/kminion:v2.2.14
     hostname: kafka-minion
     container_name: kafka-minion
     depends_on:
@@ -116,7 +116,7 @@ services:
 
   schema-registry:
     mem_limit: 256m
-    image: apicurio/apicurio-registry-kafkasql:2.6.8.Final
+    image: apicurio/apicurio-registry-kafkasql:2.6.13.Final
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
