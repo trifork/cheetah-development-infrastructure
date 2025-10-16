@@ -3,7 +3,7 @@ services:
   # login fallback: admin:admin
   # services should use OAuth2
   opensearch:
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:local
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:3.2.0
     container_name: opensearch
     pull_policy: build
     build:
@@ -63,7 +63,7 @@ services:
 
   opensearch-configurer:
     mem_limit: 128m
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:1.1.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-os:1.2.0
     container_name: opensearch-configurer
     command: "opensearch:9200 --service"
     environment:
