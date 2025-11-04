@@ -1,5 +1,5 @@
 ---
-# See: https://github.com/cloudhut/kowl/tree/master/docs/config for reference config files.
+# See: https://docs.redpanda.com/current/console/config/ for reference config files.
 kafka:
   brokers:
     - kafka:19092
@@ -14,9 +14,13 @@ kafka:
       clientId: redpanda
       clientSecret: redpanda-secret
       scope: kafka
-  schemaregistry:
-    enabled: true
-    urls: [http://schema-registry:8080/apis/ccompat/v7]
+
+schemaRegistry:
+  enabled: true
+  urls: 
+    - http://schema-registry:8080/apis/ccompat/v7
+  authentication:
     # See http://localhost:8081/apis/ for API documentation
+
 # server:
 # listenPort: 8080
