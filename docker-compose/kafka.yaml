@@ -76,7 +76,7 @@ services:
       CONFIG_FILEPATH: /etc/redpanda-config.yml
     volumes:
       - ./config/redpanda-admin.yaml:/etc/redpanda-config.yml # get FULL access to kafka from redpanda
-      #- ./config/redpanda-cluster.yaml:/etc/redpanda-config.yml # use OAUTH2 authentication with limited access like on a cluster
+      # - ./config/redpanda-cluster.yaml:/etc/redpanda-config.yml # use OAUTH2 authentication with limited access like on a cluster
     ports:
       - "9898:8080"
     healthcheck:

@@ -75,3 +75,4 @@ jobs:
 
       - name: schemaregistry test
         run: docker exec mye2eclient bash /opt/tests/schemaregistry.sh
+        
