@@ -47,7 +47,7 @@ jobs:
         run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry up --quiet-pull --force-recreate -d
 
       - name: Start mye2eclient container in shared network
-        run: docker run --pull=always -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure ghcr.io/library/alpine:3.20
+        run: docker run --pull=always -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:3.20
 
       - name: Setup mye2eclient container
         run: |
