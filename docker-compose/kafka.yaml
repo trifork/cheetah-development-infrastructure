@@ -1,7 +1,7 @@
 ---
 services:
   kafka:
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.47.0-kafka-3.9.1-trifork-1.8.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.48.0-kafka-4.0.0-trifork-1.9.0-0-48-0-kafka-4-0-0-SNAPSHOT-38
     container_name: kafka
     hostname: kafka
     mem_limit: 1024m
