@@ -40,6 +40,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
 
+      - name: Create docker network
+        run: docker network ls | grep cheetah-infrastructure || docker network create cheetah-infrastructure
+
       # OpenSearch is required for integration tests
       # - name: docker network create cheetah-infrastructure
       #  run: docker network create cheetah-infrastructure
