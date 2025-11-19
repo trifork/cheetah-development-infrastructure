@@ -1,7 +1,7 @@
 ---
 services:
   kafka:
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.48.0-kafka-4.0.0-trifork-1.9.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.48.0-kafka-4.1.0-trifork-1.9.0
     container_name: kafka
     hostname: kafka
     mem_limit: 1024m
@@ -41,7 +41,7 @@ services:
       - full
 
   kafka-setup:
-    image: quay.io/strimzi/kafka:0.48.0-kafka-4.0.0
+    image: quay.io/strimzi/kafka:0.48.0-kafka-4.1.0
     container_name: kafka-setup
     volumes:
       - ./config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
