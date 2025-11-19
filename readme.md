@@ -75,7 +75,6 @@ docker compose --profile=kafka --profile=oauth --profile=schemaregistry --profil
 When all of the services are running, you can go to:
 
 - <http://localhost:9898/topics> to see the different topics in redpanda.
-- <http://localhost:8081> to see the schema-registry UI.
 - <http://localhost:8081/apis> to the the schema-registry api documentation
 
 ### Listeners
