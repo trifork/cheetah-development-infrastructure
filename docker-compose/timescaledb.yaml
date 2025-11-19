@@ -18,7 +18,7 @@ services:
 
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4:9.9
+    image: dpage/pgadmin4:9.10
     restart: unless-stopped
     ports:
       - "5050:80"
@@ -36,6 +36,7 @@ services:
 networks:
   default:
     name: "cheetah-infrastructure"
+    external: true
 
 volumes:
   timescaledb:
