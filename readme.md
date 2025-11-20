@@ -123,7 +123,18 @@ You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SEC
 
 #### Basic auth access
 
-When working locally, you can use `admin:admin` user and query OpenSearch like this:
+**Note:** OpenSearch has anonymous access enabled by default, but the anonymous user has no permissions. Browsers won't prompt for credentials automatically.
+
+**For browser access**, use a browser extension or tool that supports basic authentication, or use the OpenSearch Dashboard at <http://localhost:5602> instead.
+
+**For API/command line access**, use curl with the `admin:admin` credentials:
+
+```sh
+curl -k -s -u "admin:admin" http://localhost:9200/
+curl -k -s -u "admin:admin" http://localhost:9200/_cat/indices
+```
+
+Or set the OPENSEARCH_URL variable:
 
 ```sh
 curl -k -s -u "admin:admin" $OPENSEARCH_URL/_cat/indices
