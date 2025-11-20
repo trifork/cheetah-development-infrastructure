@@ -3,7 +3,7 @@ services:
   # login fallback: admin:admin
   # services should use OAuth2
   opensearch:
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:3.2.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:3.3.0
     container_name: opensearch
     pull_policy: build
     build:
@@ -93,7 +93,7 @@ services:
   opensearch-dashboards:
     mem_limit: 256m
     container_name: opensearch-dashboards
-    image: opensearchproject/opensearch-dashboards:3.2.0
+    image: opensearchproject/opensearch-dashboards:3.3.0
     hostname: opensearch-dashboards
     ports:
       - 5602:5601

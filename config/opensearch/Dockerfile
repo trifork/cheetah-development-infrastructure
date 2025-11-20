@@ -1,6 +1,6 @@
-FROM opensearchproject/opensearch:3.2.0
+FROM opensearchproject/opensearch:3.3.0
 
-RUN /usr/share/opensearch/bin/opensearch-plugin install --batch 'repository-s3' 'https://github.com/opensearch-project/opensearch-prometheus-exporter/releases/download/3.2.0.0/prometheus-exporter-3.2.0.0.zip' \
+RUN /usr/share/opensearch/bin/opensearch-plugin install --batch 'repository-s3' 'https://github.com/opensearch-project/opensearch-prometheus-exporter/releases/download/3.3.0.0/prometheus-exporter-3.3.0.0.zip' \
     && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-security-analytics \
     && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-skills \
     && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-ml
