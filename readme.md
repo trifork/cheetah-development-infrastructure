@@ -15,7 +15,6 @@ docker compose up --quiet-pull
 ## Prerequisites
 
 1. Follow: <https://docs.cheetah.trifork.dev/getting-started/guided-tour/prerequisites#run-standard-jobs>
-1. Run `docker network create cheetah-infrastructure`
 
 ## Resource requirements
 
