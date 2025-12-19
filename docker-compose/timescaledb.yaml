@@ -2,7 +2,7 @@
 services:
   timescaledb:
     container_name: timescaledb
-    image: timescale/timescaledb:2.23.1-pg16
+    image: timescale/timescaledb:2.24.0-pg16
     restart: unless-stopped
     mem_limit: 1024m
     ports:
@@ -18,7 +18,7 @@ services:
 
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4:9.10
+    image: dpage/pgadmin4:9.11
     restart: unless-stopped
     ports:
       - "5050:80"
