@@ -40,6 +40,68 @@ services:
       - kafka
       - observability
       - full
+  
+  kafka-connect:
+    cpus: 2
+    container_name: kafka-connect
+    build:
+      context: ./config/kafka
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    hostname: kafka-connect
+    mem_limit: 1024m
+    command:
+      [
+        "sh",
+        "-c",
+        "bin/connect-distributed.sh /opt/kafka/custom-config/connect-distributed.properties", #start connect with properies https://kafka.apache.org/documentation/#connect_running
+      ]
+    depends_on:
+      zookeeper:
+        condition: service_started
+      keycloak-setup:
+        condition: service_completed_successfully
+      kafka:
+        condition: service_started
+    ports:
+      - 8083:8083
+    expose:
+      - "8083"
+    environment:
+      LOG_DIR: "/tmp/logs"
+      KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/opt/kafka/custom-config/log4j.properties"
+    volumes:
+      - kafka:/var/lib/kafka 
+      - ./config/kafka/log4j.cluster.properties:/opt/kafka/custom-config/log4j.properties
+      - ./config/kafka/connect-distributed.properties:/opt/kafka/custom-config/connect-distributed.properties #kafka-connect properties
+    restart: unless-stopped
+    healthcheck:
+      test: nc -z kafka 19092 || exit -1
+      interval: 30s # (default: 30s)
+      timeout: 10s # (default: 30s)
+      retries: 3 #  (default: 3)
+      start_period: 30s # (default: 0s)
+    profiles:
+      - kafka-core
+      - schema-registry-core
+      - core
+      - kafka
+      - observability
+      - full
+
+  kafka-connect-ui:
+    mem_limit: 512m
+    image: landoop/kafka-connect-ui:0.9.7
+    container_name: kafka-connect-ui
+    environment:
+      CONNECT_URL: http://kafka-connect:8083
+      PROXY: 'true'
+    ports:
+      - 8000:8000
+    depends_on:
+      kafka-connect:
+        condition: service_started
+
 
   kafka-setup:
     image: quay.io/strimzi/kafka:0.48.0-kafka-4.1.0
