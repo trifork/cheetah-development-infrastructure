@@ -70,7 +70,7 @@ services:
   redpanda:
     mem_limit: 128m
     container_name: redpanda
-    image: redpandadata/console:v3.2.2
+    image: redpandadata/console:v3.3.1
     entrypoint: /bin/sh
     command: -c "/app/console"
     environment:
