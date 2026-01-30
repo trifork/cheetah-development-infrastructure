@@ -21,7 +21,7 @@ services:
   grafana:
     mem_limit: 256m
     container_name: grafana
-    image: docker.io/grafana/grafana:12.3.1
+    image: docker.io/grafana/grafana:12.3.2
     # restart: always
     environment:
       GF_INSTALL_PLUGINS: "grafana-clock-panel,grafana-simple-json-datasource"
