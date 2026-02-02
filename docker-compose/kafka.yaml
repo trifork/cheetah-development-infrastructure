@@ -42,7 +42,7 @@ services:
       - full
 
   kafka-setup:
-    image: quay.io/strimzi/kafka:0.48.0-kafka-4.1.0
+    image: quay.io/strimzi/kafka:0.49.0-kafka-4.1.0
     container_name: kafka-setup
     volumes:
       - ./config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
