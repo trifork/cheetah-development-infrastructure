@@ -42,7 +42,7 @@ services:
       - full
 
   kafka-setup:
-    image: quay.io/strimzi/kafka:0.48.0-kafka-4.1.0
+    image: quay.io/strimzi/kafka:0.49.0-kafka-4.1.0
     container_name: kafka-setup
     volumes:
       - ./config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
@@ -101,7 +101,7 @@ services:
   # Kafka Prometheus exporter https://github.com/cloudhut/kminion
   kafka-minion:
     mem_limit: 128m
-    image: redpandadata/kminion:v2.2.17
+    image: redpandadata/kminion:v2.3.0
     hostname: kafka-minion
     container_name: kafka-minion
     depends_on:
