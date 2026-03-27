@@ -3,7 +3,7 @@ services:
   # login fallback: admin:admin
   # services should use OAuth2
   opensearch:
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:3.5.0-upgreade-opensearch-to-3-5-0-snapshot-10
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-opensearch:3.5.0
     container_name: opensearch
     pull_policy: build
     build:
