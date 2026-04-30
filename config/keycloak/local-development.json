@@ -151,6 +151,10 @@
         "name": "opensearch"
       },
       {
+        "clientId": "postgres",
+        "name": "postgres"
+      },
+      {
         "clientId": "kafka",
         "name": "kafka",
         "enabled": true,
