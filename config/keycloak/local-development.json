@@ -47,6 +47,11 @@
             "name": "sr-producer"
           }
         ],
+        "postgres": [
+          {
+            "name": "postgres_access"
+          }
+        ],
         "custom-client": [
           $(env:DEMO_ROLES_DEFINITION)
         ]
@@ -64,7 +69,8 @@
         "optionalClientScopes": [
           "kafka",
           "schema-registry",
-          "opensearch"
+          "opensearch",
+          "postgres"
         ],
         "redirectUris": [
           "*"
@@ -81,7 +87,8 @@
         "optionalClientScopes": [
           "kafka",
           "schema-registry",
-          "opensearch"
+          "opensearch",
+          "postgres"
         ]
       },
       {
@@ -95,7 +102,8 @@
         "optionalClientScopes": [
           "kafka",
           "schema-registry",
-          "opensearch"
+          "opensearch",
+          "postgres"
         ]
       },
       {
@@ -109,7 +117,8 @@
         "optionalClientScopes": [
           "opensearch",
           "kafka",
-          "schema-registry"
+          "schema-registry",
+          "postgres"
         ]
       },
       {
@@ -140,6 +149,10 @@
       {
         "clientId": "opensearch",
         "name": "opensearch"
+      },
+      {
+        "clientId": "postgres",
+        "name": "postgres"
       },
       {
         "clientId": "kafka",
@@ -201,6 +214,9 @@
           ],
           "schema-registry": [
             "sr-producer"
+          ],
+          "postgres": [
+            "postgres_access"
           ]
         }
       },
@@ -217,6 +233,9 @@
           ],
           "schema-registry": [
             "sr-producer"
+          ],
+          "postgres": [
+            "postgres_access"
           ]
         }
       },
@@ -255,6 +274,9 @@
           ],
           "schema-registry": [
             "sr-producer"
+          ],
+          "postgres": [
+            "postgres_access"
           ]
         }
       },
@@ -268,6 +290,9 @@
           ],
           "opensearch": [
             "opensearch_default_read"
+          ],
+          "postgres": [
+            "postgres_access"
           ]
         }
       },
@@ -391,6 +416,34 @@
         ]
       },
       {
+        "name": "postgres",
+        "protocol": "openid-connect",
+        "protocolMappers": [
+          {
+            "name": "client roles",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-usermodel-client-role-mapper",
+            "config": {
+              "multivalued": "true",
+              "access.token.claim": "true",
+              "id.token.claim": "true",
+              "claim.name": "roles",
+              "jsonType.label": "String",
+              "usermodel.clientRoleMapping.clientId": "postgres"
+            }
+          },
+          {
+            "name": "postgres-audience",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-audience-mapper",
+            "config": {
+              "included.client.audience": "postgres",
+              "access.token.claim": "true"
+            }
+          }
+        ]
+      },
+      {
         "name": "custom-client",
         "protocol": "openid-connect",
         "protocolMappers": [
@@ -417,6 +470,7 @@
     "defaultOptionalClientScopes": [
       "opensearch",
       "kafka",
-      "schema-registry"
+      "schema-registry",
+      "postgres"
     ]
   }

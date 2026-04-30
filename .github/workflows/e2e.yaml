@@ -45,7 +45,7 @@ jobs:
       # - name: docker network create cheetah-infrastructure
       #  run: docker network create cheetah-infrastructure
       - name: Run development environment
-        run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry up --quiet-pull --force-recreate -d
+        run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry --profile postgres up --quiet-pull --force-recreate -d
 
       - name: Start mye2eclient container in shared network
         run: docker run -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:latest
@@ -76,4 +76,16 @@ jobs:
 
       - name: schemaregistry test
         run: docker exec mye2eclient bash /opt/tests/schemaregistry.sh
+
+      - name: "Wait for postgres"
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 3
+          max_attempts: 25
+          retry_wait_seconds: 5
+          warning_on_retry: false
+          command: docker exec postgres pg_isready -U postgres -d app
+
+      - name: postgres test
+        run: bash tests/postgres.sh
         
