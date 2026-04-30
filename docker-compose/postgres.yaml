@@ -27,7 +27,7 @@ services:
       POSTGRES_PASSWORD: admin
     volumes:
       - postgres:/var/lib/postgresql
-      - postgres-validator-lib:/usr/lib/postgresql/18/lib:ro
+      - postgres-validator-lib:/usr/lib/postgresql/extra:ro
       - ./config/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
       - ./config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
       - ./config/postgres/init:/docker-entrypoint-initdb.d:ro
