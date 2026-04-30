@@ -41,7 +41,7 @@ services:
       postgres-validator-build:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d app"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d app -h /var/run/postgresql"]
       interval: 30s
       timeout: 10s
       retries: 10
