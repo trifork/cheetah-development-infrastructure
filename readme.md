@@ -160,6 +160,7 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 ## PostgreSQL
 
 The PostgreSQL setup consists of different services:
+* **postgres-validator-build** one-shot helper service that downloads/builds `pg_oidc_validator.so` into a shared Docker volume
 * **PostgreSQL 18** OAuth-protected PostgreSQL database
 * **PgAdmin** GUI container for database administration
 
@@ -170,6 +171,8 @@ Run:
 ```bash
 docker compose --profile=postgres up -d
 ```
+
+On first startup, `postgres-validator-build` prepares the OAuth validator library and exits successfully. The `postgres` service then mounts that library read-only from the shared volume.
 
 When all of the services are running, you can go to:
 
@@ -186,7 +189,8 @@ PostgreSQL network authentication is configured to use OAuth only.
 Example interactive OAuth login with `psql`:
 
 ```bash
-psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=http://localhost:1852/realms/local-development oauth_client_id=postgres'
+psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=http://localhost:1852/realms/local-development oauth_client_id=users'
+
 ```
 
 ## List of all profiles in docker compose
@@ -232,7 +236,7 @@ All roles are mapped to the `roles` claim in the JWT. This configuration is defi
 To modify the configuration either go to the [admin console](http://localhost:1852/admin) (Username: `admin` Password: `admin`) or edit the `local-development.json` following this [guide](./config/keycloak/setup.md)
 
 - Default access
-     * Description: Read and write access to all data Kafka, OpenSearch and Schema registry
+     * Description: Read and write access to all data Kafka, OpenSearch, Schema registry and PostgreSQL
      * client_id: `default-access`
      * client_secret: `default-access-secret`
      * default_scopes: [ ] 
@@ -246,8 +250,11 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `schema-registry`
                * Roles:
                     - `sr-producer`
+          - `postgres`
+               * Roles:
+                    - `postgres_access`
 - Default write
-     * Description: Write access to all data in Kafka, OpenSearch and Schema registry
+     * Description: Write access to all data in Kafka, OpenSearch, Schema registry and PostgreSQL
      * client_id: `default-write`
      * client_secret: `default-write-secret`
      * default_scopes: [ ] 
@@ -262,8 +269,11 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `schema-registry`
                * Roles:
                     - `sr-producer`
+          - `postgres`
+               * Roles:
+                    - `postgres_access`
 - Default read
-     * Description: Read access to all data in Kafka, OpenSearch and Schema registry
+     * Description: Read access to all data in Kafka, OpenSearch and PostgreSQL (plus schema-registry producer role where configured)
      * client_id: `default-read`
      * client_secret: `default-read-secret`
      * default_scopes: [ ] 
@@ -274,11 +284,6 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `opensearch`
                * Roles:
                     - `opensearch_default_read`
-- Postgres
-     * Description: Interactive OAuth login client for PostgreSQL
-     * client_id: `postgres`
-     * client_secret: `postgres-secret`
-     * optional_scopes:
           - `postgres`
                * Roles:
                     - `postgres_access`
@@ -291,6 +296,7 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `kafka`
           - `opensearch`
           - `schema-registry`
+          - `postgres`
 - Custom client
      * Description: A custom client which can be configured using Environment variables. Useful for pipelines where services require custom roles.
      * client_id: $DEMO_CLIENT_NAME
@@ -310,3 +316,4 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `Kafka_*_all`
           - `sr-producer`
           - `postgres_access`
+

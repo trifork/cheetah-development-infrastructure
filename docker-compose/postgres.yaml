@@ -1,12 +1,23 @@
 ---
 services:
+  postgres-validator-build:
+    container_name: postgres-validator-build
+    image: postgres:18.3-bookworm
+    restart: "no"
+    environment:
+      VALIDATOR_SO_PATH: /validator-out/pg_oidc_validator.so
+    volumes:
+      - postgres-validator-lib:/validator-out
+      - ./config/postgres/install-validator.sh:/usr/local/bin/install-validator.sh:ro
+    command:
+      - bash
+      - /usr/local/bin/install-validator.sh
+    profiles:
+      - postgres
+
   postgres:
     container_name: postgres
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-postgres:18.3
-    pull_policy: build
-    build:
-      context: ./config/postgres
-      dockerfile: Dockerfile
+    image: postgres:18.3-bookworm
     restart: unless-stopped
     mem_limit: 1024m
     ports:
@@ -16,6 +27,7 @@ services:
       POSTGRES_PASSWORD: admin
     volumes:
       - postgres:/var/lib/postgresql
+      - postgres-validator-lib:/usr/lib/postgresql/18/lib:ro
       - ./config/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
       - ./config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
       - ./config/postgres/init:/docker-entrypoint-initdb.d:ro
@@ -25,6 +37,8 @@ services:
       - config_file=/etc/postgresql/postgresql.conf
     depends_on:
       keycloak-setup:
+        condition: service_completed_successfully
+      postgres-validator-build:
         condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d app"]
@@ -62,3 +76,4 @@ networks:
 volumes:
   postgres:
   pgadmin-data:
+  postgres-validator-lib:

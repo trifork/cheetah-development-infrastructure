@@ -32,4 +32,4 @@ fi
 
 echo "INFO - OAuth-only auth checks passed"
 echo "INFO - Manual OAuth login test:"
-echo "psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=http://localhost:1852/realms/local-development oauth_client_id=postgres'"
+echo "psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=http://localhost:1852/realms/local-development oauth_client_id=users'"

@@ -122,21 +122,6 @@
         ]
       },
       {
-        "clientId": "postgres",
-        "name": "postgres",
-        "enabled": true,
-        "clientAuthenticatorType": "client-secret",
-        "secret": "postgres-secret",
-        "serviceAccountsEnabled": true,
-        "publicClient": false,
-        "attributes": {
-          "oauth2.device.authorization.grant.enabled": "true"
-        },
-        "optionalClientScopes": [
-          "postgres"
-        ]
-      },
-      {
         "clientId": "opensearch-admin",
         "name": "opensearch-admin",
         "enabled": true,
@@ -302,16 +287,6 @@
           "opensearch": [
             "opensearch_default_read"
           ],
-          "postgres": [
-            "postgres_access"
-          ]
-        }
-      },
-      {
-        "username": "service-account-postgres",
-        "enabled": true,
-        "serviceAccountClientId": "postgres",
-        "clientRoles": {
           "postgres": [
             "postgres_access"
           ]
