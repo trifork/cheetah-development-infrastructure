@@ -157,29 +157,37 @@ And query OpenSearch like this:
 curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 ```
 
-## Timescale
+## PostgreSQL
 
-The Timescale setup consists of different services:
-* **TimescaleDB** PostgreSQL with the timescale extension
-* **PgAdmin** GUI for managing TimescaleDB
+The PostgreSQL setup consists of different services:
+* **PostgreSQL 18** OAuth-protected PostgreSQL database
+* **PgAdmin** GUI container for database administration
 
-### Running TimescaleDB and its associated services
+### Running PostgreSQL and its associated services
 
 Run:
 
 ```bash
-docker compose --profile=timescale up -d
+docker compose --profile=postgres up -d
 ```
 
 When all of the services are running, you can go to:
 
-- <http://localhost:5432/> TimescaleDB
 - <http://localhost:5050> to see the PgAdmin UI
 
 ### Authentication
 
-By default a single user is setup:
-* **Username**: `postgres`, **Password**: `admin`
+PostgreSQL network authentication is configured to use OAuth only.
+
+- Basic/password auth is disabled for host connections.
+- OAuth issuer: `http://keycloak:1852/realms/local-development`
+- OAuth scope: `postgres`
+
+Example interactive OAuth login with `psql`:
+
+```bash
+psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=http://localhost:1852/realms/local-development oauth_client_id=postgres'
+```
 
 ## List of all profiles in docker compose
 
@@ -190,11 +198,11 @@ By default a single user is setup:
 - kafka
 - opensearch
 - observability
-- timescale
+- postgres
 
 Here is further explanation on what each profile starts.
 
-|   Images / profiles   | kafka-core | opensearch-core | schema-registry-core | core  | kafka | opensearch | observability | timescale | full  |
+|   Images / profiles   | kafka-core | opensearch-core | schema-registry-core | core  | kafka | opensearch | observability | postgres | full  |
 | :-------------------: | :--------: | :-------------: | :------------------: | :---: | :---: | :--------: | :-----------: | :-------: | :---: |
 |       Keycloak        |     x      |        x        |          x           |   x   |   x   |     x      |       x       |           |   x   |
 |         Kafka         |     x      |                 |          x           |   x   |   x   |            |       x       |           |   x   |
@@ -205,7 +213,7 @@ Here is further explanation on what each profile starts.
 |    Schema registry    |            |                 |          x           |   x   |   x   |            |               |           |   x   |
 |      Prometheus       |            |                 |                      |       |       |            |       x       |           |   x   |
 |        Grafana        |            |                 |                      |       |       |            |       x       |           |   x   |
-|       Timescale       |            |                 |                      |       |       |            |               |     x     |       |
+|      PostgreSQL       |            |                 |                      |       |       |            |               |    x     |       |
 
 ## Keycloak
 
@@ -266,6 +274,14 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `opensearch`
                * Roles:
                     - `opensearch_default_read`
+- Postgres
+     * Description: Interactive OAuth login client for PostgreSQL
+     * client_id: `postgres`
+     * client_secret: `postgres-secret`
+     * optional_scopes:
+          - `postgres`
+               * Roles:
+                    - `postgres_access`
 - Users
      * Description: User login via browser such as OpenSearch Dashboard (See [Users](#users) for user details)
      * client_id: `users`
@@ -293,3 +309,4 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `opensearch_default_read`
           - `Kafka_*_all`
           - `sr-producer`
+          - `postgres_access`

@@ -1,0 +1,64 @@
+---
+services:
+  postgres:
+    container_name: postgres
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-postgres:18.3
+    pull_policy: build
+    build:
+      context: ./config/postgres
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    mem_limit: 1024m
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres:/var/lib/postgresql
+      - ./config/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./config/postgres/init:/docker-entrypoint-initdb.d:ro
+    command:
+      - postgres
+      - -c
+      - config_file=/etc/postgresql/postgresql.conf
+    depends_on:
+      keycloak-setup:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d app"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    profiles:
+      - postgres
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:9.14
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+      - ./config/pgadmin/servers.json:/pgadmin4/servers.json
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - postgres
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+
+volumes:
+  postgres:
+  pgadmin-data:
