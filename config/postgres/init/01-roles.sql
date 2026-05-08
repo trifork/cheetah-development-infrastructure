@@ -1,4 +1,5 @@
-CREATE DATABASE app;
+-- The `app` database is created by docker-entrypoint.sh via POSTGRES_DB.
+-- Recreating it here would abort the script under ON_ERROR_STOP.
 
 CREATE ROLE developer LOGIN;
 CREATE ROLE "service-account-default-access" LOGIN;

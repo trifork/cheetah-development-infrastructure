@@ -1,49 +1,46 @@
 #!/usr/bin/env bash
+# Builds pg_oidc_validator.so from the bind-mounted fork at /pg_oidc_validator-src
+# into the shared volume that the postgres service mounts.
+#
+# To pick up source edits, drop the volume between runs:
+#   docker compose --profile postgres down
+#   docker volume rm cheetah-infrastructure_postgres-validator-lib
+#   docker compose --profile postgres up
 set -euo pipefail
 
 out_file="${VALIDATOR_SO_PATH:-/validator-out/pg_oidc_validator.so}"
+src_dir="${VALIDATOR_SRC_DIR:-/pg_oidc_validator-src}"
 out_dir="$(dirname "$out_file")"
 
 mkdir -p "$out_dir"
 
 if [[ -f "$out_file" ]]; then
-  echo "Validator library already present at $out_file"
+  echo "Validator library already present at $out_file - skipping rebuild."
   exit 0
+fi
+
+if [[ ! -d "$src_dir" ]]; then
+  echo "ERROR: validator source not bind-mounted at $src_dir (see postgres.yaml)" >&2
+  exit 1
 fi
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends \
-  ca-certificates \
-  curl \
-  git \
-  make \
-  g++ \
-  pkg-config \
-  libssl-dev
+    git make g++ pkg-config \
+    libssl-dev libcurl4-openssl-dev libkrb5-dev \
+    postgresql-server-dev-18
 
-# Prefer the prebuilt package; fall back to source build if unavailable.
-if curl -fsSL -o /tmp/pg-oidc-validator-pgdg18.deb \
-  https://github.com/percona/pg_oidc_validator/releases/download/latest/pg-oidc-validator-pgdg18.deb; then
-  if apt-get install -y --no-install-recommends /tmp/pg-oidc-validator-pgdg18.deb; then
-    cp /usr/lib/postgresql/18/lib/pg_oidc_validator.so "$out_file"
-  else
-    rm -f /tmp/pg-oidc-validator-pgdg18.deb
-  fi
-fi
+# Build out-of-tree so artifacts don't leak back into the (read-only) bind mount.
+build_dir=/tmp/pg_oidc_validator-build
+rm -rf "$build_dir"
+cp -r "$src_dir" "$build_dir"
 
-if [[ ! -f "$out_file" ]]; then
-  rm -rf /tmp/pg_oidc_validator
-  git clone --depth 1 --recurse-submodules https://github.com/percona/pg_oidc_validator.git /tmp/pg_oidc_validator
-  make -C /tmp/pg_oidc_validator USE_PGXS=1 -j"$(nproc)"
-  cp /tmp/pg_oidc_validator/pg_oidc_validator.so "$out_file"
-fi
-
+make -C "$build_dir" USE_PGXS=1 -j"$(nproc)"
+cp "$build_dir/pg_oidc_validator.so" "$out_file"
 chmod 0644 "$out_file"
 
-rm -rf /tmp/pg_oidc_validator
-rm -f /tmp/pg-oidc-validator-pgdg18.deb
 apt-get clean
-rm -rf /var/lib/apt/lists/*
+rm -rf /var/lib/apt/lists/* "$build_dir"
 
-echo "Installed validator to $out_file"
+echo "Built validator from $src_dir, installed to $out_file"

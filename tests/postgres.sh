@@ -8,7 +8,7 @@
 set -euo pipefail
 
 network_name=${1:-cheetah-infrastructure}
-issuer=${2:-http://keycloak:1852/realms/local-development}
+issuer=${2:-https://localhost:8443/realms/local-development}
 scope=${3:-postgres}
 
 echo "INFO - Verifying pg_hba oauth entries in postgres container"
@@ -32,4 +32,4 @@ fi
 
 echo "INFO - OAuth-only auth checks passed"
 echo "INFO - Manual OAuth login test:"
-echo "psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=http://localhost:1852/realms/local-development oauth_client_id=users'"
+echo "psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=https://localhost:8443/realms/local-development oauth_client_id=users'"

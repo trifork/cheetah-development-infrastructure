@@ -13,15 +13,27 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HEALTH_ENABLED: true
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
-      KC_HOSTNAME: http://localhost:1852/
+      # HTTPS on `localhost:8443` is the canonical issuer (= JWT `iss`); libpq-oauth
+      # accepts loopback. Plain HTTP on 1852 stays for service-to-service backchannels.
+      KC_HOSTNAME: https://localhost:8443/
+      KC_HOSTNAME_STRICT: false
       KC_HTTP_PORT: 1852
+      KC_HTTPS_PORT: 8443
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/keycloak.pem
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/keycloak-key.pem
+    volumes:
+      - ./config/keycloak/certs/keycloak.pem:/opt/keycloak/certs/keycloak.pem:ro
+      - ./config/keycloak/certs/keycloak-key.pem:/opt/keycloak/certs/keycloak-key.pem:ro
     ports:
       - 1852:1852
+      - 8443:8443
     healthcheck:
+      # TCP liveness on the HTTPS listener. The base image has no curl/openssl/wget,
+      # and readiness is effectively gated by keycloak-setup's realm import.
       test:
         [
           "CMD-SHELL",
-          "exec 3<>/dev/tcp/127.0.0.1/9000;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3",
+          "exec 3<>/dev/tcp/127.0.0.1/8443",
         ]
       interval: 30s # (default: 30s)
       timeout: 10s # (default: 30s)

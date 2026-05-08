@@ -183,14 +183,15 @@ When all of the services are running, you can go to:
 PostgreSQL network authentication is configured to use OAuth only.
 
 - Basic/password auth is disabled for host connections.
-- OAuth issuer: `http://keycloak:1852/realms/local-development`
+- OAuth issuer: `https://localhost:8443/realms/local-development`
 - OAuth scope: `postgres`
 
-Example interactive OAuth login with `psql`:
+The Keycloak HTTPS cert is self-signed (`config/keycloak/certs/keycloak.pem`); your browser will warn on first visit — accept the cert. To regenerate the cert, run `bash config/keycloak/certs/generate-certs.sh`.
+
+Example interactive OAuth login with `psql` (requires PostgreSQL 18 client + `libpq-oauth`):
 
 ```bash
-psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=http://localhost:1852/realms/local-development oauth_client_id=users'
-
+psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=https://localhost:8443/realms/local-development oauth_client_id=users'
 ```
 
 ## List of all profiles in docker compose
@@ -225,8 +226,11 @@ Keycloak is used as a local identity provider, to be able to mimic a production 
 
 ### Useful urls:
 
-- OpenID Endpoint Configuration: http://localhost:1852/realms/local-development/.well-known/openid-configuration
-- Token Endpoint http://localhost:1852/realms/local-development/protocol/openid-connect/token 
+- OpenID Endpoint Configuration (HTTPS, used by browsers and `libpq`): https://localhost:8443/realms/local-development/.well-known/openid-configuration
+- OpenID Endpoint Configuration (HTTP backchannel for service-to-service): http://keycloak:1852/realms/local-development/.well-known/openid-configuration
+- Token Endpoint (HTTP backchannel): http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+
+> Note: JWT `iss` claim on every token is `https://localhost:8443/realms/local-development`, regardless of which port the token request hit. Services that validate `iss` (schema-registry, opensearch, postgres) are configured to expect that string. 
 
 ### Default clients:
 

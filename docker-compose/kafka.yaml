@@ -158,7 +158,8 @@ services:
       QUARKUS_OIDC_ROLES_ROLE_CLAIM_PATH: "roles"
       QUARKUS_OIDC_AUTHENTICATION_VERIFY_ACCESS_TOKEN: "true"
       QUARKUS_OIDC_TOKEN_AUDIENCE: schema-registry
-      QUARKUS_OIDC_TOKEN_ISSUER: "http://localhost:1852/realms/local-development"
+      # Must match KC_HOSTNAME (= JWT `iss`). Discovery URL above stays HTTP backchannel.
+      QUARKUS_OIDC_TOKEN_ISSUER: "https://localhost:8443/realms/local-development"
 
     healthcheck:
       test: curl schema-registry:8080 || exit -1
