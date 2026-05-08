@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
-# Builds pg_oidc_validator.so from the bind-mounted fork at /pg_oidc_validator-src
-# into the shared volume that the postgres service mounts.
+# Builds pg_oidc_validator.so from /pg_oidc_validator-src into the shared
+# volume mounted by postgres. Mirrors a Kubernetes initContainer that
+# populates a sidecar volume.
 #
-# To pick up source edits, drop the volume between runs:
-#   docker compose --profile postgres down
-#   docker volume rm cheetah-infrastructure_postgres-validator-lib
-#   docker compose --profile postgres up
+# To rebuild after editing the fork, drop the volume between runs.
 set -euo pipefail
 
 out_file="${VALIDATOR_SO_PATH:-/validator-out/pg_oidc_validator.so}"
@@ -15,7 +13,7 @@ out_dir="$(dirname "$out_file")"
 mkdir -p "$out_dir"
 
 if [[ -f "$out_file" ]]; then
-  echo "Validator library already present at $out_file - skipping rebuild."
+  echo "Validator already at $out_file - skipping rebuild."
   exit 0
 fi
 
@@ -31,7 +29,7 @@ apt-get install -y --no-install-recommends \
     libssl-dev libcurl4-openssl-dev libkrb5-dev \
     postgresql-server-dev-18
 
-# Build out-of-tree so artifacts don't leak back into the (read-only) bind mount.
+# Build out-of-tree so artifacts don't leak back into the bind mount.
 build_dir=/tmp/pg_oidc_validator-build
 rm -rf "$build_dir"
 cp -r "$src_dir" "$build_dir"
@@ -43,4 +41,4 @@ chmod 0644 "$out_file"
 apt-get clean
 rm -rf /var/lib/apt/lists/* "$build_dir"
 
-echo "Built validator from $src_dir, installed to $out_file"
+echo "Built validator from $src_dir -> $out_file"
