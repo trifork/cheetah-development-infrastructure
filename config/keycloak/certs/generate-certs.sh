@@ -22,8 +22,11 @@ openssl req -x509 -nodes -newkey rsa:2048 \
   -subj "/CN=keycloak" \
   -addext "subjectAltName=DNS:keycloak,DNS:localhost,IP:127.0.0.1"
 
+# 0644 (world-readable) on purpose: this is a throwaway local-dev key, and the
+# Keycloak container's `keycloak` user (uid 1000) needs to read it regardless
+# of which host uid runs the generator (e.g. GitHub Actions' `runner` uid 1001).
 chmod 0644 "$crt"
-chmod 0600 "$key"
+chmod 0644 "$key"
 
 echo "Generated:"
 echo "  $crt"
