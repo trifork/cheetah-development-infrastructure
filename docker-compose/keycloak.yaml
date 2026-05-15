@@ -22,8 +22,20 @@ services:
       KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/keycloak.pem
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/keycloak-key.pem
     volumes:
-      - ./config/keycloak/certs/keycloak.pem:/opt/keycloak/certs/keycloak.pem:ro
-      - ./config/keycloak/certs/keycloak-key.pem:/opt/keycloak/certs/keycloak-key.pem:ro
+      # Fail fast if the cert files are missing on the host.
+      # Run `bash config/keycloak/certs/generate-certs.sh` once to create them.
+      - type: bind
+        source: ./config/keycloak/certs/keycloak.pem
+        target: /opt/keycloak/certs/keycloak.pem
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./config/keycloak/certs/keycloak-key.pem
+        target: /opt/keycloak/certs/keycloak-key.pem
+        read_only: true
+        bind:
+          create_host_path: false
     ports:
       - 1852:1852
       - 8443:8443
