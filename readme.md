@@ -160,9 +160,9 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 ## PostgreSQL
 
 The PostgreSQL setup consists of different services:
-* **postgres-validator-build** one-shot helper service that downloads/builds `pg_oidc_validator.so` into a shared Docker volume
-* **PostgreSQL 18** OAuth-protected PostgreSQL database
-* **PgAdmin** GUI container for database administration
+* **PostgreSQL 18** OAuth-protected PostgreSQL database. Bind-mounts the prebuilt `pg_oidc_validator.so` checked in at `config/postgres/validator/`.
+* **PgAdmin** GUI container for database administration.
+* **postgres-validator-build** (opt-in, profile `validator-build`) one-shot helper to rebuild `pg_oidc_validator.so` from a sibling checkout of the [`MarkBogelund/pg_oidc_validator`](https://github.com/MarkBogelund/pg_oidc_validator) fork. The committed `.so` is the source of truth until we publish a real distribution channel.
 
 ### Running PostgreSQL and its associated services
 
@@ -172,7 +172,15 @@ Run:
 docker compose --profile=postgres up -d
 ```
 
-On first startup, `postgres-validator-build` prepares the OAuth validator library and exits successfully. The `postgres` service then mounts that library read-only from the shared volume.
+### Rebuilding the OAuth validator
+
+Only needed when the validator fork changes. Requires `MarkBogelund/pg_oidc_validator` checked out as a sibling of this repo (`../pg_oidc_validator`). Then:
+
+```bash
+docker compose --profile=validator-build up postgres-validator-build
+```
+
+This compiles the fork against `postgres:18.3-trixie` and overwrites `config/postgres/validator/pg_oidc_validator.so`. Commit the updated `.so`.
 
 When all of the services are running, you can go to:
 

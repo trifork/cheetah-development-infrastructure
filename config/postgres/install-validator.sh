@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
-# Builds pg_oidc_validator.so from /pg_oidc_validator-src into the shared
-# volume mounted by postgres. Mirrors a Kubernetes initContainer that
-# populates a sidecar volume.
+# Builds pg_oidc_validator.so from $VALIDATOR_SRC_DIR and writes it to
+# $VALIDATOR_SO_PATH. Used by the `validator-build` compose profile to
+# regenerate the committed binary at config/postgres/validator/.
 #
-# To rebuild after editing the fork, drop the volume between runs.
+# Set VALIDATOR_FORCE_REBUILD=1 to overwrite an existing .so (default off so
+# accidentally bind-mounting an existing output dir is a no-op).
 set -euo pipefail
 
 out_file="${VALIDATOR_SO_PATH:-/validator-out/pg_oidc_validator.so}"
 src_dir="${VALIDATOR_SRC_DIR:-/pg_oidc_validator-src}"
+force="${VALIDATOR_FORCE_REBUILD:-0}"
 out_dir="$(dirname "$out_file")"
 
 mkdir -p "$out_dir"
 
-if [[ -f "$out_file" ]]; then
-  echo "Validator already at $out_file - skipping rebuild."
+if [[ -f "$out_file" && "$force" != "1" ]]; then
+  echo "Validator already at $out_file - skipping rebuild (set VALIDATOR_FORCE_REBUILD=1 to overwrite)."
   exit 0
 fi
 
