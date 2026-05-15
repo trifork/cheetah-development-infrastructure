@@ -21,11 +21,11 @@ function oauth_login() {
 	local startup_len p_msg_len mech_nul_len cmsg_len client_msg
 
 	# Helper: write a 32-bit big-endian integer to fd 3
-	be4() {
-		printf "$(printf '\\x%02x\\x%02x\\x%02x\\x%02x' \
-			$((($1 >> 24) & 0xff)) $((($1 >> 16) & 0xff)) \
-			$((($1 >>  8) & 0xff)) $(( $1        & 0xff)))"
-	}
+		be4() {
+			printf '\\x%02x\\x%02x\\x%02x\\x%02x' \
+				$((($1 >> 24) & 0xff)) $((($1 >> 16) & 0xff)) \
+				$((($1 >>  8) & 0xff)) $(( $1        & 0xff))
+		}
 
 	exec 3<>"/dev/tcp/${host}/${port}"
 
