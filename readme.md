@@ -160,7 +160,7 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 ## PostgreSQL
 
 The PostgreSQL setup consists of different services:
-* **postgres-validator-build** init container that provisions `pg_oidc_validator.so` (upstream Percona) into a shared volume on first boot. Prefers the upstream prebuilt `.deb`; falls back to compiling from source.
+* **postgres-validator-build** init container that provisions `pg_oidc_validator.so` (upstream Percona) into a shared volume on first boot. Prefers the upstream prebuilt `.deb`; falls back to compiling from source. The version is not pinned because Percona only ships the `.deb` under the rolling `latest` tag (no per-version `.deb` assets); to truly pin we would have to drop the prebuilt path and always source-build, which we've chosen not to do for boot-time reasons.
 * **PostgreSQL 18** OAuth-protected PostgreSQL database. Mounts the validator `.so` read-only from the shared volume.
 * **pgAdmin** (opt-in via the `pgadmin` profile) GUI for browsing the database. Uses a scoped scram-sha-256 carve-out because pgAdmin can't drive libpq's device-flow OAuth (see `config/postgres/pg_hba.conf`).
 
