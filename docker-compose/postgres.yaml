@@ -1,28 +1,24 @@
 ---
 services:
-  # Optional: rebuild pg_oidc_validator.so from the sibling fork checkout and
-  # overwrite the committed binary in config/postgres/validator/. Run with:
-  #   docker compose --profile validator-build up postgres-validator-build
-  # Requires github.com/MarkBogelund/pg_oidc_validator checked out next to this
-  # repo. The default `postgres` profile uses the already-committed .so and
-  # does NOT pull this service in.
+  # Init container: provisions pg_oidc_validator.so into a shared named volume
+  # which `postgres` then mounts read-only at /usr/lib/postgresql/extra. Uses
+  # upstream Percona pg_oidc_validator (prebuilt .deb with source-build
+  # fallback). To rebuild, run `docker compose --profile postgres down -v` to
+  # drop the volume.
   postgres-validator-build:
     container_name: postgres-validator-build
     image: postgres:18.3-trixie
     restart: "no"
     environment:
       VALIDATOR_SO_PATH: /validator-out/pg_oidc_validator.so
-      VALIDATOR_SRC_DIR: /pg_oidc_validator-src
-      VALIDATOR_FORCE_REBUILD: "1"
     volumes:
-      - ./config/postgres/validator:/validator-out
+      - postgres-validator-lib:/validator-out
       - ./config/postgres/install-validator.sh:/usr/local/bin/install-validator.sh:ro
-      - ../pg_oidc_validator:/pg_oidc_validator-src:ro
     command:
       - bash
       - /usr/local/bin/install-validator.sh
     profiles:
-      - validator-build
+      - postgres
 
   postgres:
     container_name: postgres
@@ -36,19 +32,19 @@ services:
       POSTGRES_PASSWORD: admin
     volumes:
       - postgres:/var/lib/postgresql
-      # Prebuilt validator .so checked into the repo. See postgres-validator-build
-      # above for how to regenerate it. create_host_path:false makes a missing
-      # .so a fast, clear error instead of a silent empty-dir mount.
-      - type: bind
-        source: ./config/postgres/validator/pg_oidc_validator.so
-        target: /usr/lib/postgresql/extra/pg_oidc_validator.so
-        read_only: true
-        bind:
-          create_host_path: false
+      - postgres-validator-lib:/usr/lib/postgresql/extra:ro
       - ./config/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
       - ./config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
       - ./config/postgres/init:/docker-entrypoint-initdb.d:ro
       - ./config/postgres/entrypoint.sh:/usr/local/bin/custom-entrypoint.sh:ro
+      # Self-signed Keycloak CA, trusted by the entrypoint so the validator's
+      # libcurl-driven HTTPS fetch of `keycloak:8443` succeeds.
+      - type: bind
+        source: ./config/keycloak/certs/keycloak.pem
+        target: /etc/keycloak-ca/keycloak.pem
+        read_only: true
+        bind:
+          create_host_path: false
     entrypoint: ["bash", "/usr/local/bin/custom-entrypoint.sh"]
     command:
       - postgres
@@ -56,6 +52,8 @@ services:
       - config_file=/etc/postgresql/postgresql.conf
     depends_on:
       keycloak-setup:
+        condition: service_completed_successfully
+      postgres-validator-build:
         condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d app -h 127.0.0.1"]
@@ -93,3 +91,4 @@ networks:
 volumes:
   postgres:
   pgadmin-data:
+  postgres-validator-lib:

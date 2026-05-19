@@ -160,9 +160,9 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 ## PostgreSQL
 
 The PostgreSQL setup consists of different services:
-* **PostgreSQL 18** OAuth-protected PostgreSQL database. Bind-mounts the prebuilt `pg_oidc_validator.so` checked in at `config/postgres/validator/`.
+* **postgres-validator-build** init container that provisions `pg_oidc_validator.so` (upstream Percona) into a shared volume on first boot. Prefers the upstream prebuilt `.deb`; falls back to compiling from source.
+* **PostgreSQL 18** OAuth-protected PostgreSQL database. Mounts the validator `.so` read-only from the shared volume.
 * **PgAdmin** GUI container for database administration.
-* **postgres-validator-build** (opt-in, profile `validator-build`) one-shot helper to rebuild `pg_oidc_validator.so` from a sibling checkout of the [`MarkBogelund/pg_oidc_validator`](https://github.com/MarkBogelund/pg_oidc_validator) fork. The committed `.so` is the source of truth until we publish a real distribution channel.
 
 ### Running PostgreSQL and its associated services
 
@@ -172,15 +172,11 @@ Run:
 docker compose --profile=postgres up -d
 ```
 
-### Rebuilding the OAuth validator
-
-Only needed when the validator fork changes. Requires `MarkBogelund/pg_oidc_validator` checked out as a sibling of this repo (`../pg_oidc_validator`). Then:
+The validator init container exits successfully on first start. To force a re-fetch (e.g. after upstream releases a new validator), drop the named volume:
 
 ```bash
-docker compose --profile=validator-build up postgres-validator-build
+docker compose --profile=postgres down -v
 ```
-
-This compiles the fork against `postgres:18.3-trixie` and overwrites `config/postgres/validator/pg_oidc_validator.so`. Commit the updated `.so`.
 
 When all of the services are running, you can go to:
 
@@ -191,15 +187,24 @@ When all of the services are running, you can go to:
 PostgreSQL network authentication is configured to use OAuth only.
 
 - Basic/password auth is disabled for host connections.
-- OAuth issuer: `https://localhost:8443/realms/local-development`
+- OAuth issuer: `https://keycloak:8443/realms/local-development`
 - OAuth scope: `postgres`
 
-The Keycloak HTTPS cert is self-signed (`config/keycloak/certs/keycloak.pem`); your browser will warn on first visit — accept the cert. To regenerate the cert, run `bash config/keycloak/certs/generate-certs.sh`.
+The issuer hostname is `keycloak` (the docker-network DNS name), so in-cluster services can fetch OIDC discovery directly via `keycloak:8443`. The Keycloak admin console remains reachable at `https://localhost:8443/admin` from the host (see `KC_HOSTNAME_ADMIN` in `docker-compose/keycloak.yaml`).
 
-Example interactive OAuth login with `psql` (requires PostgreSQL 18 client + `libpq-oauth`):
+The Keycloak HTTPS cert is self-signed (`config/keycloak/certs/keycloak.pem`); your browser will warn on first visit — accept the cert. To regenerate the cert, run `bash config/keycloak/certs/generate-certs.sh`. The postgres container imports this cert as a trusted CA at startup so the validator's HTTPS fetch of `keycloak:8443` works.
+
+#### Host-side psql
+
+To run `psql` from the host against the OAuth-protected listener, you need two one-time setup steps:
+
+1. Add `127.0.0.1 keycloak` to `/etc/hosts` (so libpq can reach `keycloak:8443` during the OAuth device flow).
+2. Trust `config/keycloak/certs/keycloak.pem` — either add it to your system CA store, or export `SSL_CERT_FILE=$(pwd)/config/keycloak/certs/keycloak.pem`.
+
+Then (requires PostgreSQL 18 client + `libpq-oauth`):
 
 ```bash
-psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=https://localhost:8443/realms/local-development oauth_client_id=users'
+psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=https://keycloak:8443/realms/local-development oauth_client_id=users'
 ```
 
 ## List of all profiles in docker compose

@@ -1,46 +1,53 @@
 #!/usr/bin/env bash
-# Builds pg_oidc_validator.so from $VALIDATOR_SRC_DIR and writes it to
-# $VALIDATOR_SO_PATH. Used by the `validator-build` compose profile to
-# regenerate the committed binary at config/postgres/validator/.
+# Init-container script: provisions pg_oidc_validator.so into the shared
+# volume mounted by postgres at /usr/lib/postgresql/extra.
 #
-# Set VALIDATOR_FORCE_REBUILD=1 to overwrite an existing .so (default off so
-# accidentally bind-mounting an existing output dir is a no-op).
+# Strategy: prefer upstream Percona's prebuilt .deb; fall back to building
+# from source. Uses github.com/percona/pg_oidc_validator
+# directly.
+#
+# To force a rebuild, drop the postgres-validator-lib named volume:
+#   docker compose --profile postgres down -v
 set -euo pipefail
 
 out_file="${VALIDATOR_SO_PATH:-/validator-out/pg_oidc_validator.so}"
-src_dir="${VALIDATOR_SRC_DIR:-/pg_oidc_validator-src}"
-force="${VALIDATOR_FORCE_REBUILD:-0}"
 out_dir="$(dirname "$out_file")"
 
 mkdir -p "$out_dir"
 
-if [[ -f "$out_file" && "$force" != "1" ]]; then
-  echo "Validator already at $out_file - skipping rebuild (set VALIDATOR_FORCE_REBUILD=1 to overwrite)."
+if [[ -f "$out_file" ]]; then
+  echo "Validator already at $out_file - skipping fetch/build."
   exit 0
-fi
-
-if [[ ! -d "$src_dir" ]]; then
-  echo "ERROR: validator source not bind-mounted at $src_dir (see postgres.yaml)" >&2
-  exit 1
 fi
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y --no-install-recommends \
+apt-get install -y --no-install-recommends ca-certificates curl
+
+# Prefer the upstream prebuilt .deb (built on Ubuntu noble, compatible with
+# Debian trixie's glibc). Fall back to a source build if the deb can't be
+# fetched or installed.
+if curl -fsSL -o /tmp/pg-oidc-validator-pgdg18.deb \
+    https://github.com/percona/pg_oidc_validator/releases/download/latest/pg-oidc-validator-pgdg18.deb \
+  && apt-get install -y --no-install-recommends /tmp/pg-oidc-validator-pgdg18.deb; then
+  cp /usr/lib/postgresql/18/lib/pg_oidc_validator.so "$out_file"
+else
+  echo "Prebuilt .deb unavailable, building from source..."
+  rm -f /tmp/pg-oidc-validator-pgdg18.deb
+  apt-get install -y --no-install-recommends \
     git make g++ pkg-config \
     libssl-dev libcurl4-openssl-dev libkrb5-dev \
     postgresql-server-dev-18
+  rm -rf /tmp/pg_oidc_validator
+  git clone --depth 1 --recurse-submodules \
+    https://github.com/percona/pg_oidc_validator.git /tmp/pg_oidc_validator
+  make -C /tmp/pg_oidc_validator USE_PGXS=1 -j"$(nproc)"
+  cp /tmp/pg_oidc_validator/pg_oidc_validator.so "$out_file"
+  rm -rf /tmp/pg_oidc_validator
+fi
 
-# Build out-of-tree so artifacts don't leak back into the bind mount.
-build_dir=/tmp/pg_oidc_validator-build
-rm -rf "$build_dir"
-cp -r "$src_dir" "$build_dir"
-
-make -C "$build_dir" USE_PGXS=1 -j"$(nproc)"
-cp "$build_dir/pg_oidc_validator.so" "$out_file"
 chmod 0644 "$out_file"
-
 apt-get clean
-rm -rf /var/lib/apt/lists/* "$build_dir"
+rm -rf /var/lib/apt/lists/* /tmp/pg-oidc-validator-pgdg18.deb 2>/dev/null || true
 
-echo "Built validator from $src_dir -> $out_file"
+echo "Installed validator -> $out_file"
