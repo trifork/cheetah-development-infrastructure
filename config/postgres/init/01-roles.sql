@@ -1,4 +1,5 @@
--- `app` is created by docker-entrypoint.sh via POSTGRES_DB.
+CREATE DATABASE app;
+
 CREATE ROLE "default-access" LOGIN;
 CREATE ROLE "default-read" LOGIN;
 CREATE ROLE "default-write" LOGIN;

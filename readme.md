@@ -241,11 +241,12 @@ Keycloak is used as a local identity provider, to be able to mimic a production 
 
 ### Useful urls:
 
-- OpenID Endpoint Configuration (HTTPS, used by browsers and `libpq`): https://localhost:8443/realms/local-development/.well-known/openid-configuration
-- OpenID Endpoint Configuration (HTTP backchannel for service-to-service): http://keycloak:1852/realms/local-development/.well-known/openid-configuration
-- Token Endpoint (HTTP backchannel): http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+- Admin console (from the host): https://localhost:8443/admin (`KC_HOSTNAME_ADMIN`)
+- OpenID Endpoint Configuration (in-cluster, HTTPS): https://keycloak:8443/realms/local-development/.well-known/openid-configuration
+- OpenID Endpoint Configuration (in-cluster, HTTP backchannel): http://keycloak:1852/realms/local-development/.well-known/openid-configuration
+- Token Endpoint (in-cluster, HTTP backchannel): http://keycloak:1852/realms/local-development/protocol/openid-connect/token
 
-> Note: JWT `iss` claim on every token is `https://localhost:8443/realms/local-development`, regardless of which port the token request hit. Services that validate `iss` (schema-registry, opensearch, postgres) are configured to expect that string. 
+> Note: JWT `iss` claim on every token is `https://keycloak:8443/realms/local-development` (set by `KC_HOSTNAME`), regardless of which hostname or port the token request hit. Services that validate `iss` (schema-registry, opensearch, postgres) all expect that string.
 
 ### Default clients:
 

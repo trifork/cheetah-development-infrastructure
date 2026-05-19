@@ -4,7 +4,7 @@
       "Name": "cheetah-postgres",
       "Group": "Servers",
       "Port": 5432,
-      "Username": "developer",
+      "Username": "default-access",
       "Host": "postgres",
       "SSLMode": "prefer",
       "MaintenanceDB": "app",
