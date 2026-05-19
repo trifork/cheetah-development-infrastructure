@@ -39,10 +39,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
-      - name: Generate Keycloak dev certs
-        # Run container to generate certs, and copy them to host for later use in tests
-        run: docker compose --profile keycloak-cert up --quiet-pull keycloak-cert-init
-
       - name: Run development environment
         run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry --profile postgres up --quiet-pull --force-recreate --wait --wait-timeout 240 -d
 

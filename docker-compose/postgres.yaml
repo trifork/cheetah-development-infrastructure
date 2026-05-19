@@ -31,12 +31,7 @@ services:
       - ./config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
       - ./config/postgres/init:/docker-entrypoint-initdb.d:ro
       - ./config/postgres/entrypoint.sh:/usr/local/bin/custom-entrypoint.sh:ro
-      - type: bind
-        source: ./config/keycloak/certs/keycloak.pem
-        target: /etc/keycloak-ca/keycloak.pem
-        read_only: true
-        bind:
-          create_host_path: false
+      - keycloak-certs:/etc/keycloak-ca:ro
     entrypoint: ["bash", "/usr/local/bin/custom-entrypoint.sh"]
     command:
       - postgres
@@ -84,3 +79,4 @@ volumes:
   postgres:
   postgres-validator-lib:
   pgadmin-data:
+  keycloak-certs:
