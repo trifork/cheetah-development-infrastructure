@@ -56,9 +56,6 @@ services:
     profiles:
       - postgres
 
-  # pgAdmin is opt-in via its own profile because it cannot use OAuth to reach
-  # postgres today (libpq's only flow is device-auth, which pgAdmin has no UI
-  # for). It connects via the scoped scram-sha-256 carve-out in pg_hba.conf.
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:9.15
@@ -77,7 +74,7 @@ services:
       postgres:
         condition: service_healthy
     profiles:
-      - pgadmin
+      - postgres
 
 networks:
   default:
