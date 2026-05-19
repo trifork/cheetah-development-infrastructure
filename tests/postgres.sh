@@ -73,16 +73,19 @@ if ! docker exec postgres grep -q "oauth issuer=${issuer} scope=\"${scope}\"" /e
 	exit 1
 fi
 
-echo "INFO - Verifying no host password/basic auth entries are configured"
-if docker exec postgres grep -E "^host\s+.*\s+(password|md5|scram-sha-256)" /etc/postgresql/pg_hba.conf; then
-	echo "ERROR - Found password/basic auth entry in pg_hba.conf"
+echo "INFO - Verifying password/basic auth is only allowed for the pgadmin role"
+non_pgadmin_pwd=$(docker exec postgres grep -E "^host\s+\S+\s+\S+\s+\S+\s+(password|md5|scram-sha-256)" /etc/postgresql/pg_hba.conf \
+	| awk '$3 != "pgadmin"' || true)
+if [ -n "$non_pgadmin_pwd" ]; then
+	echo "ERROR - Found password/basic auth entry for a role other than pgadmin:"
+	echo "$non_pgadmin_pwd"
 	exit 1
 fi
 
-echo "INFO - Verifying password login fails for host connection"
-if docker run --rm --network "${network_name}" -e PGPASSWORD=admin postgres:18.3-trixie \
-	psql "host=postgres port=5432 dbname=app user=developer" -c "select 1" >/dev/null 2>&1; then
-	echo "ERROR - Password based login unexpectedly succeeded"
+echo "INFO - Verifying password login fails for non-pgadmin roles"
+if docker run --rm --network "${network_name}" -e PGPASSWORD=admin postgres:18.4-trixie \
+	psql "host=postgres port=5432 dbname=app user=default-access" -c "select 1" >/dev/null 2>&1; then
+	echo "ERROR - Password based login unexpectedly succeeded as default-access"
 	exit 1
 fi
 

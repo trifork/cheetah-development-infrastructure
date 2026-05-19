@@ -2,7 +2,7 @@
 services:
   postgres-validator-build:
     container_name: postgres-validator-build
-    image: postgres:18.3-trixie
+    image: postgres:18.4-trixie
     restart: "no"
     environment:
       VALIDATOR_SO_PATH: /validator-out/pg_oidc_validator.so
@@ -17,7 +17,7 @@ services:
 
   postgres:
     container_name: postgres
-    image: postgres:18.3-trixie
+    image: postgres:18.4-trixie
     restart: unless-stopped
     mem_limit: 1024m
     ports:
@@ -56,9 +56,12 @@ services:
     profiles:
       - postgres
 
+  # pgAdmin is opt-in via its own profile because it cannot use OAuth to reach
+  # postgres today (libpq's only flow is device-auth, which pgAdmin has no UI
+  # for). It connects via the scoped scram-sha-256 carve-out in pg_hba.conf.
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4:9.14
+    image: dpage/pgadmin4:9.15
     restart: unless-stopped
     ports:
       - "5050:80"
@@ -69,12 +72,13 @@ services:
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
     volumes:
       - pgadmin-data:/var/lib/pgadmin
-      - ./config/pgadmin/servers.json:/pgadmin4/servers.json
+      - ./config/pgadmin/servers.json:/pgadmin4/servers.json:ro
+      - ./config/pgadmin/pgpass:/pgpass:ro
     depends_on:
       postgres:
         condition: service_healthy
     profiles:
-      - postgres
+      - pgadmin
 
 networks:
   default:
@@ -82,5 +86,5 @@ networks:
 
 volumes:
   postgres:
-  pgadmin-data:
   postgres-validator-lib:
+  pgadmin-data:

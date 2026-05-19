@@ -3,12 +3,12 @@
     "1": {
       "Name": "cheetah-postgres",
       "Group": "Servers",
-      "Port": 5432,
-      "Username": "default-access",
       "Host": "postgres",
-      "SSLMode": "prefer",
+      "Port": 5432,
       "MaintenanceDB": "app",
-      "PassFile": "/pgadmin4/pgpass"
+      "Username": "pgadmin",
+      "PassFile": "/pgpass",
+      "SSLMode": "prefer"
     }
   }
 }

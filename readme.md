@@ -162,7 +162,7 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 The PostgreSQL setup consists of different services:
 * **postgres-validator-build** init container that provisions `pg_oidc_validator.so` (upstream Percona) into a shared volume on first boot. Prefers the upstream prebuilt `.deb`; falls back to compiling from source.
 * **PostgreSQL 18** OAuth-protected PostgreSQL database. Mounts the validator `.so` read-only from the shared volume.
-* **PgAdmin** GUI container for database administration.
+* **pgAdmin** (opt-in via the `pgadmin` profile) GUI for browsing the database. Uses a scoped scram-sha-256 carve-out because pgAdmin can't drive libpq's device-flow OAuth (see `config/postgres/pg_hba.conf`).
 
 ### Running PostgreSQL and its associated services
 
@@ -172,23 +172,26 @@ Run:
 docker compose --profile=postgres up -d
 ```
 
+To also run pgAdmin (opt-in):
+
+```bash
+docker compose --profile=postgres --profile=pgadmin up -d
+# then visit http://localhost:5050  (login: pgadmin4@pgadmin.org / admin)
+```
+
 The validator init container exits successfully on first start. To force a re-fetch (e.g. after upstream releases a new validator), drop the named volume:
 
 ```bash
 docker compose --profile=postgres down -v
 ```
 
-When all of the services are running, you can go to:
-
-- <http://localhost:5050> to see the PgAdmin UI
-
 ### Authentication
 
-PostgreSQL network authentication is configured to use OAuth only.
+PostgreSQL network authentication is OAuth-only for services. The `pgadmin` role is the single exception: it uses scram-sha-256 password auth via a scoped rule in `pg_hba.conf` so pgAdmin (which has no device-flow UI today) can still connect.
 
-- Basic/password auth is disabled for host connections.
 - OAuth issuer: `https://keycloak:8443/realms/local-development`
 - OAuth scope: `postgres`
+- pgAdmin role/password: `pgadmin` / `pgadmin-password` (see `config/pgadmin/pgpass`)
 
 The issuer hostname is `keycloak` (the docker-network DNS name), so in-cluster services can fetch OIDC discovery directly via `keycloak:8443`. The Keycloak admin console remains reachable at `https://localhost:8443/admin` from the host (see `KC_HOSTNAME_ADMIN` in `docker-compose/keycloak.yaml`).
 
