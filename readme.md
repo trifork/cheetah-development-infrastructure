@@ -159,61 +159,32 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 
 ## PostgreSQL
 
-The PostgreSQL setup consists of different services:
-* **postgres-validator-build** init container that provisions `pg_oidc_validator.so` (upstream Percona) into a shared volume on first boot. Prefers the upstream prebuilt `.deb`; falls back to compiling from source. The version is not pinned because Percona only ships the `.deb` under the rolling `latest` tag (no per-version `.deb` assets); to truly pin we would have to drop the prebuilt path and always source-build, which we've chosen not to do for boot-time reasons.
-* **PostgreSQL 18** OAuth-protected PostgreSQL database. Mounts the validator `.so` read-only from the shared volume.
-* **pgAdmin** (opt-in via the `pgadmin` profile) GUI for browsing the database. Uses a scoped scram-sha-256 carve-out because pgAdmin can't drive libpq's device-flow OAuth (see `config/postgres/pg_hba.conf`).
+Services:
+* **postgres-validator-build** — init container; provisions `pg_oidc_validator.so` (upstream Percona) into a shared volume on first boot.
+* **postgres** — OAuth-protected PostgreSQL 18.
+* **pgadmin** — browser GUI.
 
-### Running PostgreSQL and its associated services
-
-Run:
+### Running
 
 ```bash
 docker compose --profile=postgres up -d
 ```
 
-To also run pgAdmin (opt-in):
-
-```bash
-docker compose --profile=postgres --profile=pgadmin up -d
-```
-
-Then visit <http://localhost:5050>:
-1. Sign in to pgAdmin: `admin@admin.com` / `admin`.
-2. Click the `cheetah-postgres` server in the tree → enter database password `admin` when prompted. pgAdmin remembers it for the life of the `pgadmin-data` volume.
-
-The validator init container exits successfully on first start. To force a re-fetch (e.g. after upstream releases a new validator), drop the named volume:
-
-```bash
-docker compose --profile=postgres down -v
-```
+pgAdmin: <http://localhost:5050> — login `admin@admin.com` / `admin`. On first Connect to `cheetah-postgres`, enter database password `admin` (cached for the life of `pgadmin-data`).
 
 ### Authentication
 
-PostgreSQL network authentication is OAuth-only for services. The `pgadmin` role is the single exception: it uses scram-sha-256 password auth via a scoped rule in `pg_hba.conf` so pgAdmin (which has no device-flow UI today) can still connect.
+- OAuth-only for services. Issuer `https://keycloak:8443/realms/local-development`, scope `postgres`.
+- One scram-sha-256 exception: the `pgadmin` role (password `admin`, defined in `config/postgres/init/01-roles.sql`), scoped via `pg_hba.conf`.
+- The validator maps JWT `client_id` → PostgreSQL role. Roles: `default-access`, `default-read`, `default-write`.
 
-- OAuth issuer: `https://keycloak:8443/realms/local-development`
-- OAuth scope: `postgres`
-- pgAdmin role/password: `pgadmin` / `admin` (set in `config/postgres/init/01-roles.sql`; type the password into the pgAdmin UI on first Connect — pgAdmin stores it for subsequent reconnects)
+### Host-side `psql`
 
-The issuer hostname is `keycloak` (the docker-network DNS name), so in-cluster services can fetch OIDC discovery directly via `keycloak:8443`. The Keycloak admin console remains reachable at `https://localhost:8443/admin` from the host (see `KC_HOSTNAME_ADMIN` in `docker-compose/keycloak.yaml`).
-
-The Keycloak HTTPS cert is self-signed (`config/keycloak/certs/keycloak.pem`); your browser will warn on first visit — accept the cert. The cert is generated automatically on first `up` by the `keycloak-cert-init` container (no openssl required on the host, works on Windows). To regenerate, delete the two `.pem` files in `config/keycloak/certs/` and `up` again. The postgres container imports this cert as a trusted CA at startup so the validator's HTTPS fetch of `keycloak:8443` works.
-
-#### Host-side psql
-
-To run `psql` from the host against the OAuth-protected listener, you need two one-time setup steps:
-
-1. Add `127.0.0.1 keycloak` to `/etc/hosts` (so libpq can reach `keycloak:8443` during the OAuth device flow).
-2. Trust `config/keycloak/certs/keycloak.pem` — either add it to your system CA store, or export `SSL_CERT_FILE=$(pwd)/config/keycloak/certs/keycloak.pem`.
-
-Then (requires PostgreSQL 18 client + `libpq-oauth`):
+Requires PostgreSQL 18 client + `libpq-oauth` and `127.0.0.1 keycloak` in `/etc/hosts`. Your browser/CLI will need to accept the self-signed Keycloak cert once.
 
 ```bash
 psql 'host=localhost port=5432 dbname=app user=default-access oauth_issuer=https://keycloak:8443/realms/local-development oauth_client_id=default-access'
 ```
-
-The validator maps the JWT `client_id` claim to a PostgreSQL role, so `user=` must match the Keycloak client_id (`default-access`, `default-read`, `default-write` — see `config/postgres/init/01-roles.sql`).
 
 ## List of all profiles in docker compose
 
@@ -230,7 +201,7 @@ Here is further explanation on what each profile starts.
 
 |   Images / profiles   | kafka-core | opensearch-core | schema-registry-core | core  | kafka | opensearch | observability | postgres | full  |
 | :-------------------: | :--------: | :-------------: | :------------------: | :---: | :---: | :--------: | :-----------: | :-------: | :---: |
-|       Keycloak        |     x      |        x        |          x           |   x   |   x   |     x      |       x       |           |   x   |
+|       Keycloak        |     x      |        x        |          x           |   x   |   x   |     x      |       x       |    x     |   x   |
 |         Kafka         |     x      |                 |          x           |   x   |   x   |            |       x       |           |   x   |
 |   Redpanda console    |            |                 |                      |       |   x   |            |               |           |   x   |
 |      Opensearch       |            |        x        |                      |   x   |       |     x      |               |           |   x   |
@@ -245,21 +216,19 @@ Here is further explanation on what each profile starts.
 
 Keycloak is used as a local identity provider, to be able to mimic a production security model with service to service authentication.
 
-### Useful urls:
+### Useful URLs
 
-- Admin console (from the host): https://localhost:8443/admin (`KC_HOSTNAME_ADMIN`)
-- OpenID Endpoint Configuration (in-cluster, HTTPS): https://keycloak:8443/realms/local-development/.well-known/openid-configuration
-- OpenID Endpoint Configuration (in-cluster, HTTP backchannel): http://keycloak:1852/realms/local-development/.well-known/openid-configuration
-- Token Endpoint (in-cluster, HTTP backchannel): http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+- Admin console: <https://keycloak:8443/admin> (requires `127.0.0.1 keycloak` in `/etc/hosts`; browser will warn about the self-signed cert — accept once).
+- OIDC discovery (in-cluster HTTP backchannel): `http://keycloak:1852/realms/local-development/.well-known/openid-configuration`.
 
-> Note: JWT `iss` claim on every token is `https://keycloak:8443/realms/local-development` (set by `KC_HOSTNAME`), regardless of which hostname or port the token request hit. Services that validate `iss` (schema-registry, opensearch, postgres) all expect that string.
+JWT `iss` is always `https://keycloak:8443/realms/local-development` (set by `KC_HOSTNAME`). Validators that pin `iss` (postgres, opensearch, schema-registry) all expect that exact string.
 
 ### Default clients:
 
 A set of default clients have been defined which covers most common usecases.
 
 All roles are mapped to the `roles` claim in the JWT. This configuration is defined in [local-development.json](./config/keycloak/local-development.json) and is applied to keycloak using the `keycloak-setup` service.
-To modify the configuration either go to the [admin console](http://localhost:1852/admin) (Username: `admin` Password: `admin`) or edit the `local-development.json` following this [guide](./config/keycloak/setup.md)
+To modify the configuration either go to the [admin console](https://keycloak:8443/admin) (Username: `admin` Password: `admin`) or edit `local-development.json` following this [guide](./config/keycloak/setup.md).
 
 - Default access
      * Description: Read and write access to all data Kafka, OpenSearch, Schema registry and PostgreSQL
