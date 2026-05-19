@@ -176,8 +176,11 @@ To also run pgAdmin (opt-in):
 
 ```bash
 docker compose --profile=postgres --profile=pgadmin up -d
-# then visit http://localhost:5050  (login: pgadmin4@pgadmin.org / admin)
 ```
+
+Then visit <http://localhost:5050>:
+1. Sign in to pgAdmin: `admin@admin.com` / `admin`.
+2. Click the `cheetah-postgres` server in the tree → enter database password `admin` when prompted. pgAdmin remembers it for the life of the `pgadmin-data` volume.
 
 The validator init container exits successfully on first start. To force a re-fetch (e.g. after upstream releases a new validator), drop the named volume:
 
@@ -191,7 +194,7 @@ PostgreSQL network authentication is OAuth-only for services. The `pgadmin` role
 
 - OAuth issuer: `https://keycloak:8443/realms/local-development`
 - OAuth scope: `postgres`
-- pgAdmin role/password: `pgadmin` / `pgadmin-password` (see `config/pgadmin/pgpass`)
+- pgAdmin role/password: `pgadmin` / `admin` (set in `config/postgres/init/01-roles.sql`; type the password into the pgAdmin UI on first Connect — pgAdmin stores it for subsequent reconnects)
 
 The issuer hostname is `keycloak` (the docker-network DNS name), so in-cluster services can fetch OIDC discovery directly via `keycloak:8443`. The Keycloak admin console remains reachable at `https://localhost:8443/admin` from the host (see `KC_HOSTNAME_ADMIN` in `docker-compose/keycloak.yaml`).
 

@@ -6,7 +6,8 @@ CREATE ROLE "default-write" LOGIN;
 
 -- pgadmin is the one exception to OAuth-only: a dedicated role using
 -- scram-sha-256 password auth, via the scoped rule in pg_hba.conf.
-CREATE ROLE pgadmin LOGIN PASSWORD 'pgadmin-password';
+-- SUPERUSER so the dev tool can create tables/schemas/extensions freely.
+CREATE ROLE pgadmin LOGIN PASSWORD 'admin' SUPERUSER;
 
 GRANT CONNECT ON DATABASE app TO "default-access";
 GRANT CONNECT ON DATABASE app TO "default-read";
