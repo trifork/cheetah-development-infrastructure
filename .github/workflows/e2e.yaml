@@ -48,7 +48,7 @@ jobs:
         run: bash config/keycloak/certs/generate-certs.sh
 
       - name: Run development environment
-        run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry --profile postgres up --quiet-pull --force-recreate -d
+        run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry --profile postgres up --quiet-pull --force-recreate --wait --wait-timeout 240 -d
 
       - name: Start mye2eclient container in shared network
         run: docker run -d -v "${PWD}/tests/:/opt/tests/" -it --name mye2eclient --network=cheetah-infrastructure alpine:latest
@@ -56,20 +56,6 @@ jobs:
       - name: Setup mye2eclient container
         run: |
           docker exec mye2eclient apk add curl jq bash httpie
-
-      - name: "Wait for opensearch, the slowest component"
-        uses: nick-fields/retry@v4
-        with:
-          timeout_minutes: 3
-          max_attempts: 25
-          retry_wait_seconds: 5
-          warning_on_retry: false
-          command: 'docker exec mye2eclient curl -sS -X GET -H "Content-Type: application/json" http://admin:admin@opensearch:9200/_cat/indices'
-
-      - name: Check docker health
-        run: |
-          echo $(docker compose ps -a | grep 'unhealthy')
-          docker compose ps -a | grep 'unhealthy' && echo "Services unhealthy" && exit 1 || exit 0
 
       - name: opensearch test
         run: docker exec mye2eclient bash /opt/tests/opensearch.sh
@@ -80,15 +66,6 @@ jobs:
       - name: schemaregistry test
         run: docker exec mye2eclient bash /opt/tests/schemaregistry.sh
 
-      - name: "Wait for postgres"
-        uses: nick-fields/retry@v4
-        with:
-          timeout_minutes: 3
-          max_attempts: 25
-          retry_wait_seconds: 5
-          warning_on_retry: false
-          command: docker exec postgres pg_isready -U postgres -d app
-
       - name: postgres test
         run: bash tests/postgres.sh
-        
+
