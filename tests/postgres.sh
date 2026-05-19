@@ -22,9 +22,9 @@ function oauth_login() {
 
 	# Helper: write a 32-bit big-endian integer to fd 3
 		be4() {
-			printf '\\x%02x\\x%02x\\x%02x\\x%02x' \
+			printf '%b' "$(printf '\\x%02x\\x%02x\\x%02x\\x%02x' \
 				$((($1 >> 24) & 0xff)) $((($1 >> 16) & 0xff)) \
-				$((($1 >>  8) & 0xff)) $(( $1        & 0xff))
+				$((($1 >>  8) & 0xff)) $(( $1        & 0xff)))"
 		}
 
 	exec 3<>"/dev/tcp/${host}/${port}"
