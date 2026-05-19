@@ -204,8 +204,10 @@ To run `psql` from the host against the OAuth-protected listener, you need two o
 Then (requires PostgreSQL 18 client + `libpq-oauth`):
 
 ```bash
-psql 'host=localhost port=5432 dbname=app user=developer oauth_issuer=https://keycloak:8443/realms/local-development oauth_client_id=users'
+psql 'host=localhost port=5432 dbname=app user=default-access oauth_issuer=https://keycloak:8443/realms/local-development oauth_client_id=default-access'
 ```
+
+The validator maps the JWT `client_id` claim to a PostgreSQL role, so `user=` must match the Keycloak client_id (`default-access`, `default-read`, `default-write` — see `config/postgres/init/01-roles.sql`).
 
 ## List of all profiles in docker compose
 

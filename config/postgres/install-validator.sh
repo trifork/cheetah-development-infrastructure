@@ -1,22 +1,14 @@
 #!/usr/bin/env bash
-# Init-container script: provisions pg_oidc_validator.so into the shared
-# volume mounted by postgres at /usr/lib/postgresql/extra.
-#
-# Strategy: prefer upstream Percona's prebuilt .deb; fall back to building
-# from source. Uses github.com/percona/pg_oidc_validator
-# directly.
-#
-# To force a rebuild, drop the postgres-validator-lib named volume:
-#   docker compose --profile postgres down -v
+# Provisions upstream Percona pg_oidc_validator.so into the shared volume
+# mounted by postgres. Prebuilt .deb first; source build as fallback.
+# Re-run by dropping the postgres-validator-lib volume.
 set -euo pipefail
 
 out_file="${VALIDATOR_SO_PATH:-/validator-out/pg_oidc_validator.so}"
-out_dir="$(dirname "$out_file")"
-
-mkdir -p "$out_dir"
+mkdir -p "$(dirname "$out_file")"
 
 if [[ -f "$out_file" ]]; then
-  echo "Validator already at $out_file - skipping fetch/build."
+  echo "Validator already at $out_file - skipping."
   exit 0
 fi
 
@@ -24,9 +16,6 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends ca-certificates curl
 
-# Prefer the upstream prebuilt .deb (built on Ubuntu noble, compatible with
-# Debian trixie's glibc). Fall back to a source build if the deb can't be
-# fetched or installed.
 if curl -fsSL -o /tmp/pg-oidc-validator-pgdg18.deb \
     https://github.com/percona/pg_oidc_validator/releases/download/latest/pg-oidc-validator-pgdg18.deb \
   && apt-get install -y --no-install-recommends /tmp/pg-oidc-validator-pgdg18.deb; then

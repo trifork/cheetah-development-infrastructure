@@ -13,10 +13,8 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HEALTH_ENABLED: true
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
-      # Canonical issuer (= JWT `iss`) is the docker-network hostname
       KC_HOSTNAME: https://keycloak:8443/
-      # Keep the admin console reachable via https://localhost:8443/admin so devs
-      # don't need /etc/hosts to manage Keycloak through a browser.
+      # Admin console reachable from the host without /etc/hosts.
       KC_HOSTNAME_ADMIN: https://localhost:8443/
       KC_HOSTNAME_STRICT: false
       KC_HTTP_PORT: 1852
@@ -24,8 +22,7 @@ services:
       KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/keycloak.pem
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/keycloak-key.pem
     volumes:
-      # Fail fast if the cert files are missing on the host.
-      # Run `bash config/keycloak/certs/generate-certs.sh` once to create them.
+      # Run `bash config/keycloak/certs/generate-certs.sh` once to create the certs.
       - type: bind
         source: ./config/keycloak/certs/keycloak.pem
         target: /opt/keycloak/certs/keycloak.pem
@@ -42,8 +39,6 @@ services:
       - 1852:1852
       - 8443:8443
     healthcheck:
-      # TCP liveness on the HTTPS listener. The base image has no curl/openssl/wget,
-      # and readiness is effectively gated by keycloak-setup's realm import.
       test:
         [
           "CMD-SHELL",

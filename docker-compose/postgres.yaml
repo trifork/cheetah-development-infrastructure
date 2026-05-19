@@ -1,10 +1,5 @@
 ---
 services:
-  # Init container: provisions pg_oidc_validator.so into a shared named volume
-  # which `postgres` then mounts read-only at /usr/lib/postgresql/extra. Uses
-  # upstream Percona pg_oidc_validator (prebuilt .deb with source-build
-  # fallback). To rebuild, run `docker compose --profile postgres down -v` to
-  # drop the volume.
   postgres-validator-build:
     container_name: postgres-validator-build
     image: postgres:18.3-trixie
@@ -37,8 +32,6 @@ services:
       - ./config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
       - ./config/postgres/init:/docker-entrypoint-initdb.d:ro
       - ./config/postgres/entrypoint.sh:/usr/local/bin/custom-entrypoint.sh:ro
-      # Self-signed Keycloak CA, trusted by the entrypoint so the validator's
-      # libcurl-driven HTTPS fetch of `keycloak:8443` succeeds.
       - type: bind
         source: ./config/keycloak/certs/keycloak.pem
         target: /etc/keycloak-ca/keycloak.pem

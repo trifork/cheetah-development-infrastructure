@@ -10,8 +10,6 @@ set -euo pipefail
 network_name=${1:-cheetah-infrastructure}
 issuer=${2:-https://keycloak:8443/realms/local-development}
 scope=${3:-postgres}
-# Token URL hits HTTP/1852 from the host to dodge cert-trust setup; the iss
-# claim still comes from KC_HOSTNAME and matches the `issuer` above.
 keycloak_token_url=${4:-http://localhost:1852/realms/local-development/protocol/openid-connect/token}
 
 # Drives a Postgres SASL OAUTHBEARER auth with a pre-fetched bearer token,
@@ -99,7 +97,7 @@ token=$(curl --fail -s -X POST "${keycloak_token_url}" \
 	|| { echo "ERROR - failed to obtain token from Keycloak"; exit 1; }
 
 echo "INFO - Authenticating to postgres via SASL OAUTHBEARER"
-if ! oauth_login localhost 5432 app service-account-default-access "${token}"; then
+if ! oauth_login localhost 5432 app default-access "${token}"; then
 	echo "ERROR - OAuth authentication failed"
 	exit 1
 fi
