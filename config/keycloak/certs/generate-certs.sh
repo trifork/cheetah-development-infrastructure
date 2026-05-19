@@ -1,19 +1,26 @@
-#!/usr/bin/env bash
-# Generates a self-signed cert for the local-dev Keycloak HTTPS listener.
-# SANs cover both `keycloak` (used inside the docker network) and `localhost`/127.0.0.1
-# (so a host browser can hit https://localhost:8443 if `keycloak` isn't in /etc/hosts).
+#!/usr/bin/env sh
+# Generates the self-signed Keycloak HTTPS cert. Designed to run inside the
+# `keycloak-cert-init` compose service (Alpine + openssl), but also works on a
+# developer host that has openssl, by falling back to the script's own dir.
 #
-# Run: bash config/keycloak/certs/generate-certs.sh
-set -euo pipefail
+# SANs cover `keycloak` (in-cluster), `localhost` and `127.0.0.1` (host browser
+# hitting https://localhost:8443/admin/).
+set -eu
 
-cert_dir="$(cd "$(dirname "$0")" && pwd)"
+cert_dir="${CERT_DIR:-$(cd "$(dirname "$0")" && pwd)}"
 crt="${cert_dir}/keycloak.pem"
 key="${cert_dir}/keycloak-key.pem"
 
-if [[ -f "$crt" && -f "$key" ]]; then
-  echo "Cert already exists at $crt - delete it first to regenerate."
+if [ -f "$crt" ] && [ -f "$key" ]; then
+  echo "Certs already exist at $cert_dir - skipping."
   exit 0
 fi
+
+if ! command -v openssl >/dev/null 2>&1; then
+  apk add --no-cache openssl >/dev/null
+fi
+
+mkdir -p "$cert_dir"
 
 openssl req -x509 -nodes -newkey rsa:2048 \
   -keyout "$key" \
@@ -22,11 +29,9 @@ openssl req -x509 -nodes -newkey rsa:2048 \
   -subj "/CN=keycloak" \
   -addext "subjectAltName=DNS:keycloak,DNS:localhost,IP:127.0.0.1"
 
-# 0644 (world-readable) on purpose: this is a throwaway local-dev key, and the
-# Keycloak container's `keycloak` user (uid 1000) needs to read it regardless
-# of which host uid runs the generator (e.g. GitHub Actions' `runner` uid 1001).
-chmod 0644 "$crt"
-chmod 0644 "$key"
+# 0644 so non-root container users (keycloak uid 1000) can read the key
+# regardless of which host uid created it (e.g. CI runner uid 1001).
+chmod 0644 "$crt" "$key"
 
 echo "Generated:"
 echo "  $crt"

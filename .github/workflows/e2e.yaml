@@ -44,9 +44,6 @@ jobs:
       # OpenSearch is required for integration tests
       # - name: docker network create cheetah-infrastructure
       #  run: docker network create cheetah-infrastructure
-      - name: Generate Keycloak dev cert
-        run: bash config/keycloak/certs/generate-certs.sh
-
       - name: Run development environment
         run: docker compose --profile opensearch --profile kafka --profile oauth --profile schemaregistry --profile postgres up --quiet-pull --force-recreate --wait --wait-timeout 240 -d
 

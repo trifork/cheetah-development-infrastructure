@@ -1,5 +1,26 @@
 ---
 services:
+  keycloak-cert-init:
+    container_name: keycloak-cert-init
+    image: alpine:3.23
+    restart: "no"
+    environment:
+      CERT_DIR: /certs
+    volumes:
+      - ./config/keycloak/certs:/certs
+      - ./config/keycloak/certs/generate-certs.sh:/generate-certs.sh:ro
+    command: ["sh", "/generate-certs.sh"]
+    profiles:
+      - kafka-core
+      - opensearch-core
+      - schema-registry-core
+      - core
+      - kafka
+      - opensearch
+      - observability
+      - postgres
+      - full
+
   keycloak:
     mem_limit: 512m
     cpus: 2
@@ -21,8 +42,10 @@ services:
       KC_HTTPS_PORT: 8443
       KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/keycloak.pem
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/keycloak-key.pem
+    depends_on:
+      keycloak-cert-init:
+        condition: service_completed_successfully
     volumes:
-      # Run `bash config/keycloak/certs/generate-certs.sh` once to create the certs.
       - type: bind
         source: ./config/keycloak/certs/keycloak.pem
         target: /opt/keycloak/certs/keycloak.pem

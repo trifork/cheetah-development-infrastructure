@@ -195,7 +195,7 @@ PostgreSQL network authentication is OAuth-only for services. The `pgadmin` role
 
 The issuer hostname is `keycloak` (the docker-network DNS name), so in-cluster services can fetch OIDC discovery directly via `keycloak:8443`. The Keycloak admin console remains reachable at `https://localhost:8443/admin` from the host (see `KC_HOSTNAME_ADMIN` in `docker-compose/keycloak.yaml`).
 
-The Keycloak HTTPS cert is self-signed (`config/keycloak/certs/keycloak.pem`); your browser will warn on first visit — accept the cert. To regenerate the cert, run `bash config/keycloak/certs/generate-certs.sh`. The postgres container imports this cert as a trusted CA at startup so the validator's HTTPS fetch of `keycloak:8443` works.
+The Keycloak HTTPS cert is self-signed (`config/keycloak/certs/keycloak.pem`); your browser will warn on first visit — accept the cert. The cert is generated automatically on first `up` by the `keycloak-cert-init` container (no openssl required on the host, works on Windows). To regenerate, delete the two `.pem` files in `config/keycloak/certs/` and `up` again. The postgres container imports this cert as a trusted CA at startup so the validator's HTTPS fetch of `keycloak:8443` works.
 
 #### Host-side psql
 
