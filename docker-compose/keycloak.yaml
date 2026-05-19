@@ -11,6 +11,7 @@ services:
       - ./config/keycloak/certs/generate-certs.sh:/generate-certs.sh:ro
     command: ["sh", "/generate-certs.sh"]
     profiles:
+      - keycloak-cert
       - kafka-core
       - opensearch-core
       - schema-registry-core
