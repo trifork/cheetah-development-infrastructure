@@ -32,7 +32,8 @@ function oauth_login() {
 
 	# StartupMessage: [len:4][ver:4][user\0<user>\0database\0<db>\0\0]
 	startup_len=$((4 + 4 + 5 + ${#user} + 1 + 9 + ${#PG_DB} + 1 + 1))
-	printf "$(be4 "$startup_len")\x00\x03\x00\x00user\x00${user}\x00database\x00${PG_DB}\x00\x00" >&3
+	printf '%b\x00\x03\x00\x00user\x00%s\x00database\x00%s\x00\x00' \
+		"$(be4 "$startup_len")" "$user" "$PG_DB" >&3
 
 	# Expect AuthenticationSASL: 'R' + len + auth_type=10 + mechanisms.
 	# Use `dd` rather than `head` because busybox head buffers socket reads.
@@ -45,7 +46,8 @@ function oauth_login() {
 	# SASLInitialResponse: 'p' + len + "OAUTHBEARER\0" + cmsg_len + GS2-Bearer
 	client_msg="n,,$(printf '\x01')auth=Bearer ${token}$(printf '\x01\x01')"
 	cmsg_len=${#client_msg}
-	printf "p$(be4 $((4 + 12 + 4 + cmsg_len)))OAUTHBEARER\x00$(be4 "$cmsg_len")${client_msg}" >&3
+	printf 'p%bOAUTHBEARER\x00%b%s' \
+		"$(be4 $((4 + 12 + 4 + cmsg_len)))" "$(be4 "$cmsg_len")" "$client_msg" >&3
 
 	# Expect AuthenticationOk: 'R' + len=8 + auth_type=0
 	kind=$(dd bs=1 count=1 <&3 2>/dev/null)
