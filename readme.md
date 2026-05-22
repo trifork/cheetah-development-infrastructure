@@ -160,7 +160,7 @@ curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 ## PostgreSQL
 
 Services:
-* **postgres-validator-build** — init container; provisions `pg_oidc_validator.so` (upstream Percona) into a shared volume on first boot.
+* **postgres-build-oidc-validator** — init container; provisions `pg_oidc_validator.so` (upstream Percona) into a shared volume on first boot.
 * **postgres** — OAuth-protected PostgreSQL 18.
 * **pgadmin** — browser GUI.
 

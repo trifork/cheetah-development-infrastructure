@@ -1,17 +1,17 @@
 ---
 services:
-  postgres-validator-build:
-    container_name: postgres-validator-build
+  postgres-build-oidc-validator:
+    container_name: postgres-build-oidc-validator
     image: postgres:18.4
     restart: "no"
     environment:
       VALIDATOR_SO_PATH: /validator-out/pg_oidc_validator.so
     volumes:
       - postgres-validator-lib:/validator-out
-      - ./config/postgres/install-validator.sh:/usr/local/bin/install-validator.sh:ro
+      - ./config/postgres/install-oidc-validator:/usr/local/bin/install-oidc-validator:ro
     command:
       - bash
-      - /usr/local/bin/install-validator.sh
+      - /usr/local/bin/install-oidc-validator
     profiles:
       - postgres
 
@@ -48,7 +48,7 @@ services:
     depends_on:
       keycloak-setup:
         condition: service_completed_successfully
-      postgres-validator-build:
+      postgres-build-oidc-validator:
         condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d cheetah-postgres -h 127.0.0.1"]
