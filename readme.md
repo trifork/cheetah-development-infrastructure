@@ -183,7 +183,7 @@ pgAdmin: <http://localhost:5050> — login `admin@admin.com` / `admin`. On first
 Requires PostgreSQL 18 client + `libpq-oauth` and `127.0.0.1 keycloak` in `/etc/hosts`. Your browser/CLI will need to accept the self-signed Keycloak cert once.
 
 ```bash
-psql 'host=localhost port=5432 dbname=app user=default-access oauth_issuer=https://keycloak:8443/realms/local-development oauth_client_id=default-access'
+psql 'host=localhost port=5432 dbname=cheetah-postgres user=default-access oauth_issuer=https://keycloak:8443/realms/local-development oauth_client_id=default-access'
 ```
 
 ## List of all profiles in docker compose

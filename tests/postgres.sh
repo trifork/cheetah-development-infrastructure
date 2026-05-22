@@ -8,7 +8,7 @@ set -euo pipefail
 
 PG_HOST=${1:-postgres}
 PG_PORT=${2:-5432}
-PG_DB=${3:-app}
+PG_DB=${3:-cheetah-postgres}
 OIDC_TOKEN_HOST=${4:-http://keycloak:1852}
 TENANT=default-access
 

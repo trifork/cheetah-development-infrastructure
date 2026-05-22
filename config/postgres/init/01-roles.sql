@@ -1,4 +1,4 @@
-CREATE DATABASE app;
+CREATE DATABASE "cheetah-postgres";
 
 CREATE ROLE "default-access" LOGIN;
 CREATE ROLE "default-read" LOGIN;
@@ -9,7 +9,7 @@ CREATE ROLE "default-write" LOGIN;
 -- SUPERUSER so the dev tool can create tables/schemas/extensions freely.
 CREATE ROLE pgadmin LOGIN PASSWORD 'admin' SUPERUSER;
 
-GRANT CONNECT ON DATABASE app TO "default-access";
-GRANT CONNECT ON DATABASE app TO "default-read";
-GRANT CONNECT ON DATABASE app TO "default-write";
-GRANT CONNECT ON DATABASE app TO pgadmin;
+GRANT CONNECT ON DATABASE "cheetah-postgres" TO "default-access";
+GRANT CONNECT ON DATABASE "cheetah-postgres" TO "default-read";
+GRANT CONNECT ON DATABASE "cheetah-postgres" TO "default-write";
+GRANT CONNECT ON DATABASE "cheetah-postgres" TO pgadmin;
