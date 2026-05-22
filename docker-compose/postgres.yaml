@@ -8,10 +8,10 @@ services:
       VALIDATOR_SO_PATH: /validator-out/pg_oidc_validator.so
     volumes:
       - postgres-validator-lib:/validator-out
-      - ./config/postgres/install-oidc-validator:/usr/local/bin/install-oidc-validator:ro
+      - ./config/postgres/install-oidc-validator.sh:/usr/local/bin/install-oidc-validator.sh:ro
     command:
       - bash
-      - /usr/local/bin/install-oidc-validator
+      - /usr/local/bin/install-oidc-validator.sh
     profiles:
       - postgres
 
