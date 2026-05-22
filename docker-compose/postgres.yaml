@@ -6,6 +6,7 @@ services:
     restart: "no"
     environment:
       VALIDATOR_SO_PATH: /validator-out/pg_oidc_validator.so
+      VALIDATOR_VERSION: "0.2"
     volumes:
       - postgres-validator-lib:/validator-out
       - ./config/postgres/install-oidc-validator.sh:/usr/local/bin/install-oidc-validator.sh:ro
