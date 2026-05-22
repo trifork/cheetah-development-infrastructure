@@ -1,24 +1,5 @@
 ---
 services:
-  keycloak-cert-init:
-    container_name: keycloak-cert-init
-    image: alpine:3.23
-    restart: "no"
-    volumes:
-      - keycloak-certs:/certs
-      - ./config/keycloak/generate-certs.sh:/generate-certs.sh:ro
-    command: ["sh", "/generate-certs.sh"]
-    profiles:
-      - kafka-core
-      - opensearch-core
-      - schema-registry-core
-      - core
-      - kafka
-      - opensearch
-      - observability
-      - postgres
-      - full
-
   keycloak:
     mem_limit: 512m
     cpus: 2
@@ -32,22 +13,13 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HEALTH_ENABLED: true
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
-      KC_HOSTNAME: https://keycloak:8443/
+      KC_HOSTNAME: http://keycloak:1852/
       KC_HOSTNAME_STRICT: false
       KC_HTTP_PORT: 1852
-      KC_HTTPS_PORT: 8443
-      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/keycloak.pem
-      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/keycloak-key.pem
-    depends_on:
-      keycloak-cert-init:
-        condition: service_completed_successfully
-    volumes:
-      - keycloak-certs:/opt/keycloak/certs:ro
     ports:
       - 1852:1852
-      - 8443:8443
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8443"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/1852"]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -76,6 +48,7 @@ services:
         condition: service_healthy
     volumes:
       - ./config/keycloak/local-development.json:/tmp/local-development.json
+      - ./config/keycloak/master.json:/tmp/master.json
     environment:
       - KEYCLOAK_URL=http://keycloak:1852
       - KEYCLOAK_USER=admin
@@ -101,6 +74,3 @@ services:
 networks:
   default:
     name: "cheetah-infrastructure"
-
-volumes:
-  keycloak-certs:

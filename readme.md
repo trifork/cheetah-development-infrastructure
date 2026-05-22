@@ -174,16 +174,17 @@ pgAdmin: <http://localhost:5050> — login `admin@admin.com` / `admin`. On first
 
 ### Authentication
 
-- OAuth-only for services. Issuer `https://keycloak:8443/realms/local-development`, scope `postgres`.
+- OAuth-only for services. Issuer `http://keycloak:1852/realms/local-development`, scope `postgres`.
 - One scram-sha-256 exception: the `pgadmin` role (password `admin`, defined in `config/postgres/init/01-roles.sql`), scoped via `pg_hba.conf`.
-- The validator maps JWT `client_id` → PostgreSQL role. Roles: `default-access`, `default-read`, `default-write`.
+- The validator maps the JWT `azp` claim (authorized party = the OAuth client_id) → PostgreSQL role. Roles: `default-access`, `default-read`, `default-write`.
 
 ### Host-side `psql`
 
-Requires PostgreSQL 18 client + `libpq-oauth` and `127.0.0.1 keycloak` in `/etc/hosts`. Your browser/CLI will need to accept the self-signed Keycloak cert once.
+Requires PostgreSQL 18 client + `libpq-oauth` and `127.0.0.1 keycloak` in `/etc/hosts`. libpq enforces HTTPS issuer URLs by default; for local-dev HTTP, prepend `PGOAUTHDEBUG=UNSAFE`. libpq runs the OAuth device flow — it prints a URL + code; visit it, log in as `developer/developer`, authorize the client.
 
+Use the folowing command to connect with psql and filter out everything except the device flow auth url and the device code during autherization.
 ```bash
-psql 'host=localhost port=5432 dbname=cheetah-postgres user=default-access oauth_issuer=https://keycloak:8443/realms/local-development oauth_client_id=default-access'
+PGOAUTHDEBUG=UNSAFE psql 'host=localhost port=5432 dbname=cheetah-postgres user=default-access oauth_issuer=http://keycloak:1852/realms/local-development oauth_client_id=default-access oauth_client_secret=default-access-secret oauth_scope=postgres' 2>&1 | grep --line-buffered -vE '^\[libcurl\]'
 ```
 
 ## List of all profiles in docker compose
@@ -218,17 +219,17 @@ Keycloak is used as a local identity provider, to be able to mimic a production 
 
 ### Useful URLs
 
-- Admin console: <https://keycloak:8443/admin> (requires `127.0.0.1 keycloak` in `/etc/hosts`; browser will warn about the self-signed cert — accept once).
-- OIDC discovery (in-cluster HTTP backchannel): `http://keycloak:1852/realms/local-development/.well-known/openid-configuration`.
+- Admin console: <http://keycloak:1852/admin> (requires `127.0.0.1 keycloak` in `/etc/hosts`).
+- OIDC discovery: `http://keycloak:1852/realms/local-development/.well-known/openid-configuration`.
 
-JWT `iss` is always `https://keycloak:8443/realms/local-development` (set by `KC_HOSTNAME`). Validators that pin `iss` (postgres, opensearch, schema-registry) all expect that exact string.
+JWT `iss` is always `http://keycloak:1852/realms/local-development` (set by `KC_HOSTNAME`). Validators that pin `iss` (postgres, opensearch, schema-registry) all expect that exact string.
 
 ### Default clients:
 
 A set of default clients have been defined which covers most common usecases.
 
 All roles are mapped to the `roles` claim in the JWT. This configuration is defined in [local-development.json](./config/keycloak/local-development.json) and is applied to keycloak using the `keycloak-setup` service.
-To modify the configuration either go to the [admin console](https://keycloak:8443/admin) (Username: `admin` Password: `admin`) or edit `local-development.json` following this [guide](./config/keycloak/setup.md).
+To modify the configuration either go to the [admin console](http://keycloak:1852/admin) (Username: `admin` Password: `admin`) or edit `local-development.json` following this [guide](./config/keycloak/setup.md).
 
 - Default access
      * Description: Read and write access to all data Kafka, OpenSearch, Schema registry and PostgreSQL

@@ -1,6 +1,7 @@
 {
     "realm": "local-development",
-    "enabled": true,  
+    "enabled": true,
+    "sslRequired": "none",
     "eventsEnabled": true,
     "adminEventsEnabled": true,
     "roles": {
@@ -114,6 +115,9 @@
         "secret": "default-access-secret",
         "serviceAccountsEnabled": true,
         "publicClient": false,
+        "attributes": {
+          "oauth2.device.authorization.grant.enabled": "true"
+        },
         "optionalClientScopes": [
           "opensearch",
           "kafka",
