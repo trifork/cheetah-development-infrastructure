@@ -29,6 +29,9 @@ function oauth_login() {
 	be4() { printf '\\x%02x\\x%02x\\x%02x\\x%02x' $((($1 >> 24) & 0xff)) $((($1 >> 16) & 0xff)) $((($1 >> 8) & 0xff)) $(($1 & 0xff)); }
 
 	exec 3<>"/dev/tcp/${PG_HOST}/${PG_PORT}"
+	# Close both read and write halves of fd 3 on any exit path (early return,
+	# pipefail abort, normal return). Otherwise the write end leaks.
+	trap 'exec 3<&- 3>&-' RETURN
 
 	# StartupMessage: [len:4][ver:4][user\0<user>\0database\0<db>\0\0]
 	startup_len=$((4 + 4 + 5 + ${#user} + 1 + 9 + ${#PG_DB} + 1 + 1))
@@ -53,7 +56,6 @@ function oauth_login() {
 	kind=$(dd bs=1 count=1 <&3 2>/dev/null)
 	hex=$(dd bs=1 count=4 <&3 2>/dev/null | od -An -tx1 | tr -d ' \n'); length=$((16#${hex:-0}))
 	hex=$(dd bs=1 count=4 <&3 2>/dev/null | od -An -tx1 | tr -d ' \n'); auth_type=$((16#${hex:-0}))
-	exec 3<&-
 	[[ "$kind" == "R" && "$auth_type" == "0" ]]
 }
 
