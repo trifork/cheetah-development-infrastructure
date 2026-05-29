@@ -15,6 +15,7 @@ docker compose up --quiet-pull
 ## Prerequisites
 
 1. Follow: <https://docs.cheetah.trifork.dev/getting-started/guided-tour/prerequisites#run-standard-jobs>
+2. Add `127.0.0.1 keycloak` to your hosts file (`/etc/hosts` on Linux/macOS, `C:\Windows\System32\drivers\etc\hosts` on Windows). Keycloak is served under the `keycloak` hostname so browser and host-side tooling resolve to the same name the in-cluster services use.
 
 ## Resource requirements
 
@@ -182,7 +183,7 @@ pgAdmin: <http://localhost:5050> — login `admin@admin.com` / `admin`. On first
 
 Requires PostgreSQL 18 client + `libpq-oauth` and `127.0.0.1 keycloak` in `/etc/hosts`. libpq enforces HTTPS issuer URLs by default; for local-dev HTTP, prepend `PGOAUTHDEBUG=UNSAFE`. libpq runs the OAuth device flow — it prints a URL + code; visit it, log in as `developer/developer`, authorize the client.
 
-Use the following command to connect with psql and filter out everything except the device flow auth url and the device code during autherization.
+Use the following command to connect with psql and filter out everything except the device flow auth url and the device code during authorization.
 ```bash
 PGOAUTHDEBUG=UNSAFE psql 'host=localhost port=5432 dbname=cheetah-postgres user=default-access oauth_issuer=http://keycloak:1852/realms/local-development oauth_client_id=default-access oauth_client_secret=default-access-secret oauth_scope=postgres' 2>&1 | grep --line-buffered -vE '^\[libcurl\]'
 ```
@@ -217,12 +218,10 @@ Here is further explanation on what each profile starts.
 
 Keycloak is used as a local identity provider, to be able to mimic a production security model with service to service authentication.
 
-### Useful URLs
+### Useful urls:
 
-- Admin console: <http://keycloak:1852/admin> (requires `127.0.0.1 keycloak` in `/etc/hosts`).
-- OIDC discovery: `http://keycloak:1852/realms/local-development/.well-known/openid-configuration`.
-
-JWT `iss` is always `http://keycloak:1852/realms/local-development` (set by `KC_HOSTNAME`). Validators that pin `iss` (postgres, opensearch, schema-registry) all expect that exact string.
+- OpenID Endpoint Configuration: <http://keycloak:1852/realms/local-development/.well-known/openid-configuration>
+- Token Endpoint: <http://keycloak:1852/realms/local-development/protocol/openid-connect/token>
 
 ### Default clients:
 
