@@ -67,4 +67,4 @@ if ! oauth_login "$TENANT" "$token"; then
 	exit 1
 fi
 
-echo "Finished test sucessfully."
+echo "Finished test successfully."
