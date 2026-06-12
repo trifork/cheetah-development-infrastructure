@@ -6,7 +6,10 @@ services:
     restart: "no"
     environment:
       VALIDATOR_SO_PATH: /validator-out/pg_oidc_validator.so
-      VALIDATOR_VERSION: "0.2"
+      # Temporary: fork for discovery_url_override. Switch both back to percona
+      # (repo + a release tag) once the GUC is merged upstream.
+      VALIDATOR_REPO_URL: https://github.com/MarkBogelund/pg_oidc_validator.git
+      VALIDATOR_VERSION: "main"
     volumes:
       - postgres-validator-lib:/validator-out
       - ./config/postgres/install-oidc-validator.sh:/usr/local/bin/install-oidc-validator.sh:ro

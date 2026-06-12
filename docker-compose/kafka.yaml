@@ -159,7 +159,7 @@ services:
       QUARKUS_OIDC_ROLES_ROLE_CLAIM_PATH: "roles"
       QUARKUS_OIDC_AUTHENTICATION_VERIFY_ACCESS_TOKEN: "true"
       QUARKUS_OIDC_TOKEN_AUDIENCE: schema-registry
-      QUARKUS_OIDC_TOKEN_ISSUER: "http://keycloak:1852/realms/local-development"
+      QUARKUS_OIDC_TOKEN_ISSUER: "http://localhost:1852/realms/local-development"
 
     healthcheck:
       test: curl schema-registry:8080 || exit -1

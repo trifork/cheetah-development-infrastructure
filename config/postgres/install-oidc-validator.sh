@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Builds upstream Percona pg_oidc_validator.so from source at $VALIDATOR_VERSION
+# Builds pg_oidc_validator.so from source at $VALIDATOR_REPO_URL @ $VALIDATOR_VERSION
 # and writes it to the shared volume mounted by postgres.
-# Bump: change VALIDATOR_VERSION in docker-compose/postgres.yaml and
-# `docker compose --profile postgres down -v && up`.
+# Rebuild: `docker compose --profile postgres down -v && up`.
 set -euo pipefail
 
-: "${VALIDATOR_VERSION:?VALIDATOR_VERSION must be set (e.g. 0.2)}"
+: "${VALIDATOR_REPO_URL:?VALIDATOR_REPO_URL must be set}"
+: "${VALIDATOR_VERSION:?VALIDATOR_VERSION must be set (branch or tag)}"
 out_file="${VALIDATOR_SO_PATH:-/validator-out/pg_oidc_validator.so}"
 mkdir -p "$(dirname "$out_file")"
 
@@ -24,7 +24,7 @@ apt-get install -y --no-install-recommends \
 src=/tmp/pg_oidc_validator
 rm -rf "$src"
 git clone --depth 1 --recurse-submodules --branch "$VALIDATOR_VERSION" \
-	https://github.com/percona/pg_oidc_validator.git "$src"
+	"$VALIDATOR_REPO_URL" "$src"
 make -C "$src" USE_PGXS=1 -j"$(nproc)"
 cp "$src/pg_oidc_validator.so" "$out_file"
 chmod 0644 "$out_file"
