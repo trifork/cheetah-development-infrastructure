@@ -126,6 +126,18 @@
         ]
       },
       {
+        "clientId": "default-create",
+        "name": "default-create",
+        "enabled": true,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "default-create-secret",
+        "serviceAccountsEnabled": true,
+        "publicClient": false,
+        "optionalClientScopes": [
+          "postgres"
+        ]
+      },
+      {
         "clientId": "opensearch-admin",
         "name": "opensearch-admin",
         "enabled": true,
@@ -295,6 +307,16 @@
           "opensearch": [
             "opensearch_default_read"
           ],
+          "postgres": [
+            "postgres_access"
+          ]
+        }
+      },
+      {
+        "username": "service-account-default-create",
+        "enabled": true,
+        "serviceAccountClientId": "default-create",
+        "clientRoles": {
           "postgres": [
             "postgres_access"
           ]
