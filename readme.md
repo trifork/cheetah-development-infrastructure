@@ -15,6 +15,7 @@ docker compose up --quiet-pull
 ## Prerequisites
 
 1. Follow: <https://docs.cheetah.trifork.dev/getting-started/guided-tour/prerequisites#run-standard-jobs>
+2. Add `127.0.0.1 keycloak` to your hosts file (`/etc/hosts` on Linux/macOS, `C:\Windows\System32\drivers\etc\hosts` on Windows). Keycloak is served under the `keycloak` hostname so browser and host-side tooling resolve to the same name the in-cluster services use.
 
 ## Resource requirements
 
@@ -157,29 +158,35 @@ And query OpenSearch like this:
 curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 ```
 
-## Timescale
+## PostgreSQL
 
-The Timescale setup consists of different services:
-* **TimescaleDB** PostgreSQL with the timescale extension
-* **PgAdmin** GUI for managing TimescaleDB
+Services:
+* **postgres-build-oidc-validator** — init container; provisions `pg_oidc_validator.so` (upstream Percona) into a shared volume on first boot.
+* **postgres** — OAuth-protected PostgreSQL 18.
+* **pgadmin** — browser GUI.
 
-### Running TimescaleDB and its associated services
-
-Run:
+### Running
 
 ```bash
-docker compose --profile=timescale up -d
+docker compose --profile=postgres up -d
 ```
 
-When all of the services are running, you can go to:
-
-- <http://localhost:5432/> TimescaleDB
-- <http://localhost:5050> to see the PgAdmin UI
+pgAdmin: <http://localhost:5050> — login `admin@admin.com` / `admin`. On first Connect to `cheetah-postgres`, enter database password `admin` (cached for the life of `pgadmin-data`).
 
 ### Authentication
 
-By default a single user is setup:
-* **Username**: `postgres`, **Password**: `admin`
+- OAuth-only for services. Issuer `http://keycloak:1852/realms/local-development`, scope `postgres`.
+- One scram-sha-256 exception: the `pgadmin` role (password `admin`, defined in `config/postgres/init/01-roles.sql`), scoped via `pg_hba.conf`.
+- The validator maps the JWT `azp` claim (authorized party = the OAuth client_id) → PostgreSQL role. Roles: `default-access`, `default-read`, `default-write`.
+
+### Host-side `psql`
+
+Requires PostgreSQL 18 client + `libpq-oauth` and `127.0.0.1 keycloak` in `/etc/hosts`. libpq enforces HTTPS issuer URLs by default; for local-dev HTTP, prepend `PGOAUTHDEBUG=UNSAFE`. libpq runs the OAuth device flow — it prints a URL + code; visit it, log in as `developer/developer`, authorize the client.
+
+Use the following command to connect with psql and filter out everything except the device flow auth url and the device code during authorization.
+```bash
+PGOAUTHDEBUG=UNSAFE psql 'host=localhost port=5432 dbname=cheetah-postgres user=default-access oauth_issuer=http://keycloak:1852/realms/local-development oauth_client_id=default-access oauth_client_secret=default-access-secret oauth_scope=postgres' 2>&1 | grep --line-buffered -vE '^\[libcurl\]'
+```
 
 ## List of all profiles in docker compose
 
@@ -190,13 +197,13 @@ By default a single user is setup:
 - kafka
 - opensearch
 - observability
-- timescale
+- postgres
 
 Here is further explanation on what each profile starts.
 
-|   Images / profiles   | kafka-core | opensearch-core | schema-registry-core | core  | kafka | opensearch | observability | timescale | full  |
+|   Images / profiles   | kafka-core | opensearch-core | schema-registry-core | core  | kafka | opensearch | observability | postgres | full  |
 | :-------------------: | :--------: | :-------------: | :------------------: | :---: | :---: | :--------: | :-----------: | :-------: | :---: |
-|       Keycloak        |     x      |        x        |          x           |   x   |   x   |     x      |       x       |           |   x   |
+|       Keycloak        |     x      |        x        |          x           |   x   |   x   |     x      |       x       |    x     |   x   |
 |         Kafka         |     x      |                 |          x           |   x   |   x   |            |       x       |           |   x   |
 |   Redpanda console    |            |                 |                      |       |   x   |            |               |           |   x   |
 |      Opensearch       |            |        x        |                      |   x   |       |     x      |               |           |   x   |
@@ -205,7 +212,7 @@ Here is further explanation on what each profile starts.
 |    Schema registry    |            |                 |          x           |   x   |   x   |            |               |           |   x   |
 |      Prometheus       |            |                 |                      |       |       |            |       x       |           |   x   |
 |        Grafana        |            |                 |                      |       |       |            |       x       |           |   x   |
-|       Timescale       |            |                 |                      |       |       |            |               |     x     |       |
+|      PostgreSQL       |            |                 |                      |       |       |            |               |    x     |       |
 
 ## Keycloak
 
@@ -213,18 +220,18 @@ Keycloak is used as a local identity provider, to be able to mimic a production 
 
 ### Useful urls:
 
-- OpenID Endpoint Configuration: http://localhost:1852/realms/local-development/.well-known/openid-configuration
-- Token Endpoint http://localhost:1852/realms/local-development/protocol/openid-connect/token 
+- OpenID Endpoint Configuration: <http://keycloak:1852/realms/local-development/.well-known/openid-configuration>
+- Token Endpoint: <http://keycloak:1852/realms/local-development/protocol/openid-connect/token>
 
 ### Default clients:
 
 A set of default clients have been defined which covers most common usecases.
 
 All roles are mapped to the `roles` claim in the JWT. This configuration is defined in [local-development.json](./config/keycloak/local-development.json) and is applied to keycloak using the `keycloak-setup` service.
-To modify the configuration either go to the [admin console](http://localhost:1852/admin) (Username: `admin` Password: `admin`) or edit the `local-development.json` following this [guide](./config/keycloak/setup.md)
+To modify the configuration either go to the [admin console](http://keycloak:1852/admin) (Username: `admin` Password: `admin`) or edit `local-development.json` following this [guide](./config/keycloak/setup.md).
 
 - Default access
-     * Description: Read and write access to all data Kafka, OpenSearch and Schema registry
+     * Description: Read and write access to all data Kafka, OpenSearch, Schema registry and PostgreSQL
      * client_id: `default-access`
      * client_secret: `default-access-secret`
      * default_scopes: [ ] 
@@ -238,8 +245,11 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `schema-registry`
                * Roles:
                     - `sr-producer`
+          - `postgres`
+               * Roles:
+                    - `postgres_access`
 - Default write
-     * Description: Write access to all data in Kafka, OpenSearch and Schema registry
+     * Description: Write access to all data in Kafka, OpenSearch, Schema registry and PostgreSQL
      * client_id: `default-write`
      * client_secret: `default-write-secret`
      * default_scopes: [ ] 
@@ -254,8 +264,11 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `schema-registry`
                * Roles:
                     - `sr-producer`
+          - `postgres`
+               * Roles:
+                    - `postgres_access`
 - Default read
-     * Description: Read access to all data in Kafka, OpenSearch and Schema registry
+     * Description: Read access to all data in Kafka, OpenSearch and PostgreSQL (plus schema-registry producer role where configured)
      * client_id: `default-read`
      * client_secret: `default-read-secret`
      * default_scopes: [ ] 
@@ -266,6 +279,9 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `opensearch`
                * Roles:
                     - `opensearch_default_read`
+          - `postgres`
+               * Roles:
+                    - `postgres_access`
 - Users
      * Description: User login via browser such as OpenSearch Dashboard (See [Users](#users) for user details)
      * client_id: `users`
@@ -275,6 +291,7 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `kafka`
           - `opensearch`
           - `schema-registry`
+          - `postgres`
 - Custom client
      * Description: A custom client which can be configured using Environment variables. Useful for pipelines where services require custom roles.
      * client_id: $DEMO_CLIENT_NAME
@@ -293,3 +310,5 @@ To modify the configuration either go to the [admin console](http://localhost:18
           - `opensearch_default_read`
           - `Kafka_*_all`
           - `sr-producer`
+          - `postgres_access`
+
