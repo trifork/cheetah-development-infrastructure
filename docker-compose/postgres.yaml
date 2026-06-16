@@ -1,0 +1,93 @@
+---
+services:
+  postgres-build-oidc-validator:
+    container_name: postgres-build-oidc-validator
+    image: postgres:18.4
+    restart: "no"
+    environment:
+      VALIDATOR_SO_PATH: /validator-out/pg_oidc_validator.so
+      # Temporary: fork for discovery_url_override. Switch both back to percona
+      # (repo + a release tag) once the GUC is merged upstream.
+      VALIDATOR_REPO_URL: https://github.com/MarkBogelund/pg_oidc_validator.git
+      VALIDATOR_VERSION: "main"
+    volumes:
+      - postgres-validator-lib:/validator-out
+      - ./config/postgres/install-oidc-validator.sh:/usr/local/bin/install-oidc-validator.sh:ro
+    command:
+      - bash
+      - /usr/local/bin/install-oidc-validator.sh
+    profiles:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    image: postgres:18.4
+    restart: unless-stopped
+    mem_limit: 1024m
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres:/var/lib/postgresql
+      - postgres-validator-lib:/usr/lib/postgresql/extra:ro
+      - ./config/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./config/postgres/init:/docker-entrypoint-initdb.d:ro
+    # libcurl4 is a runtime dependency of pg_oidc_validator.so. Install it
+    # inline before handing off to the standard postgres entrypoint.
+    entrypoint:
+      - sh
+      - -c
+      - |
+        apt-get update -qq
+        apt-get install -y --no-install-recommends libcurl4
+        rm -rf /var/lib/apt/lists/*
+        exec docker-entrypoint.sh "$@"
+      - --
+    command:
+      - postgres
+      - -c
+      - config_file=/etc/postgresql/postgresql.conf
+    depends_on:
+      keycloak-setup:
+        condition: service_completed_successfully
+      postgres-build-oidc-validator:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cheetah-postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    profiles:
+      - postgres
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:9.15
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+      - ./config/pgadmin/servers.json:/pgadmin4/servers.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - postgres
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+
+volumes:
+  postgres:
+  postgres-validator-lib:
+  pgadmin-data:

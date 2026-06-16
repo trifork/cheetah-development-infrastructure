@@ -1,14 +1,13 @@
 {
   "Servers": {
     "1": {
-      "Name": "cheetah",
+      "Name": "cheetah-postgres",
       "Group": "Servers",
+      "Host": "postgres",
       "Port": 5432,
-      "Username": "postgres",
-      "Host": "timescaledb",
-      "SSLMode": "prefer",
-      "MaintenanceDB": "postgres",
-      "PassFile": "/pgadmin4/pgpass"
+      "MaintenanceDB": "cheetah-postgres",
+      "Username": "pgadmin",
+      "SSLMode": "prefer"
     }
   }
 }
