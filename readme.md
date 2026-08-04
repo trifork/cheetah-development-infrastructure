@@ -121,7 +121,16 @@ When all of the services are running, you can go to:
 Services should connect using the OAuth2 protocol.  
 You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SECURITY_PLUGIN=true` to disable security completely.
 
-#### Basic auth access
+There are two ways to authenticate against OpenSearch, backed by **two separate user directories**:
+
+| Path | Credentials | Where the user lives | When to use it |
+| --- | --- | --- | --- |
+| **HTTP Basic Auth** | `admin` / `admin` | OpenSearch's internal user DB ([internal_users.yml](config/opensearch/security/internal_users.yml)) | Break-glass, API/curl scripting, when Keycloak is down |
+| **OIDC (OAuth2)** | `developer` / `developer` | Keycloak realm ([local-development.json](config/keycloak/local-development.json)) | Mirrors production auth — how a real user would log in |
+
+The `admin` user does **not** exist in Keycloak, and the `developer` user does **not** exist in OpenSearch. They're two entirely different accounts in two different databases with two different auth mechanisms. Consequently, `admin:admin` has full cluster admin, while `developer:developer` gets only the roles mapped to it via Keycloak scopes (read-only data access, no cluster-admin actions).
+
+#### Basic auth access (`admin:admin`)
 
 **Note:** OpenSearch has anonymous access enabled by default, but the anonymous user has no permissions. Browsers won't prompt for credentials automatically.
 
@@ -142,6 +151,8 @@ curl -k -s -u "admin:admin" $OPENSEARCH_URL/_cat/indices
 
 #### OAuth2 token
 
+Tokens are minted by Keycloak and must carry `aud: opensearch` - enforced by `required_audience` in [config/opensearch/security/config.yml](config/opensearch/security/config.yml). The `opensearch` scope on a Keycloak client stamps this audience automatically, so as long as you request `scope=opensearch` you're fine.
+
 If you do not want to use basicauth locally, you can get a token using this curl command:
 
 ```sh
@@ -157,6 +168,12 @@ And query OpenSearch like this:
 ```sh
 curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 ```
+
+#### OIDC login via Dashboards (`developer:developer`)
+
+On <http://localhost:5602> click **"Log in with single sign-on"** → you'll be redirected to Keycloak → sign in as `developer` / `developer`. First-time login prompts for profile fields (email, first/last name - any placeholder like `developer@localhost` works; values persist for the container's lifetime).
+
+The `developer` user only has read access and a couple of dev roles, so some cluster-admin UI features (e.g. "Manage data sources") will return 403. That's expected - for full admin access, use `admin:admin` via the internal-user form on the same login page.
 
 ## PostgreSQL
 
