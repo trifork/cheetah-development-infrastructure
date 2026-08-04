@@ -28,7 +28,8 @@ services:
       # - ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties # enables debug logging
     restart: unless-stopped
     healthcheck:
-      test: nc -z kafka 9093 || exit -1
+      # bash `/dev/tcp` builtin 
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9093"]
       interval: 30s # (default: 30s)
       timeout: 10s # (default: 30s)
       retries: 3 #  (default: 3)
