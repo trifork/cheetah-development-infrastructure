@@ -380,7 +380,8 @@
             "protocolMapper": "oidc-audience-mapper",
             "config": {
               "included.client.audience": "opensearch",
-              "access.token.claim": "true"
+              "access.token.claim": "true",
+              "id.token.claim": "true"
             }
           }
         ]

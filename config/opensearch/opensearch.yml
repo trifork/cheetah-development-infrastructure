@@ -51,7 +51,6 @@ plugins.security.system_indices.indices:
     ".opendistro-asynchronous-search-response*",
     ".replication-metadata-store",
   ]
-node.max_local_storage_nodes: 3
 ######## End OpenSearch Security Demo Configuration ########
 
 prometheus.indices: "true"
