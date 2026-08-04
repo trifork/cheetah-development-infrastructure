@@ -1,9 +1,10 @@
-FROM opensearchproject/opensearch:3.3.0
+FROM opensearchproject/opensearch:3.6.0
 
-RUN /usr/share/opensearch/bin/opensearch-plugin install --batch 'repository-s3' 'https://github.com/opensearch-project/opensearch-prometheus-exporter/releases/download/3.3.0.0/prometheus-exporter-3.3.0.0.zip' \
+RUN /usr/share/opensearch/bin/opensearch-plugin install --batch 'repository-s3' 'https://github.com/opensearch-project/opensearch-prometheus-exporter/releases/download/3.6.0.0/prometheus-exporter-3.6.0.0.zip' \
     && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-security-analytics \
     && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-skills \
-    && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-ml
+    && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-ml \
+    && /usr/share/opensearch/bin/opensearch-plugin remove opensearch-performance-analyzer
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 CMD curl -u admin:admin -s -f opensearch:9200/_cat/health > /dev/null || exit 1
 #trivy:ignore:avd-ds-0002

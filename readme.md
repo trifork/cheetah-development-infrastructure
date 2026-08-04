@@ -107,7 +107,7 @@ Files placed in any subdirectory of [config/opensearch-configurer/](config/opens
 Run:
 
 ```bash
-docker compose --profile=opensearch --profile=opensearch_dashboard up -d
+docker compose --profile=opensearch up -d
 ```
 
 When all of the services are running, you can go to:
