@@ -58,7 +58,7 @@ See sections below for details on security model configuration.
 
 The kafka setup consists of different services:
 
-- **kafka** - Strimzi Kafka with the [Cheetah Kafka Authorizer](https://github.com/trifork/cheetah-infrastructure-utils-kafka)
+- **kafka** - Strimzi Kafka with the [Cheetah KRaft Kafka Authorizer](https://github.com/trifork/cheetah-infrastructure-utils-kafka)
 - **redpanda** - A Console provides a user interface to manage multiple Kafka connect clusters. <https://docs.redpanda.com/docs/manage/console/>
 - **kafka-setup** - A bash script which sets up a Kafka User for redpanda to use when connecting to Kafka, as well as some predefined topics. The topics to be created are determined by the environment variable INITIAL_KAFKA_TOPICS, which can be set in the `.env` file or overritten in your local environment. 
 - **schema-registry** - [Schema registry](https://www.apicur.io/registry/docs/apicurio-registry/2.5.x/index.html)
@@ -69,17 +69,19 @@ The kafka setup consists of different services:
 Run:
 
 ```bash
-docker compose --profile=kafka --profile=oauth --profile=schemaregistry --profile=redpanda up -d
+docker compose --profile=kafka up -d
 ```
+
+This brings up `kafka`, `kafka-setup`, `redpanda`, `schema-registry`, and their Keycloak dependency. `kafka-minion` lives under the `observability` (or `full`) profile — add `--profile=observability` if you want Prometheus metrics too.
 
 When all of the services are running, you can go to:
 
 - <http://localhost:9898/topics> to see the different topics in redpanda.
-- <http://localhost:8081/apis> to the the schema-registry api documentation
+- <http://localhost:8081/apis> to see the schema-registry api documentation
 
 ### Listeners
 
-5 different listeners is setup for Kafka on different internal and external ports (see [server.properties](/config/kafka/server.properties) for the configuration):
+5 different listeners is setup for Kafka on different internal and external ports (see [kraft.properties](/config/kafka/kraft.properties) for the configuration):
 
 - `localhost:9092` - Used for connecting to kafka with OAuth2 authentication from outside the docker environment.
 - `localhost:9093` - Used for connecting to kafka without authentication from outside the docker environment.
@@ -89,8 +91,8 @@ When all of the services are running, you can go to:
 
 ### Authentication
 
-To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [server.properties](/config/kafka/server.properties).  
-This will cause all connections from unauthenticated sources to be rejected by `CheetahKafkaAuthorizer`.
+To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [kraft.properties](/config/kafka/kraft.properties).  
+This will cause all connections from unauthenticated sources to be rejected by `CheetahKRaftAuthorizer`.
 
 ## OpenSearch
 

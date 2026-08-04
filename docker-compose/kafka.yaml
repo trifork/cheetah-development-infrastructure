@@ -1,7 +1,7 @@
 ---
 services:
   kafka:
-    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-0.48.0-kafka-4.1.0-trifork-1.9.0
+    image: ${CHEETAH_DOCKER_REGISTRY-}cheetah-infrastructure-utils-kafka:strimzi-1.0.1-kafka-4.1.0-trifork-2.0.0
 
     container_name: kafka
     hostname: kafka
@@ -28,7 +28,8 @@ services:
       # - ./config/kafka/log4j.properties:/opt/kafka/custom-config/log4j.properties # enables debug logging
     restart: unless-stopped
     healthcheck:
-      test: nc -z kafka 9093 || exit -1
+      # bash `/dev/tcp` builtin 
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9093"]
       interval: 30s # (default: 30s)
       timeout: 10s # (default: 30s)
       retries: 3 #  (default: 3)
@@ -42,7 +43,7 @@ services:
       - full
 
   kafka-setup:
-    image: quay.io/strimzi/kafka:0.49.0-kafka-4.1.0
+    image: quay.io/strimzi/kafka:1.0.1-kafka-4.1.0
     container_name: kafka-setup
     volumes:
       - ./config/kafkaconfig.sh:/etc/config/kafkaconfig.sh
