@@ -79,7 +79,7 @@ When all of the services are running, you can go to:
 
 ### Listeners
 
-5 different listeners is setup for Kafka on different internal and external ports (see [server.properties](/config/kafka/server.properties) for the configuration):
+5 different listeners is setup for Kafka on different internal and external ports (see [kraft.properties](/config/kafka/kraft.properties) for the configuration):
 
 - `localhost:9092` - Used for connecting to kafka with OAuth2 authentication from outside the docker environment.
 - `localhost:9093` - Used for connecting to kafka without authentication from outside the docker environment.
@@ -89,8 +89,8 @@ When all of the services are running, you can go to:
 
 ### Authentication
 
-To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [server.properties](/config/kafka/server.properties).  
-This will cause all connections from unauthenticated sources to be rejected by `CheetahKafkaAuthorizer`.
+To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [kraft.properties](/config/kafka/kraft.properties).  
+This will cause all connections from unauthenticated sources to be rejected by `CheetahKRaftAuthorizer`.
 
 ## OpenSearch
 
