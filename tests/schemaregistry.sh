@@ -29,7 +29,7 @@ function get_default_access_token() {
 }
 
 function test_anonymous_user() {
-	if ! http --check-status --ignore-stdin "$SCHEMAREGISTRY_HOST/apis/registry/v2/users/me" cache-control:'no-cache'; then
+	if ! http --check-status --ignore-stdin "$SCHEMAREGISTRY_HOST/apis/registry/v3/users/me" cache-control:'no-cache'; then
 		echo "ERROR - Anonymous readonly not allowed"
 		return 1
 	fi
@@ -39,7 +39,7 @@ function test_anonymous_user() {
 function test_jwt_auth() {
 	local token=$1
 	local response
-	if http --check-status --ignore-stdin "$SCHEMAREGISTRY_HOST/apis/registry/v2/users/me" Authorization:"bearer $token"; then
+	if http --check-status --ignore-stdin "$SCHEMAREGISTRY_HOST/apis/registry/v3/users/me" Authorization:"bearer $token"; then
 		echo "INFO - Authorized access using jwt successful"
 	else
 		echo "ERROR - Authorized access using jwt failed. Err: " $?
@@ -70,10 +70,13 @@ function upload_api_description() {
 			}
 		}
   	}'
+	# v3 wraps the artifact content in a structured envelope; jq handles the JSON string escaping.
+	local request_body
+	request_body=$(jq -n --arg c "$api_description" '{artifactType: "OPENAPI", firstVersion: {content: {content: $c, contentType: "application/json"}}}')
 	local response
-	response=$(http --body POST "$SCHEMAREGISTRY_HOST/apis/registry/v2/groups/$group_id/artifacts" Content-Type:"application/json; artifactType=OPENAPI" Authorization:"bearer $token" <<<"$api_description")
+	response=$(http --body POST "$SCHEMAREGISTRY_HOST/apis/registry/v3/groups/$group_id/artifacts" Content-Type:"application/json" Authorization:"bearer $token" <<<"$request_body")
 	echo "$response"
-	if [[ $(echo "$response" | jq -r '.status') == 401 ]]; then
+	if [[ $(echo "$response" | jq -r '.status // empty') == 401 ]]; then
 		echo "Error uploading API description!"
 		return 1
 	else
