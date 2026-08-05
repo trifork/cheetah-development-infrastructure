@@ -119,7 +119,7 @@ services:
 
   schema-registry:
     mem_limit: 256m
-    image: apicurio/apicurio-registry-kafkasql:2.6.13.Final
+    image: apicurio/apicurio-registry:3.1.7
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
@@ -133,34 +133,39 @@ services:
       - "8081:8080" # http://localhost:8081/ui/
     restart: unless-stopped
     environment:
-      # Kafka
-      ENABLE_KAFKA_SASL: true
-      CLIENT_ID: schema-registry
-      CLIENT_SECRET: schema-registry-secret
+      # Storage
+      APICURIO_STORAGE_KIND: kafkasql
+      APICURIO_KAFKASQL_BOOTSTRAP_SERVERS: kafka:19092
+      APICURIO_KAFKASQL_TOPIC: kafkasql-journal-v3
+      APICURIO_KAFKASQL_SNAPSHOTS_TOPIC: kafkasql-snapshots
+      APICURIO_EVENTS_KAFKA_TOPIC: registry-events
+      APICURIO_KAFKASQL_TOPIC_AUTO_CREATE: "false"
+      # Kafka SASL / OAuth (schema-registry -> broker)
+      APICURIO_KAFKASQL_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      APICURIO_KAFKASQL_SECURITY_SASL_ENABLED: "true"
+      APICURIO_KAFKASQL_SECURITY_SASL_MECHANISM: OAUTHBEARER
+      APICURIO_KAFKASQL_SECURITY_SASL_CLIENT_ID: schema-registry
+      APICURIO_KAFKASQL_SECURITY_SASL_CLIENT_SECRET: schema-registry-secret
+      APICURIO_KAFKASQL_SECURITY_SASL_TOKEN_ENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      APICURIO_KAFKASQL_SECURITY_SASL_LOGIN_CALLBACK_HANDLER_CLASS: io.strimzi.kafka.oauth.client.JaasClientOauthLoginCallbackHandler
+      # Read by the Strimzi callback handler; needed so the JWT includes the `Kafka_*` roles.
       OAUTH_SCOPE: kafka
-      OAUTH_TOKEN_ENDPOINT_URI: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
-      KAFKA_BOOTSTRAP_SERVERS: kafka:19092
-      KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
-      REGISTRY_KAFKASQL_TOPIC: _kafkasql-journal
-      REGISTRY_KAFKASQL_TOPIC_AUTO_CREATE: false
       # Basics
-      REGISTRY_AUTH_ANONYMOUS_READ_ACCESS_ENABLED: true
-      REGISTRY_UI_FEATURES_READONLY: true
+      APICURIO_AUTH_ANONYMOUS_READ_ACCESS_ENABLED: "true"
+      APICURIO_UI_FEATURES_READ_ONLY_ENABLED: "true"
       # API protection
-      AUTH_ENABLED: true # also protects UI
-      ROLE_BASED_AUTHZ_ENABLED: true # Allows admin and developer concept
-      REGISTRY_AUTH_OBAC_ENABLED: true
-      REGISTRY_AUTH_OBAC_LIMIT_GROUP_ACCESS: true
-      ROLE_BASED_AUTHZ_SOURCE: "token"
-      REGISTRY_AUTH_ROLES_DEVELOPER: "sr-producer" # default is "sr-developer"
+      QUARKUS_OIDC_TENANT_ENABLED: "true" # also protects UI
+      APICURIO_AUTH_ROLE_BASED_AUTHORIZATION: "true" # Allows admin and developer concept
+      APICURIO_AUTH_OWNER_ONLY_AUTHORIZATION: "true"
+      APICURIO_AUTH_OWNER_ONLY_AUTHORIZATION_LIMIT_GROUP_ACCESS: "true"
+      APICURIO_AUTH_ROLE_SOURCE: token
+      APICURIO_AUTH_ROLES_DEVELOPER: sr-producer # default is "sr-developer"
       # https://quarkus.io/guides/security-oidc-configuration-properties-reference
-      QUARKUS_OIDC_ENABLED: true
       QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:1852/realms/local-development
-      # quarkus.log.level: DEBUG
-      QUARKUS_OIDC_ROLES_ROLE_CLAIM_PATH: "roles"
+      QUARKUS_OIDC_ROLES_ROLE_CLAIM_PATH: roles
       QUARKUS_OIDC_AUTHENTICATION_VERIFY_ACCESS_TOKEN: "true"
       QUARKUS_OIDC_TOKEN_AUDIENCE: schema-registry
-      QUARKUS_OIDC_TOKEN_ISSUER: "http://localhost:1852/realms/local-development"
+      QUARKUS_OIDC_TOKEN_ISSUER: http://localhost:1852/realms/local-development
 
     healthcheck:
       test: curl schema-registry:8080 || exit -1
