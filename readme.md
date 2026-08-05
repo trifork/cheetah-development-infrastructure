@@ -60,8 +60,8 @@ The kafka setup consists of different services:
 
 - **kafka** - Strimzi Kafka with the [Cheetah KRaft Kafka Authorizer](https://github.com/trifork/cheetah-infrastructure-utils-kafka)
 - **redpanda** - A Console provides a user interface to manage multiple Kafka connect clusters. <https://docs.redpanda.com/docs/manage/console/>
-- **kafka-setup** - A bash script which sets up a Kafka User for redpanda to use when connecting to Kafka, as well as some predefined topics. The topics to be created are determined by the environment variable INITIAL_KAFKA_TOPICS, which can be set in the `.env` file or overritten in your local environment. 
-- **schema-registry** - [Schema registry](https://www.apicur.io/registry/docs/apicurio-registry/2.5.x/index.html)
+- **kafka-setup** - A bash script which sets up a Kafka User for redpanda to use when connecting to Kafka, as well as some predefined topics. The topics to be created are determined by the environment variable INITIAL_KAFKA_TOPICS, which can be set in the `.env` file or overritten in your local environment. It also pre-creates the internal topics that Apicurio Registry 3.x depends on (`kafkasql-journal-v3`, `kafkasql-snapshots`, `registry-events`).
+- **schema-registry** - [Apicurio Registry 3.1.x](https://www.apicur.io/registry/docs/apicurio-registry/3.1.x/index.html), running the `kafkasql` storage backend against the local Kafka broker via OAuth.
 - **kafka-minion** - [Kafka Prometheus exporter](https://github.com/cloudhut/kminion)
 
 ### Running Kafka and its associated services
@@ -77,7 +77,8 @@ This brings up `kafka`, `kafka-setup`, `redpanda`, `schema-registry`, and their 
 When all of the services are running, you can go to:
 
 - <http://localhost:9898/topics> to see the different topics in redpanda.
-- <http://localhost:8081/apis> to see the schema-registry api documentation
+- <http://localhost:8081/ui/> to open the schema-registry UI.
+- <http://localhost:8081/apis/registry/v3> to hit the schema-registry REST API (v3).
 
 ### Listeners
 
