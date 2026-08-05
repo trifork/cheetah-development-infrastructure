@@ -12,6 +12,8 @@ See also: <https://docs.cheetah.trifork.dev/reference/development-infrastructure
 docker compose up --quiet-pull
 ```
 
+> **First-time boot note:** OpenSearch performs a one-time security cert and index bootstrap on cold start that can take a few minutes, especially on slower machines. Its healthcheck's `start_period` is set to 120s to accommodate this. If OpenSearch still isn't healthy after ~2 minutes, dependent services (`opensearch-dashboards`, `opensearch-configurer`) won't start - just re-run `docker compose up` once OpenSearch is healthy and everything else will come up.
+
 ## Prerequisites
 
 1. Follow: <https://docs.cheetah.trifork.dev/getting-started/guided-tour/prerequisites#run-standard-jobs>

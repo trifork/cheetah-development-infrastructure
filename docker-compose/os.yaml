@@ -59,7 +59,7 @@ services:
       interval: 30s # (default: 30s)
       timeout: 10s # (default: 30s)
       retries: 3 #  (default: 3)
-      start_period: 30s # (default: 0s)
+      start_period: 120s # first boot performs security cert init and index bootstrap; can exceed 120s on slower machines
 
   opensearch-configurer:
     mem_limit: 128m
