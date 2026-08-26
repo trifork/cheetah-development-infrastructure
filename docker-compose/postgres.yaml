@@ -7,7 +7,7 @@ services:
     environment:
       VALIDATOR_SO_PATH: /validator-out/pg_oidc_validator.so
       VALIDATOR_REPO_URL: https://github.com/percona/pg_oidc_validator.git
-      VALIDATOR_VERSION: "main"
+      VALIDATOR_VERSION: "1.1.0"
     volumes:
       - postgres-validator-lib:/validator-out
       - ./config/postgres/install-oidc-validator.sh:/usr/local/bin/install-oidc-validator.sh:ro
