@@ -6,9 +6,7 @@ services:
     restart: "no"
     environment:
       VALIDATOR_SO_PATH: /validator-out/pg_oidc_validator.so
-      # Temporary: fork for discovery_url_override. Switch both back to percona
-      # (repo + a release tag) once the GUC is merged upstream.
-      VALIDATOR_REPO_URL: https://github.com/MarkBogelund/pg_oidc_validator.git
+      VALIDATOR_REPO_URL: https://github.com/percona/pg_oidc_validator.git
       VALIDATOR_VERSION: "main"
     volumes:
       - postgres-validator-lib:/validator-out
@@ -55,7 +53,8 @@ services:
       postgres-build-oidc-validator:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d cheetah-postgres"]
+      # Run as the postgres OS user so local peer auth matches the requested role.
+      test: ["CMD-SHELL", "su -s /bin/sh postgres -c 'pg_isready -U postgres -d cheetah-postgres'"]
       interval: 30s
       timeout: 10s
       retries: 10
