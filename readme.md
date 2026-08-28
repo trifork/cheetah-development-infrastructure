@@ -203,11 +203,11 @@ pgAdmin: <http://localhost:5050> — login `admin@admin.com` / `admin`. On first
 
 ### Host-side `psql`
 
-Requires PostgreSQL 18 client + `libpq-oauth` and `127.0.0.1 keycloak` in `/etc/hosts`. libpq enforces HTTPS issuer URLs by default; for local-dev HTTP, prepend `PGOAUTHDEBUG=UNSAFE`. libpq runs the OAuth device flow — it prints a URL + code; visit it, log in as `developer/developer`, authorize the client.
+Requires PostgreSQL 18 client + `libpq-oauth`. libpq enforces HTTPS issuer URLs by default; for local-dev HTTP, prepend `PGOAUTHDEBUG=UNSAFE`. libpq runs the OAuth device flow — it prints a URL + code; visit it, log in as `developer/developer`, authorize the client.
 
 Use the following command to connect with psql and filter out everything except the device flow auth url and the device code during authorization.
 ```bash
-PGOAUTHDEBUG=UNSAFE psql 'host=localhost port=5432 dbname=cheetah-postgres user=default-access oauth_issuer=http://keycloak:1852/realms/local-development oauth_client_id=default-access oauth_client_secret=default-access-secret oauth_scope=postgres' 2>&1 | grep --line-buffered -vE '^\[libcurl\]'
+PGOAUTHDEBUG=UNSAFE psql 'host=localhost port=5432 dbname=cheetah-postgres user=default-access oauth_issuer=http://localhost:1852/realms/local-development oauth_client_id=default-access oauth_client_secret=default-access-secret oauth_scope=postgres' 2>&1 | grep --line-buffered -vE '^\[libcurl\]'
 ```
 
 ## List of all profiles in docker compose
