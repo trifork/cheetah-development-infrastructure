@@ -12,6 +12,8 @@ See also: <https://docs.cheetah.trifork.dev/reference/development-infrastructure
 docker compose up --quiet-pull
 ```
 
+> **First-time boot note:** OpenSearch performs a one-time security cert and index bootstrap on cold start that can take a few minutes, especially on slower machines. Its healthcheck's `start_period` is set to 120s to accommodate this. If OpenSearch still isn't healthy after ~2 minutes, dependent services (`opensearch-dashboards`, `opensearch-configurer`) won't start - just re-run `docker compose up` once OpenSearch is healthy and everything else will come up.
+
 ## Prerequisites
 
 1. Follow: <https://docs.cheetah.trifork.dev/getting-started/guided-tour/prerequisites#run-standard-jobs>
@@ -58,10 +60,10 @@ See sections below for details on security model configuration.
 
 The kafka setup consists of different services:
 
-- **kafka** - Strimzi Kafka with the [Cheetah Kafka Authorizer](https://github.com/trifork/cheetah-infrastructure-utils-kafka)
+- **kafka** - Strimzi Kafka with the [Cheetah KRaft Kafka Authorizer](https://github.com/trifork/cheetah-infrastructure-utils-kafka)
 - **redpanda** - A Console provides a user interface to manage multiple Kafka connect clusters. <https://docs.redpanda.com/docs/manage/console/>
-- **kafka-setup** - A bash script which sets up a Kafka User for redpanda to use when connecting to Kafka, as well as some predefined topics. The topics to be created are determined by the environment variable INITIAL_KAFKA_TOPICS, which can be set in the `.env` file or overritten in your local environment. 
-- **schema-registry** - [Schema registry](https://www.apicur.io/registry/docs/apicurio-registry/2.5.x/index.html)
+- **kafka-setup** - A bash script which sets up a Kafka User for redpanda to use when connecting to Kafka, as well as some predefined topics. The topics to be created are determined by the environment variable INITIAL_KAFKA_TOPICS, which can be set in the `.env` file or overritten in your local environment. It also pre-creates the internal topics that Apicurio Registry 3.x depends on (`kafkasql-journal-v3`, `kafkasql-snapshots`, `registry-events`).
+- **schema-registry** - [Apicurio Registry 3.1.x](https://www.apicur.io/registry/docs/apicurio-registry/3.1.x/index.html), running the `kafkasql` storage backend against the local Kafka broker via OAuth.
 - **kafka-minion** - [Kafka Prometheus exporter](https://github.com/cloudhut/kminion)
 
 ### Running Kafka and its associated services
@@ -69,17 +71,20 @@ The kafka setup consists of different services:
 Run:
 
 ```bash
-docker compose --profile=kafka --profile=oauth --profile=schemaregistry --profile=redpanda up -d
+docker compose --profile=kafka up -d
 ```
+
+This brings up `kafka`, `kafka-setup`, `redpanda`, `schema-registry`, and their Keycloak dependency. `kafka-minion` lives under the `observability` (or `full`) profile — add `--profile=observability` if you want Prometheus metrics too.
 
 When all of the services are running, you can go to:
 
 - <http://localhost:9898/topics> to see the different topics in redpanda.
-- <http://localhost:8081/apis> to the the schema-registry api documentation
+- <http://localhost:8081/ui/> to open the schema-registry UI.
+- <http://localhost:8081/apis/registry/v3> to hit the schema-registry REST API (v3).
 
 ### Listeners
 
-5 different listeners is setup for Kafka on different internal and external ports (see [server.properties](/config/kafka/server.properties) for the configuration):
+5 different listeners is setup for Kafka on different internal and external ports (see [kraft.properties](/config/kafka/kraft.properties) for the configuration):
 
 - `localhost:9092` - Used for connecting to kafka with OAuth2 authentication from outside the docker environment.
 - `localhost:9093` - Used for connecting to kafka without authentication from outside the docker environment.
@@ -89,8 +94,8 @@ When all of the services are running, you can go to:
 
 ### Authentication
 
-To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [server.properties](/config/kafka/server.properties).  
-This will cause all connections from unauthenticated sources to be rejected by `CheetahKafkaAuthorizer`.
+To require Oauth2 authentication when connecting to kafka, you can remove `;User:ANONYMOUS` from the `super.users` property in [kraft.properties](/config/kafka/kraft.properties).  
+This will cause all connections from unauthenticated sources to be rejected by `CheetahKRaftAuthorizer`.
 
 ## OpenSearch
 
@@ -107,7 +112,7 @@ Files placed in any subdirectory of [config/opensearch-configurer/](config/opens
 Run:
 
 ```bash
-docker compose --profile=opensearch --profile=opensearch_dashboard up -d
+docker compose --profile=opensearch up -d
 ```
 
 When all of the services are running, you can go to:
@@ -121,7 +126,16 @@ When all of the services are running, you can go to:
 Services should connect using the OAuth2 protocol.  
 You can choose to set `DISABLE_SECURITY_DASHBOARDS_PLUGIN=true` and `DISABLE_SECURITY_PLUGIN=true` to disable security completely.
 
-#### Basic auth access
+There are two ways to authenticate against OpenSearch, backed by **two separate user directories**:
+
+| Path | Credentials | Where the user lives | When to use it |
+| --- | --- | --- | --- |
+| **HTTP Basic Auth** | `admin` / `admin` | OpenSearch's internal user DB ([internal_users.yml](config/opensearch/security/internal_users.yml)) | Break-glass, API/curl scripting, when Keycloak is down |
+| **OIDC (OAuth2)** | `developer` / `developer` | Keycloak realm ([local-development.json](config/keycloak/local-development.json)) | Mirrors production auth — how a real user would log in |
+
+The `admin` user does **not** exist in Keycloak, and the `developer` user does **not** exist in OpenSearch. They're two entirely different accounts in two different databases with two different auth mechanisms. Consequently, `admin:admin` has full cluster admin, while `developer:developer` gets only the roles mapped to it via Keycloak scopes (read-only data access, no cluster-admin actions).
+
+#### Basic auth access (`admin:admin`)
 
 **Note:** OpenSearch has anonymous access enabled by default, but the anonymous user has no permissions. Browsers won't prompt for credentials automatically.
 
@@ -142,6 +156,8 @@ curl -k -s -u "admin:admin" $OPENSEARCH_URL/_cat/indices
 
 #### OAuth2 token
 
+Tokens are minted by Keycloak and must carry `aud: opensearch` - enforced by `required_audience` in [config/opensearch/security/config.yml](config/opensearch/security/config.yml). The `opensearch` scope on a Keycloak client stamps this audience automatically, so as long as you request `scope=opensearch` you're fine.
+
 If you do not want to use basicauth locally, you can get a token using this curl command:
 
 ```sh
@@ -157,6 +173,12 @@ And query OpenSearch like this:
 ```sh
 curl -k -s -H "Authorization: Bearer $ACCESS_TOKEN" $OPENSEARCH_URL/_cat/indices
 ```
+
+#### OIDC login via Dashboards (`developer:developer`)
+
+On <http://localhost:5602> click **"Log in with single sign-on"** → you'll be redirected to Keycloak → sign in as `developer` / `developer`. First-time login prompts for profile fields (email, first/last name - any placeholder like `developer@localhost` works; values persist for the container's lifetime).
+
+The `developer` user only has read access and a couple of dev roles, so some cluster-admin UI features (e.g. "Manage data sources") will return 403. That's expected - for full admin access, use `admin:admin` via the internal-user form on the same login page.
 
 ## PostgreSQL
 
@@ -181,11 +203,11 @@ pgAdmin: <http://localhost:5050> — login `admin@admin.com` / `admin`. On first
 
 ### Host-side `psql`
 
-Requires PostgreSQL 18 client + `libpq-oauth` and `127.0.0.1 keycloak` in `/etc/hosts`. libpq enforces HTTPS issuer URLs by default; for local-dev HTTP, prepend `PGOAUTHDEBUG=UNSAFE`. libpq runs the OAuth device flow — it prints a URL + code; visit it, log in as `developer/developer`, authorize the client.
+Requires PostgreSQL 18 client + `libpq-oauth`. libpq enforces HTTPS issuer URLs by default; for local-dev HTTP, prepend `PGOAUTHDEBUG=UNSAFE`. libpq runs the OAuth device flow — it prints a URL + code; visit it, log in as `developer/developer`, authorize the client.
 
 Use the following command to connect with psql and filter out everything except the device flow auth url and the device code during authorization.
 ```bash
-PGOAUTHDEBUG=UNSAFE psql 'host=localhost port=5432 dbname=cheetah-postgres user=default-access oauth_issuer=http://keycloak:1852/realms/local-development oauth_client_id=default-access oauth_client_secret=default-access-secret oauth_scope=postgres' 2>&1 | grep --line-buffered -vE '^\[libcurl\]'
+PGOAUTHDEBUG=UNSAFE psql 'host=localhost port=5432 dbname=cheetah-postgres user=default-access oauth_issuer=http://localhost:1852/realms/local-development oauth_client_id=default-access oauth_client_secret=default-access-secret oauth_scope=postgres' 2>&1 | grep --line-buffered -vE '^\[libcurl\]'
 ```
 
 ## List of all profiles in docker compose
