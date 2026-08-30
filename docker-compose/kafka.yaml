@@ -119,7 +119,7 @@ services:
 
   schema-registry:
     mem_limit: 256m
-    image: apicurio/apicurio-registry:3.3.1
+    image: apicurio/apicurio-registry:3.3.2
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
