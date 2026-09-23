@@ -201,6 +201,21 @@ pgAdmin: <http://localhost:5050> — login `admin@admin.com` / `admin`. On first
 - One scram-sha-256 exception: the `pgadmin` role (password `admin`, defined in `config/postgres/init/01-roles.sql`), scoped via `pg_hba.conf`.
 - The validator maps the JWT `azp` claim (authorized party = the OAuth client_id) → PostgreSQL role. Roles: `default-access`, `default-read`, `default-write`.
 
+### Permissions and tables
+
+Permissions mirror OpenSearch (`config/postgres/init/02-permissions.sql`). The permission roles have the same names as in `config/opensearch/security/roles.yml` and cover all tables in `public`:
+
+| Role | Privileges | Granted to |
+| --- | --- | --- |
+| `all_access` | all | `default-access` |
+| `default_write` | `SELECT, INSERT, UPDATE` (an upsert reads the existing row) | `default-write` |
+| `default_delete` | `DELETE, TRUNCATE` (`DROP` cannot be granted) | `default-write` |
+| `default_read` | `SELECT` | `default-read` |
+
+Jobs do not create tables. They are created up front in `config/postgres/init/03-tables.sql`, like the index templates for OpenSearch.
+
+The init scripts only run on an empty volume. After changing them, recreate it: `docker compose --profile postgres down -v && docker compose --profile postgres up -d`.
+
 ### Host-side `psql`
 
 Requires PostgreSQL 18 client + `libpq-oauth`. libpq enforces HTTPS issuer URLs by default; for local-dev HTTP, prepend `PGOAUTHDEBUG=UNSAFE`. libpq runs the OAuth device flow — it prints a URL + code; visit it, log in as `developer/developer`, authorize the client.
