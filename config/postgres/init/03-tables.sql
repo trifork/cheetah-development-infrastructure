@@ -16,12 +16,3 @@ CREATE TABLE public.data_centric (
     "timestamp" text,
     "value"     bigint
 );
-
--- cheetah-app-jobs-golang postgresstoragejob: integration test
-CREATE TABLE public.test_table_postgres_storage (
-    kafka_key   text PRIMARY KEY,
-    "uuid"      text,
-    "deviceId"  text,
-    "timestamp" text,
-    "value"     bigint
-);
