@@ -19,7 +19,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin, "default-create" IN SCHEMA 
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin, "default-create" IN SCHEMA public
     GRANT DELETE, TRUNCATE ON TABLES TO default_delete;
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin, "default-create" IN SCHEMA public
-    GRANT ALL ON TABLES TO all_access
+    GRANT ALL ON TABLES TO all_access;
 
 -- Same mapping as the OpenSearch client roles in local-development.json.
 GRANT all_access TO "default-access";
