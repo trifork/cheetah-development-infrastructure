@@ -13,16 +13,16 @@ GRANT USAGE ON SCHEMA public TO default_read, default_write, default_delete, all
 
 -- Default privileges cover every table created later by the init scripts
 -- (postgres) or in pgAdmin (pgadmin), like the "*" index patterns in roles.yml.
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin IN SCHEMA public
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin, "default-create" IN SCHEMA public
     GRANT SELECT ON TABLES TO default_read;
 -- An upsert reads the existing row, so writing needs SELECT as well.
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin IN SCHEMA public
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin, "default-create" IN SCHEMA public
     GRANT SELECT, INSERT, UPDATE ON TABLES TO default_write;
 -- DROP cannot be granted in PostgreSQL. Emptying a table is the closest to deleting an index.
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin IN SCHEMA public
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin, "default-create" IN SCHEMA public
     GRANT DELETE, TRUNCATE ON TABLES TO default_delete;
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin IN SCHEMA public
-    GRANT ALL ON TABLES TO all_access;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin, "default-create" IN SCHEMA public
+    GRANT ALL ON TABLES TO all_access
 
 -- Same mapping as the opensearch client roles in config/keycloak/local-development.json
 GRANT all_access TO "default-access";
