@@ -212,7 +212,7 @@ Permissions mirror OpenSearch (`config/postgres/init/02-permissions.sql`). The p
 | `default_delete` | `DELETE, TRUNCATE` (`DROP` cannot be granted) | `default-write` |
 | `default_read` | `SELECT` | `default-read` |
 
-Jobs do not create tables. They are created up front in `config/postgres/init/03-tables.sql`, like the index templates for OpenSearch.
+Jobs do not create tables. They are created up front in `config/postgres/init/03-tables.sql`, like the index templates for OpenSearch. A table's columns are the fields of the Kafka message, with the same (quoted, case-sensitive) names and the types OpenSearch's dynamic mapping would give them, plus a `kafka_key` primary key for the Kafka key.
 
 The init scripts only run on an empty volume. After changing them, recreate it: `docker compose --profile postgres down -v && docker compose --profile postgres up -d`.
 
