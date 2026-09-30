@@ -208,7 +208,7 @@ Permissions mirror OpenSearch (`config/postgres/init/02-permissions.sql`). The p
 | Role | Privileges | Granted to |
 | --- | --- | --- |
 | `all_access` | all | `default-access` |
-| `default_write` | `SELECT, INSERT, UPDATE` (an upsert reads the existing row) | `default-write` |
+| `default_write` | `SELECT, INSERT, UPDATE, DELETE` (like OpenSearch's `write`, which also replaces and deletes; deleting by key needs `SELECT`) | `default-write` |
 | `default_delete` | `DELETE, TRUNCATE` (`DROP` cannot be granted) | `default-write` |
 | `default_read` | `SELECT` | `default-read` |
 

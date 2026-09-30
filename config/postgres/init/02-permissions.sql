@@ -12,9 +12,9 @@ GRANT USAGE ON SCHEMA public TO default_read, default_write, default_delete, all
 -- Default privileges cover every table created later by init scripts or pgAdmin.
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin, "default-create" IN SCHEMA public
     GRANT SELECT ON TABLES TO default_read;
--- Upserts read existing rows; writes need SELECT as well.
+-- Like OpenSearch's write, this includes replacing and deleting rows. Deleting by key needs SELECT.
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin, "default-create" IN SCHEMA public
-    GRANT SELECT, INSERT, UPDATE ON TABLES TO default_write;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO default_write;
 -- PostgreSQL cannot GRANT DROP; TRUNCATE is the closest delete model.
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres, pgadmin, "default-create" IN SCHEMA public
     GRANT DELETE, TRUNCATE ON TABLES TO default_delete;
